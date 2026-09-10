@@ -193,10 +193,10 @@ export default function Dashboard() {
         </div>
 
         {/* RIGHT SIDEBAR (Site Details) */}
-        <div className="flex-1 flex flex-col gap-4">
+        <div className="flex-1 flex flex-col gap-4 min-h-0">
           
-          <div className="flex-1 bg-bgCard rounded-xl border border-borderC p-5 flex flex-col">
-            <div className="flex justify-between items-start mb-6 border-b border-borderC pb-4">
+          <div className="flex-1 bg-bgCard rounded-xl border border-borderC p-5 flex flex-col min-h-0">
+            <div className="flex justify-between items-start mb-6 border-b border-borderC pb-4 shrink-0">
               <div>
                 <h3 className="font-bold text-lg mb-1">{activeTarget.id === 'CUSTOM' ? 'Area Analysis' : `Well - ${activeTarget.name}`}</h3>
                 <p className="text-sm text-textMuted flex items-center gap-1"><MapPin size={12}/> {activeTarget.state}</p>
@@ -213,7 +213,7 @@ export default function Dashboard() {
             </div>
 
             <div className="flex-1 flex flex-col min-h-0 overflow-y-auto pr-2">
-              <div className="flex space-x-6 border-b border-borderC mb-4 text-sm font-medium">
+              <div className="flex space-x-6 border-b border-borderC mb-4 text-sm font-medium shrink-0">
                 {['Overview', 'Telemetry', 'History'].map(t => (
                   <div key={t} onClick={() => setActiveTab(t)} className={`pb-2 cursor-pointer transition-colors ${activeTab === t ? 'text-brandBlue border-b-2 border-brandBlue' : 'text-textMuted hover:text-textMain'}`}>{t}</div>
                 ))}
@@ -280,7 +280,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="bg-bgCard rounded-xl border border-borderC p-5 flex-1 relative overflow-hidden flex flex-col">
+          <div className="bg-bgCard rounded-xl border border-borderC p-5 flex-1 relative overflow-hidden flex flex-col min-h-0">
             <h3 className="font-semibold flex items-center gap-2 mb-4 relative z-10"><Sparkles className="text-brandBlue" size={18} /> RAG AI Intelligence</h3>
             <div className="flex-1 overflow-y-auto relative z-10 space-y-3 pr-2">
               {loadingAi ? (
