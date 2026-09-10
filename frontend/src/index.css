@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bgMain: #060B14;
+  --color-bgPanel: #0E1623;
+  --color-bgCard: #152033;
+  --color-borderC: #23324A;
+  --color-brandBlue: #2C81FF;
+  --color-textMain: #F8FAFC;
+  --color-textMuted: #94A3B8;
+  --color-accentRed: #F43F5E;
+  --color-accentYellow: #FBBF24;
+  --color-accentGreen: #10B981;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: var(--color-bgMain);
+  color: var(--color-textMain);
+  font-family: 'Inter', sans-serif;
+}
+
+/* Leaflet dark mode overrides */
+.leaflet-container {
+  background: #060B14 !important;
+}
+.leaflet-tile-pane {
+  filter: brightness(0.6) contrast(1.2) saturate(0.8) sepia(0.2) hue-rotate(180deg);
+}
