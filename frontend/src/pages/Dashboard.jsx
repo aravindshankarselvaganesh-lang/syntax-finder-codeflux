@@ -234,7 +234,38 @@ export default function Dashboard() {
                 <div className="flex-1 flex flex-col justify-center text-center text-textMuted text-sm">Telemetry sensors offline or not connected for this target.</div>
               )}
               {activeTab === 'History' && (
-                <div className="flex-1 flex flex-col justify-center text-center text-textMuted text-sm">No historical completions data found.</div>
+                <div className="flex-1 overflow-y-auto pr-2 space-y-4">
+                  {activeTarget.status === 'custom' ? (
+                    <div className="flex flex-col justify-center text-center text-textMuted text-sm h-full">No historical drilling logs exist for this un-drilled coordinate.</div>
+                  ) : (
+                    <div className="relative border-l border-borderC ml-3 space-y-6 pb-2">
+                      <TimelineEvent 
+                        date="Current" 
+                        title={activeTarget.rca} 
+                        desc={activeTarget.status === 'green' ? "Drilling ahead smoothly. Parameters normal." : "Operations halted or adjusted pending engineering review."} 
+                        color={activeTarget.status === 'green' ? 'bg-accentGreen' : activeTarget.status === 'yellow' ? 'bg-accentYellow' : 'bg-accentRed'} 
+                      />
+                      <TimelineEvent 
+                        date="2 Days Ago" 
+                        title="Formation Evaluation" 
+                        desc="LWD tools deployed. Resistivity logs indicate expected lithology transition." 
+                        color="bg-brandBlue" 
+                      />
+                      <TimelineEvent 
+                        date="1 Week Ago" 
+                        title="Intermediate Casing Set" 
+                        desc="Ran and cemented 9-5/8'' casing string. BOP tested to 5,000 psi successfully." 
+                        color="bg-textMuted" 
+                      />
+                      <TimelineEvent 
+                        date={activeTarget.spud} 
+                        title="Spud Date" 
+                        desc={`Rig mobilized and well spudded by ${activeTarget.operator}.`} 
+                        color="bg-borderC" 
+                      />
+                    </div>
+                  )}
+                </div>
               )}
             </div>
           </div>
@@ -364,6 +395,17 @@ function CauseRow({ color, label, pct }) {
       <div className={`w-2 h-2 rounded-full shrink-0 ${color}`}></div>
       <div className="flex-1 text-textMain">{label}</div>
       <div className="font-medium">{pct}</div>
+    </div>
+  );
+}
+
+function TimelineEvent({ date, title, desc, color }) {
+  return (
+    <div className="relative pl-6">
+      <div className={`absolute -left-[5px] top-1.5 w-2.5 h-2.5 rounded-full ${color} shadow-[0_0_8px_rgba(0,0,0,0.5)]`}></div>
+      <div className="text-[10px] font-bold uppercase text-textMuted mb-0.5 tracking-wider">{date}</div>
+      <div className="text-sm font-semibold text-textMain mb-1">{title}</div>
+      <div className="text-xs text-textMuted leading-relaxed">{desc}</div>
     </div>
   );
 }
