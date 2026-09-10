@@ -26,7 +26,7 @@ export default function App() {
           <Route path="analytics" element={<Analytics />} />
           <Route path="reports" element={<Reports />} />
           <Route path="alerts" element={<Alerts />} />
-          <Route path="ai" element={<AIInsights />} />
+          <Route path="insights" element={<AIInsights />} />
           <Route path="settings" element={<Settings />} />
         </Route>
       </Routes>
