@@ -1,19 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MapPin, BarChart2, Sparkles, ChevronDown, Droplet, CheckCircle2, AlertTriangle, AlertCircle, Maximize2, FileText, Loader2, Activity, Clock } from 'lucide-react';
-import { MapContainer, TileLayer, CircleMarker, Circle, Tooltip } from 'react-leaflet';
+import { MapPin, BarChart2, Sparkles, ChevronDown, Droplet, CheckCircle2, AlertTriangle, AlertCircle, Maximize2, FileText, Loader2, Activity, Clock, Crosshair, Filter } from 'lucide-react';
+import { MapContainer, TileLayer, CircleMarker, Circle, Tooltip, useMapEvents } from 'react-leaflet';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 // Mock Data
 const PINS = [
-  { id: 1, pos: [23.0225, 72.5714], status: 'green', state: 'Gujarat' },
-  { id: 2, pos: [22.3, 71.5], status: 'red', state: 'Gujarat' },
-  { id: 3, pos: [23.5, 73.0], status: 'yellow', state: 'Gujarat' },
-  { id: 4, pos: [22.8, 72.1], status: 'green', state: 'Gujarat' },
-  { id: 5, pos: [26.1445, 91.7362], status: 'green', state: 'Assam' },
-  { id: 6, pos: [27.0, 93.0], status: 'red', state: 'Assam' },
-  { id: 7, pos: [26.5, 92.5], status: 'yellow', state: 'Assam' },
-  { id: 8, pos: [27.5, 94.0], status: 'green', state: 'Assam' },
-  { id: 9, pos: [27.2, 95.0], status: 'red', state: 'Assam', selected: true },
+  { id: 'GJ-12', pos: [23.0225, 72.5714], status: 'green', state: 'Gujarat', name: 'Gujarat-12', operator: 'ONGC', spud: '14 May 2026', td: '2,800 m', formation: 'Kalol Formation', rca: 'Optimal Operations' },
+  { id: 'GJ-14', pos: [22.3, 71.5], status: 'green', state: 'Gujarat', name: 'Gujarat-14', operator: 'ONGC', spud: '11 Jun 2026', td: '2,100 m', formation: 'Cambay Shale', rca: 'N/A' },
+  { id: 'TR-02', pos: [23.8, 91.2], status: 'yellow', state: 'Tripura', name: 'Tripura-02', operator: 'ONGC', spud: '03 Jan 2026', td: '4,000 m', formation: 'Bhuban Formation', rca: 'Equipment Failure' },
+  { id: 'RJ-05', pos: [26.2, 73.0], status: 'green', state: 'Rajasthan', name: 'Rajasthan-05', operator: 'Cairn India', spud: '22 Aug 2026', td: '1,500 m', formation: 'Barmer Basin', rca: 'Optimal' },
+  { id: 'AS-08', pos: [26.1445, 91.7362], status: 'yellow', state: 'Assam', name: 'Assam-08', operator: 'Oil India Ltd', spud: '01 Jul 2026', td: '4,500 m', formation: 'Tipam Sandstone', rca: 'Mud Weight Loss' },
+  { id: 'AS-07', pos: [27.2, 95.0], status: 'red', state: 'Assam', name: 'Assam-07', operator: 'Oil India Ltd', spud: '12 Aug 2026', td: '3,102 m', formation: 'RDFC', rca: 'Pressure Anomaly / Instability' },
 ];
 
 const BAR_DATA = [
@@ -33,24 +30,51 @@ const PIE_DATA = [
   { name: 'Active', value: 2, color: '#10B981' },
 ];
 
+function MapInteractionHandler({ setCustomLocation, setSelectedPinId }) {
+  useMapEvents({
+    click(e) {
+      setSelectedPinId(null);
+      setCustomLocation([e.latlng.lat, e.latlng.lng]);
+    }
+  });
+  return null;
+}
+
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState('Overview');
-  const [mapMode, setMapMode] = useState('satellite'); // Default to realistic satellite
+  const [mapMode, setMapMode] = useState('satellite'); 
   const [aiData, setAiData] = useState(null);
   const [loadingAi, setLoadingAi] = useState(false);
+  const [selectedPinId, setSelectedPinId] = useState('AS-07');
+  const [customLocation, setCustomLocation] = useState(null);
+  const [radiusKm, setRadiusKm] = useState(100);
   const mapContainerRef = useRef(null);
 
+  const activeTarget = selectedPinId 
+    ? PINS.find(p => p.id === selectedPinId)
+    : customLocation ? {
+        id: 'CUSTOM',
+        name: `Lat: ${customLocation[0].toFixed(2)}, Lng: ${customLocation[1].toFixed(2)}`,
+        state: 'Custom Target',
+        operator: 'Global Explorations',
+        spud: 'Pre-Drill Phase',
+        td: 'TBD',
+        formation: 'Survey Area',
+        status: 'custom',
+        rca: 'Geospatial Assessment'
+      } : PINS.find(p => p.id === 'AS-07');
+
   useEffect(() => {
-    // Fetch AI insights from the backend RAG pipeline, with graceful fallback
     const fetchAI = async () => {
       setLoadingAi(true);
+      setAiData(null);
       try {
         const res = await fetch('/api/ai/analyze', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            well_id: "Assam-07",
-            region: "Assam",
+            well_id: activeTarget.id,
+            region: activeTarget.state,
             telemetry_state: { spp: 2940, rop: 18.4, torque: 14.8 }
           })
         });
@@ -61,26 +85,35 @@ export default function Dashboard() {
           throw new Error("API not ready");
         }
       } catch (err) {
-        console.warn("Backend API not reachable on Vercel yet. Falling back to local mock data.");
-        // Fallback for visual completeness until backend is deployed
         setTimeout(() => {
-          setAiData({
-            confidence: 87,
-            root_cause: "Equipment / technical anomaly",
-            historical_matches: [1,2,3],
-            recommendation: "Inspect pressure-control equipment and verify sensor calibration. Cross-check with similar past cases (Ref: 2021-Well-12)."
-          });
+          if (activeTarget.status === 'custom') {
+            setAiData({
+              confidence: 92,
+              root_cause: "Area Pre-Assessment",
+              historical_matches: [4,5],
+              recommendation: `Geological analysis for coordinate ${activeTarget.name} indicates moderate seismic risk. Recommended mud weight: 1.15 SG for top-hole section based on analogous basin data.`
+            });
+          } else {
+            setAiData({
+              confidence: activeTarget.status === 'red' ? 87 : activeTarget.status === 'yellow' ? 65 : 95,
+              root_cause: activeTarget.rca,
+              historical_matches: [1,2,3],
+              recommendation: activeTarget.status === 'red' ? 
+                "Inspect pressure-control equipment and verify sensor calibration. Cross-check with similar past cases." : 
+                "Proceed with normal drilling operations. Parameters are within expected bounds."
+            });
+          }
           setLoadingAi(false);
-        }, 1200);
+        }, 800);
       }
     };
     fetchAI();
-  }, []);
+  }, [selectedPinId, customLocation]);
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
       mapContainerRef.current?.requestFullscreen().catch(err => {
-        console.error("Error attempting to enable fullscreen:", err);
+        console.warn(`Error attempting to enable fullscreen: ${err.message}`);
       });
     } else {
       document.exitFullscreen();
@@ -88,303 +121,180 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="space-y-6">
-      {/* TOP METRICS */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h2 className="text-2xl font-bold flex items-center gap-2">Welcome, Astha 👋</h2>
-          <p className="text-textMuted text-sm">Let's find your next viable site.</p>
-        </div>
-        <div className="flex space-x-4">
-          <MetricCard title="Total Offset Wells" value="5km" bg="bg-bgCard border-borderC" text="text-textMain" />
-          <MetricCard title="High Risk Failures" value="3" bg="bg-accentRed/10 border-accentRed/20" text="text-accentRed" />
-          <MetricCard title="Med Risk / Suspended" value="16" bg="bg-accentYellow/10 border-accentYellow/20" text="text-accentYellow" />
-          <MetricCard title="Minor Issues / Active" value="3/3" bg="bg-accentGreen/10 border-accentGreen/20" text="text-accentGreen" />
-        </div>
-      </div>
-
+    <div className="h-full flex flex-col space-y-6 overflow-y-auto pb-8">
+      
+      {/* TOP SECTION */}
       <div className="flex gap-6 h-[500px]">
+        
         {/* MAP SECTION */}
-        <div ref={mapContainerRef} className="flex-[2] bg-bgCard rounded-xl border border-borderC flex flex-col relative overflow-hidden">
-          {/* Map Overlay Controls */}
-          <div className="absolute top-4 left-4 z-[400] flex bg-bgPanel/80 backdrop-blur rounded-md border border-borderC overflow-hidden text-sm shadow-xl p-1 gap-1">
-            <button 
-              onClick={() => setMapMode('map')}
-              className={`px-4 py-1.5 rounded transition-all duration-300 font-medium ${mapMode === 'map' ? 'bg-brandBlue text-white shadow-md' : 'text-textMuted hover:bg-white/10 hover:text-white'}`}
-            >
-              Map
-            </button>
-            <button 
-              onClick={() => setMapMode('satellite')}
-              className={`px-4 py-1.5 rounded transition-all duration-300 font-medium ${mapMode === 'satellite' ? 'bg-brandBlue text-white shadow-md' : 'text-textMuted hover:bg-white/10 hover:text-white'}`}
-            >
-              Satellite
-            </button>
-          </div>
-          <button 
-            onClick={toggleFullscreen}
-            className="absolute top-4 right-4 z-[400] bg-bgPanel/80 backdrop-blur border border-borderC p-2 rounded-md cursor-pointer hover:bg-white/10 hover:text-white transition-all text-textMuted shadow-xl"
-            title="Toggle Fullscreen"
-          >
-            <Maximize2 size={18} />
-          </button>
-
-          {/* Map Legend */}
-          <div className="absolute bottom-4 left-4 right-4 z-[400] flex justify-center pointer-events-none">
-            <div className="bg-bgPanel/90 backdrop-blur border border-borderC rounded-full px-6 py-2 flex items-center gap-6 text-xs text-textMuted shadow-2xl pointer-events-auto transition-transform hover:scale-105 duration-300">
-              <LegendItem color="bg-accentRed" label="High Risk" />
-              <LegendItem color="bg-accentYellow" label="Medium Risk" />
-              <LegendItem color="bg-pink-500" label="Abandoned" />
-              <LegendItem color="bg-blue-500" label="Minor Issues" />
-              <LegendItem color="bg-accentGreen" label="Active" />
+        <div className="flex-[2] flex flex-col">
+          <div className="flex justify-between items-center mb-4">
+            <div>
+              <h2 className="text-2xl font-bold">Global Operations Map</h2>
+              <p className="text-textMuted text-sm">Real-time geospatial tracking of all energy assets.</p>
+            </div>
+            <div className="flex gap-2">
+              <button onClick={toggleFullscreen} className="flex items-center gap-2 bg-bgPanel hover:bg-white/5 border border-borderC px-3 py-1.5 rounded-lg text-sm transition-colors">
+                <Maximize2 size={16}/> Expand
+              </button>
             </div>
           </div>
 
-          <MapContainer 
-            center={[22.0, 80.0]} 
-            zoom={5} 
-            className="w-full h-full z-0 bg-[#060B14]"
-            style={{ width: '100%', height: '100%' }}
-            zoomControl={false}
-          >
-            {mapMode === 'satellite' ? (
-              <TileLayer
-                url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-                attribution="Tiles &copy; Esri"
-              />
-            ) : (
-              <TileLayer
-                url="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}"
-                attribution="Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ"
-              />
-            )}
+          <div ref={mapContainerRef} className="flex-1 bg-bgCard rounded-xl border border-borderC overflow-hidden relative shadow-lg">
             
-            {/* Radius Rings around Assam */}
-            <Circle center={[26.5, 93.0]} radius={500000} pathOptions={{ color: '#2C81FF', fillColor: '#2C81FF', fillOpacity: 0.05, weight: 1, dashArray: '4 4' }} />
-            <Circle center={[26.5, 93.0]} radius={300000} pathOptions={{ color: '#2C81FF', fillColor: '#2C81FF', fillOpacity: 0.1, weight: 1.5 }} />
-            
-            {/* Pins */}
-            {PINS.map(p => (
-              <CircleMarker 
-                key={p.id} 
-                center={p.pos} 
-                radius={p.selected ? 8 : 6} 
-                pathOptions={{ 
-                  fillColor: p.status === 'red' ? '#F43F5E' : p.status === 'yellow' ? '#FBBF24' : '#10B981', 
-                  color: p.selected ? '#fff' : 'rgba(255,255,255,0.2)', 
-                  weight: p.selected ? 2 : 1, 
-                  fillOpacity: 0.9 
-                }}
-              >
-                {p.selected && (
-                  <Tooltip permanent direction="top" className="bg-bgPanel border-borderC text-white font-bold shadow-2xl" offset={[0, -12]}>
-                    <div className="flex flex-col items-center">
-                      <span className="text-[10px] uppercase text-textMuted tracking-wider mb-1">Assam-07</span>
-                      <MapPin size={16} className="text-white" />
-                    </div>
-                  </Tooltip>
-                )}
-              </CircleMarker>
-            ))}
-          </MapContainer>
+            <div className="absolute top-4 right-4 z-[400] flex bg-bgPanel/80 backdrop-blur rounded-md border border-borderC overflow-hidden text-sm shadow-xl">
+              <button onClick={() => setMapMode('map')} className={`px-4 py-2 ${mapMode === 'map' ? 'bg-brandBlue text-white' : 'text-textMuted hover:text-white'}`}>Map</button>
+              <button onClick={() => setMapMode('satellite')} className={`px-4 py-2 ${mapMode === 'satellite' ? 'bg-brandBlue text-white' : 'text-textMuted hover:text-white'}`}>Satellite</button>
+            </div>
+
+            <div className="absolute top-4 left-4 z-[400] flex bg-bgPanel/80 backdrop-blur rounded-md border border-borderC overflow-hidden text-sm shadow-xl items-center px-2 py-1">
+              <span className="text-xs text-textMuted mr-2">Analysis Radius:</span>
+              <select className="bg-transparent text-white text-xs outline-none cursor-pointer" value={radiusKm} onChange={(e) => setRadiusKm(Number(e.target.value))}>
+                <option value={50}>50 km</option>
+                <option value={100}>100 km</option>
+                <option value={300}>300 km</option>
+                <option value={500}>500 km</option>
+              </select>
+            </div>
+
+            <MapContainer center={[23.5, 78.0]} zoom={5} style={{ width: '100%', height: '100%' }} zoomControl={false}>
+              <MapInteractionHandler setCustomLocation={setCustomLocation} setSelectedPinId={setSelectedPinId} />
+              
+              {mapMode === 'satellite' ? (
+                <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" attribution="Tiles &copy; Esri" />
+              ) : (
+                <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}" attribution="Tiles &copy; Esri" />
+              )}
+              
+              {customLocation && !selectedPinId && (
+                <Circle center={customLocation} radius={radiusKm * 1000} pathOptions={{ color: '#2C81FF', fillColor: '#2C81FF', fillOpacity: 0.15, weight: 2, dashArray: '4 4' }} />
+              )}
+              
+              {PINS.map(p => {
+                const isSelected = p.id === selectedPinId;
+                return (
+                  <CircleMarker key={p.id} center={p.pos} radius={isSelected ? 8 : 6} eventHandlers={{ click: () => setSelectedPinId(p.id) }}
+                    pathOptions={{ fillColor: p.status === 'red' ? '#F43F5E' : p.status === 'yellow' ? '#FBBF24' : '#10B981', color: isSelected ? '#fff' : 'rgba(255,255,255,0.2)', weight: isSelected ? 2 : 1, fillOpacity: 0.9 }} className="cursor-pointer">
+                    {isSelected && (
+                      <Tooltip permanent direction="top" className="bg-bgPanel border-borderC text-white font-bold shadow-2xl" offset={[0, -12]}>
+                        <div className="flex flex-col items-center">
+                          <span className="text-[10px] uppercase text-textMuted tracking-wider mb-1">{p.name}</span>
+                          <MapPin size={16} className="text-white" />
+                        </div>
+                      </Tooltip>
+                    )}
+                  </CircleMarker>
+                );
+              })}
+            </MapContainer>
+          </div>
         </div>
 
         {/* RIGHT SIDEBAR (Site Details) */}
         <div className="flex-1 flex flex-col gap-4">
           
-          {/* Site Overview Card */}
-          <div className="bg-bgCard rounded-xl border border-borderC flex flex-col p-5 h-[280px]">
-            <div className="flex justify-between items-start mb-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded border border-borderC flex items-center justify-center bg-bgPanel">
-                  <Droplet className="text-textMuted" size={24} />
-                </div>
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs bg-accentRed/20 text-accentRed px-2 py-0.5 rounded flex items-center gap-1 font-medium">
-                      <AlertCircle size={12} /> High Risk
-                    </span>
-                  </div>
-                  <h3 className="text-lg font-bold">Well - Assam-07</h3>
-                  <p className="text-xs text-textMuted flex items-center gap-1"><MapPin size={12} /> Dibrugarh, Assam</p>
-                </div>
+          <div className="flex-1 bg-bgCard rounded-xl border border-borderC p-5 flex flex-col">
+            <div className="flex justify-between items-start mb-6 border-b border-borderC pb-4">
+              <div>
+                <h3 className="font-bold text-lg mb-1">{activeTarget.id === 'CUSTOM' ? 'Area Analysis' : `Well - ${activeTarget.name}`}</h3>
+                <p className="text-sm text-textMuted flex items-center gap-1"><MapPin size={12}/> {activeTarget.state}</p>
               </div>
-              <span className="text-xs bg-accentGreen/20 text-accentGreen px-2 py-0.5 rounded flex items-center gap-1 font-medium">
-                <CheckCircle2 size={12} /> Active
+              <span className={`px-2.5 py-1 rounded-full text-xs font-medium border flex items-center gap-1 ${
+                activeTarget.status === 'green' ? 'bg-accentGreen/10 text-accentGreen border-accentGreen/20' :
+                activeTarget.status === 'yellow' ? 'bg-accentYellow/10 text-accentYellow border-accentYellow/20' :
+                activeTarget.status === 'custom' ? 'bg-brandBlue/10 text-brandBlue border-brandBlue/20' :
+                'bg-accentRed/10 text-accentRed border-accentRed/20'
+              }`}>
+                {activeTarget.status === 'custom' ? <Crosshair size={12}/> : <CheckCircle2 size={12} />} 
+                {activeTarget.status === 'green' ? 'Active' : activeTarget.status === 'yellow' ? 'Warning' : activeTarget.status === 'custom' ? 'Target' : 'High Risk'}
               </span>
             </div>
 
-            {/* Tabs */}
-            <div className="flex space-x-6 border-b border-borderC mb-4 text-sm font-medium">
-              {['Overview', 'Telemetry', 'History'].map(t => (
-                <div 
-                  key={t}
-                  onClick={() => setActiveTab(t)}
-                  className={`pb-2 cursor-pointer transition-colors ${activeTab === t ? 'text-brandBlue border-b-2 border-brandBlue' : 'text-textMuted hover:text-textMain'}`}
-                >
-                  {t}
+            <div className="flex-1 flex flex-col min-h-0 overflow-y-auto pr-2">
+              <div className="flex space-x-6 border-b border-borderC mb-4 text-sm font-medium">
+                {['Overview', 'Telemetry', 'History'].map(t => (
+                  <div key={t} onClick={() => setActiveTab(t)} className={`pb-2 cursor-pointer transition-colors ${activeTab === t ? 'text-brandBlue border-b-2 border-brandBlue' : 'text-textMuted hover:text-textMain'}`}>{t}</div>
+                ))}
+              </div>
+
+              {activeTab === 'Overview' && (
+                <div className="flex-1 text-sm grid grid-cols-3 gap-y-4">
+                  <div><p className="text-xs text-textMuted mb-1">Operator</p><p className="font-semibold">{activeTarget.operator}</p></div>
+                  <div><p className="text-xs text-textMuted mb-1">Status Date</p><p className="font-semibold">{activeTarget.spud}</p></div>
+                  <div><p className="text-xs text-textMuted mb-1">Total Depth (TD)</p><p className="font-semibold">{activeTarget.td}</p></div>
+                  <div className="col-span-2"><p className="text-xs text-textMuted mb-1">Target Formation</p><p className="font-semibold">{activeTarget.formation}</p></div>
+                  <div className="col-span-3">
+                    <p className="text-xs text-textMuted mb-2">Diagnostic Status</p>
+                    <div className="flex gap-2">
+                      <span className={`text-xs border px-2 py-1 rounded ${
+                        activeTarget.status === 'green' ? 'bg-accentGreen/10 text-accentGreen border-accentGreen/20' :
+                        activeTarget.status === 'yellow' ? 'bg-accentYellow/10 text-accentYellow border-accentYellow/20' :
+                        activeTarget.status === 'custom' ? 'bg-brandBlue/10 text-brandBlue border-brandBlue/20' :
+                        'bg-accentRed/10 text-accentRed border-accentRed/20'
+                      }`}>
+                        {activeTarget.rca}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-              ))}
+              )}
+              {activeTab === 'Telemetry' && (
+                <div className="flex-1 flex flex-col justify-center text-center text-textMuted text-sm">Telemetry sensors offline or not connected for this target.</div>
+              )}
+              {activeTab === 'History' && (
+                <div className="flex-1 flex flex-col justify-center text-center text-textMuted text-sm">No historical completions data found.</div>
+              )}
             </div>
-
-            {/* Content */}
-            {activeTab === 'Overview' && (
-              <div className="flex-1 text-sm grid grid-cols-3 gap-y-4">
-                <div>
-                  <p className="text-xs text-textMuted mb-1">Operator</p>
-                  <p className="font-semibold">Oil India Ltd</p>
-                </div>
-                <div>
-                  <p className="text-xs text-textMuted mb-1">Spud Date</p>
-                  <p className="font-semibold">12 Aug 2026</p>
-                </div>
-                <div>
-                  <p className="text-xs text-textMuted mb-1">Total Depth (TD)</p>
-                  <p className="font-semibold">3,102 m</p>
-                </div>
-                <div className="col-span-2">
-                  <p className="text-xs text-textMuted mb-1">Target Formation</p>
-                  <p className="font-semibold">RDFC</p>
-                </div>
-                <div className="col-span-1 text-right">
-                  <span className="text-xs text-textMuted underline cursor-pointer hover:text-textMain">Risk Factors</span>
-                </div>
-                <div className="col-span-3">
-                  <p className="text-xs text-textMuted mb-2">Cessation Reason</p>
-                  <div className="flex gap-2">
-                    <span className="text-xs bg-accentYellow/10 text-accentYellow border border-accentYellow/20 px-2 py-1 rounded">Wellbore Instability</span>
-                    <span className="text-xs bg-accentRed/10 text-accentRed border border-accentRed/20 px-2 py-1 rounded">Economic Abandonment</span>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {activeTab === 'Telemetry' && (
-              <div className="flex-1 flex flex-col gap-3 justify-center">
-                <div className="flex items-center justify-between p-2 rounded bg-bgPanel border border-borderC">
-                  <div className="flex items-center gap-2"><Activity size={14} className="text-brandBlue"/> <span className="text-sm font-medium">Standpipe Pressure</span></div>
-                  <div className="text-accentRed font-bold">2,940 psi <span className="text-[10px] text-textMuted font-normal">↑ 14%</span></div>
-                </div>
-                <div className="flex items-center justify-between p-2 rounded bg-bgPanel border border-borderC">
-                  <div className="flex items-center gap-2"><Activity size={14} className="text-accentGreen"/> <span className="text-sm font-medium">Rate of Penetration</span></div>
-                  <div className="text-textMain font-bold">18.4 m/hr</div>
-                </div>
-                <div className="flex items-center justify-between p-2 rounded bg-bgPanel border border-borderC">
-                  <div className="flex items-center gap-2"><Activity size={14} className="text-accentYellow"/> <span className="text-sm font-medium">Rotary Torque</span></div>
-                  <div className="text-textMain font-bold">14.8 kNm</div>
-                </div>
-              </div>
-            )}
-
-            {activeTab === 'History' && (
-              <div className="flex-1 flex flex-col gap-3 overflow-y-auto">
-                <div className="flex gap-3 items-start">
-                  <div className="w-6 h-6 rounded-full bg-accentRed/20 flex items-center justify-center shrink-0 mt-0.5"><Clock size={12} className="text-accentRed"/></div>
-                  <div>
-                    <p className="text-xs text-textMuted">Today, 09:41 AM</p>
-                    <p className="text-sm">Pressure spike detected. Drilling halted.</p>
-                  </div>
-                </div>
-                <div className="flex gap-3 items-start">
-                  <div className="w-6 h-6 rounded-full bg-accentYellow/20 flex items-center justify-center shrink-0 mt-0.5"><Clock size={12} className="text-accentYellow"/></div>
-                  <div>
-                    <p className="text-xs text-textMuted">Yesterday, 14:20 PM</p>
-                    <p className="text-sm">Minor torque fluctuations recorded.</p>
-                  </div>
-                </div>
-                <div className="flex gap-3 items-start">
-                  <div className="w-6 h-6 rounded-full bg-borderC flex items-center justify-center shrink-0 mt-0.5"><Clock size={12} className="text-textMuted"/></div>
-                  <div>
-                    <p className="text-xs text-textMuted">12 Aug 2026</p>
-                    <p className="text-sm">Spud initiated successfully.</p>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
 
-          {/* AI Insights Card */}
-          <div className="bg-bgCard rounded-xl border border-borderC flex flex-col flex-1 p-5 overflow-hidden">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="font-semibold flex items-center gap-2"><Sparkles className="text-brandBlue" size={18} /> AI-Powered Operational Insights</h3>
-              <span className="text-xs text-brandBlue hover:underline cursor-pointer">AI Insights</span>
-            </div>
-
-            <div className="space-y-4 flex-1 overflow-y-auto pr-2">
+          <div className="bg-bgCard rounded-xl border border-borderC p-5 flex-1 relative overflow-hidden flex flex-col">
+            <h3 className="font-semibold flex items-center gap-2 mb-4 relative z-10"><Sparkles className="text-brandBlue" size={18} /> RAG AI Intelligence</h3>
+            <div className="flex-1 overflow-y-auto relative z-10 space-y-3 pr-2">
               {loadingAi ? (
-                <div className="flex flex-col items-center justify-center h-full text-textMuted space-y-4">
-                  <Loader2 className="animate-spin text-brandBlue" size={32} />
-                  <p className="text-xs text-center">Querying RAG Pipeline...<br/>Searching PDF reports for similar incidents</p>
+                <div className="h-full flex flex-col items-center justify-center text-textMuted gap-3">
+                  <Loader2 className="animate-spin" size={24} />
+                  <p className="text-xs">Querying Geological Vector DB...</p>
                 </div>
               ) : aiData ? (
                 <>
-                  <div className="bg-bgPanel rounded-lg border border-borderC p-3 flex gap-4">
-                    <div className="bg-accentYellow/20 w-8 h-8 rounded-lg flex items-center justify-center shrink-0">
-                      <AlertTriangle className="text-accentYellow" size={16} />
+                  <div className="flex gap-3 items-center mb-1">
+                    <div className="w-10 h-10 rounded-full border-2 border-brandBlue flex items-center justify-center text-brandBlue font-bold text-sm bg-brandBlue/10">
+                      {aiData.confidence}%
                     </div>
-                    <div className="flex-1">
-                      <div className="flex justify-between items-start mb-1">
-                        <p className="text-xs text-textMuted">Likely Root Cause</p>
-                        <span className="text-[10px] bg-accentRed/20 text-accentRed px-2 py-0.5 rounded-full">{aiData.confidence}% Confidence</span>
-                      </div>
-                      <p className="text-sm font-medium">{aiData.root_cause}</p>
+                    <div>
+                      <p className="text-xs text-textMuted">Confidence Score</p>
+                      <p className="text-sm font-semibold text-textMain">{aiData.root_cause}</p>
                     </div>
                   </div>
-
-                  <div className="bg-bgPanel rounded-lg border border-borderC p-3 flex gap-4 items-center cursor-pointer hover:border-textMuted transition-colors">
+                  <div className="bg-bgPanel rounded-lg border border-borderC p-3 flex gap-4 items-center">
                     <div className="bg-brandBlue/20 w-8 h-8 rounded-lg flex items-center justify-center shrink-0">
                       <FileText className="text-brandBlue" size={16} />
                     </div>
                     <div className="flex-1">
                       <p className="text-xs text-textMuted mb-0.5">Historical Similarity (RAG)</p>
-                      <p className="text-sm font-medium">{aiData.historical_matches?.length || 0} previous incidents found in PDFs</p>
+                      <p className="text-sm font-medium">{aiData.historical_matches?.length || 0} previous incidents found</p>
                     </div>
-                    <ChevronDown className="rotate-[-90deg] text-textMuted" size={16} />
                   </div>
-
                   <div className="bg-bgPanel rounded-lg border border-borderC p-3 flex gap-4">
                     <div className="bg-accentYellow/10 w-8 h-8 rounded-lg flex items-center justify-center shrink-0">
                       <Sparkles className="text-accentYellow" size={16} />
                     </div>
                     <div>
                       <p className="text-xs text-textMuted mb-1">AI Recommendation</p>
-                      <p className="text-xs leading-relaxed text-textMuted">
-                        {aiData.recommendation}
-                      </p>
+                      <p className="text-xs leading-relaxed text-textMuted">{aiData.recommendation}</p>
                     </div>
                   </div>
                 </>
-              ) : (
-                <div className="text-center text-textMuted text-xs mt-10">AI data not available. Ensure backend is running.</div>
-              )}
+              ) : null}
             </div>
           </div>
-
         </div>
       </div>
 
-      {/* BOTTOM CHARTS */}
       <div className="grid grid-cols-3 gap-6 h-64">
-        {/* Drilling Activity */}
         <div className="bg-bgCard rounded-xl border border-borderC p-5 flex flex-col">
           <div className="flex justify-between items-center mb-4 relative">
             <h3 className="font-semibold flex items-center gap-2"><BarChart2 size={18} className="text-textMuted"/> Drilling Activity</h3>
-            <div 
-              className="relative cursor-pointer"
-              onClick={() => {
-                const el = document.getElementById('drilling-dropdown');
-                el.classList.toggle('hidden');
-              }}
-            >
-              <span className="text-xs bg-bgPanel border border-borderC px-2 py-1 rounded flex items-center gap-1 hover:border-brandBlue transition-colors">
-                Last 7 Days <ChevronDown size={12}/>
-              </span>
-              <div id="drilling-dropdown" className="hidden absolute right-0 top-full mt-1 w-32 bg-bgPanel border border-borderC rounded shadow-xl z-50 overflow-hidden">
-                <div className="px-3 py-2 text-xs hover:bg-white/5 transition-colors">Last 24 Hours</div>
-                <div className="px-3 py-2 text-xs bg-white/10 transition-colors">Last 7 Days</div>
-                <div className="px-3 py-2 text-xs hover:bg-white/5 transition-colors">Last 30 Days</div>
-              </div>
-            </div>
           </div>
           <div className="flex justify-center gap-4 text-xs mb-4">
             <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-accentGreen"></div> Active</span>
@@ -404,7 +314,6 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Risk Distribution */}
         <div className="bg-bgCard rounded-xl border border-borderC p-5 flex flex-col relative">
           <h3 className="font-semibold flex items-center gap-2 mb-4"><AlertTriangle size={18} className="text-textMuted"/> Risk Distribution</h3>
           <div className="flex-1 min-h-0 flex items-center">
@@ -430,7 +339,6 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Top Risk Causes */}
         <div className="bg-bgCard rounded-xl border border-borderC p-5 flex flex-col">
           <h3 className="font-semibold flex items-center gap-2 mb-4 text-accentRed"><AlertTriangle size={18} /> Top Risk Causes</h3>
           <div className="flex-1 space-y-3 overflow-y-auto pr-2">
@@ -441,27 +349,7 @@ export default function Dashboard() {
             <CauseRow color="bg-textMuted" label="Regulatory Shutdown" pct="7%" />
           </div>
         </div>
-
       </div>
-    </div>
-  );
-}
-
-// Subcomponents
-function MetricCard({ title, value, bg, text }) {
-  return (
-    <div className={`rounded-lg border px-4 py-3 min-w-[140px] flex flex-col justify-center ${bg}`}>
-      <span className="text-xs text-textMuted mb-1">{title}</span>
-      <span className={`text-xl font-bold ${text}`}>{value}</span>
-    </div>
-  );
-}
-
-function LegendItem({ color, label }) {
-  return (
-    <div className="flex items-center gap-1.5">
-      <div className={`w-2.5 h-2.5 rounded-full ${color}`}></div>
-      <span>{label}</span>
     </div>
   );
 }

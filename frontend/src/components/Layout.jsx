@@ -35,8 +35,8 @@ export default function Layout() {
               <div className="w-4 h-4 bg-accentRed rounded-full" />
             </div>
             <div>
-              <p className="font-semibold text-textMain">Oil India Limited</p>
-              <p className="scale-90 origin-left whitespace-nowrap">Energy for a Better Tomorrow</p>
+              <p className="font-semibold text-textMain">Enterprise Operations</p>
+              <p className="scale-90 origin-left whitespace-nowrap">Energy Intelligence Platform</p>
             </div>
           </div>
         </div>
@@ -49,7 +49,7 @@ export default function Layout() {
         <header className="h-16 bg-bgPanel flex items-center justify-between px-6 border-b border-borderC shrink-0">
           <div>
             <h1 className="text-sm font-semibold">Intelligent Drilling Intelligence System</h1>
-            <p className="text-xs text-textMuted">for Oil India Limited</p>
+            <p className="text-xs text-textMuted">Global Energy Operations</p>
           </div>
           <div className="flex items-center space-x-6 text-sm text-textMuted hidden md:flex">
             <span>Smarter Insights</span>
