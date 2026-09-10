@@ -3,15 +3,7 @@ import { MapPin, BarChart2, Sparkles, ChevronDown, Droplet, CheckCircle2, AlertT
 import { MapContainer, TileLayer, CircleMarker, Circle, Tooltip, useMapEvents } from 'react-leaflet';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
-// Mock Data
-const PINS = [
-  { id: 'GJ-12', pos: [23.0225, 72.5714], status: 'green', state: 'Gujarat', name: 'Gujarat-12', operator: 'ONGC', spud: '14 May 2026', td: '2,800 m', formation: 'Kalol Formation', rca: 'Optimal Operations' },
-  { id: 'GJ-14', pos: [22.3, 71.5], status: 'green', state: 'Gujarat', name: 'Gujarat-14', operator: 'ONGC', spud: '11 Jun 2026', td: '2,100 m', formation: 'Cambay Shale', rca: 'N/A' },
-  { id: 'TR-02', pos: [23.8, 91.2], status: 'yellow', state: 'Tripura', name: 'Tripura-02', operator: 'ONGC', spud: '03 Jan 2026', td: '4,000 m', formation: 'Bhuban Formation', rca: 'Equipment Failure' },
-  { id: 'RJ-05', pos: [26.2, 73.0], status: 'green', state: 'Rajasthan', name: 'Rajasthan-05', operator: 'Cairn India', spud: '22 Aug 2026', td: '1,500 m', formation: 'Barmer Basin', rca: 'Optimal' },
-  { id: 'AS-08', pos: [26.1445, 91.7362], status: 'yellow', state: 'Assam', name: 'Assam-08', operator: 'Oil India Ltd', spud: '01 Jul 2026', td: '4,500 m', formation: 'Tipam Sandstone', rca: 'Mud Weight Loss' },
-  { id: 'AS-07', pos: [27.2, 95.0], status: 'red', state: 'Assam', name: 'Assam-07', operator: 'Oil India Ltd', spud: '12 Aug 2026', td: '3,102 m', formation: 'RDFC', rca: 'Pressure Anomaly / Instability' },
-];
+import { MOCK_SITES as PINS } from '../data/mockSites';
 
 const BAR_DATA = [
   { day: '3 Sep', active: 10, inactive: 4 },

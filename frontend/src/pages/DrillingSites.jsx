@@ -1,21 +1,14 @@
 import React, { useState } from 'react';
 import { Search, Filter, MoreVertical, MapPin, Activity } from 'lucide-react';
 
-const SITES_DATA = [
-  { id: 'AS-07', name: 'Assam-07', region: 'Assam', depth: '3,102m', target: '3,500m', status: 'High Risk', trend: 'down', rca: 'Pressure Anomaly' },
-  { id: 'GJ-12', name: 'Gujarat-12', region: 'Gujarat', depth: '1,450m', target: '2,800m', status: 'Active', trend: 'up', rca: 'Optimal' },
-  { id: 'TR-02', name: 'Tripura-02', region: 'Tripura', depth: '2,900m', target: '4,000m', status: 'Suspended', trend: 'down', rca: 'Equipment Failure' },
-  { id: 'RJ-05', name: 'Rajasthan-05', region: 'Rajasthan', depth: '850m', target: '1,500m', status: 'Active', trend: 'up', rca: 'Optimal' },
-  { id: 'AS-08', name: 'Assam-08', region: 'Assam', depth: '4,100m', target: '4,500m', status: 'Warning', trend: 'flat', rca: 'Mud Weight Loss' },
-  { id: 'GJ-14', name: 'Gujarat-14', region: 'Gujarat', depth: '2,100m', target: '2,100m', status: 'Completed', trend: 'up', rca: 'N/A' },
-];
+import { MOCK_SITES } from '../data/mockSites';
 
 export default function DrillingSites() {
   const [searchTerm, setSearchTerm] = useState('');
 
-  const filteredSites = SITES_DATA.filter(site => 
+  const filteredSites = MOCK_SITES.filter(site => 
     site.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    site.region.toLowerCase().includes(searchTerm.toLowerCase())
+    site.state.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -69,21 +62,21 @@ export default function DrillingSites() {
                     <div className="w-8 h-8 rounded bg-bgPanel border border-borderC flex items-center justify-center"><MapPin size={14} className="text-brandBlue"/></div>
                     {site.name}
                   </td>
-                  <td className="px-6 py-4 text-textMuted">{site.region}</td>
-                  <td className="px-6 py-4 font-mono">{site.depth}</td>
-                  <td className="px-6 py-4 font-mono text-textMuted">{site.target}</td>
+                  <td className="px-6 py-4 text-textMuted">{site.state}</td>
+                  <td className="px-6 py-4 font-mono">{site.td}</td>
+                  <td className="px-6 py-4 font-mono text-textMuted">{site.td}</td>
                   <td className="px-6 py-4">
                     <span className={`px-2.5 py-1 rounded-full text-xs font-medium border ${
-                      site.status === 'Active' ? 'bg-accentGreen/10 text-accentGreen border-accentGreen/20' :
-                      site.status === 'High Risk' ? 'bg-accentRed/10 text-accentRed border-accentRed/20' :
-                      site.status === 'Warning' ? 'bg-accentYellow/10 text-accentYellow border-accentYellow/20' :
+                      site.status === 'green' ? 'bg-accentGreen/10 text-accentGreen border-accentGreen/20' :
+                      site.status === 'red' ? 'bg-accentRed/10 text-accentRed border-accentRed/20' :
+                      site.status === 'yellow' ? 'bg-accentYellow/10 text-accentYellow border-accentYellow/20' :
                       'bg-bgPanel text-textMuted border-borderC'
                     }`}>
-                      {site.status}
+                      {site.status === 'green' ? 'Active' : site.status === 'yellow' ? 'Warning' : 'High Risk'}
                     </span>
                   </td>
                   <td className="px-6 py-4 flex items-center gap-2">
-                    <Activity size={14} className={site.status === 'High Risk' ? 'text-accentRed' : 'text-textMuted'} />
+                    <Activity size={14} className={site.status === 'red' ? 'text-accentRed' : 'text-textMuted'} />
                     {site.rca}
                   </td>
                   <td className="px-6 py-4 text-right">
