@@ -10,6 +10,7 @@ import Alerts from './pages/Alerts';
 import AIInsights from './pages/AIInsights';
 import Settings from './pages/Settings';
 import Login from './pages/Login';
+import IntelligenceHub from './pages/IntelligenceHub';
 import './App.css';
 
 export default function App() {
@@ -27,6 +28,7 @@ export default function App() {
           <Route path="reports" element={<Reports />} />
           <Route path="alerts" element={<Alerts />} />
           <Route path="insights" element={<AIInsights />} />
+          <Route path="intelligence" element={<IntelligenceHub />} />
           <Route path="settings" element={<Settings />} />
         </Route>
       </Routes>

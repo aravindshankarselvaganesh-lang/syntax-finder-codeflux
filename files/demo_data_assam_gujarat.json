@@ -1,0 +1,50 @@
+{
+  "notice": "ALL RECORDS BELOW ARE FICTIONAL. Well names, dates, depths, and telemetry values are invented for pipeline-testing purposes only. Assam wells are loosely modeled on the real Naga Thrust wellbore-instability pattern described in OIL's own published geomechanics papers (see rag_records.jsonl); Gujarat wells are fully synthetic with no real case-study basis, since no public Gujarat drilling-failure case studies were found.",
+  "wells": [
+    {
+      "well_id": "ASSAM-01",
+      "data_status": "SYNTHETIC",
+      "basin": "Upper Assam (fictional field)",
+      "formation": "Upper Oligocene (modeled on real Naga Thrust lithology)",
+      "scenario": "Progressive wellbore instability leading to stuck pipe",
+      "synthetic_telemetry_trend": {"rop": "declining", "torque": "rising", "spp": "rising", "pit_volume": "stable"},
+      "synthetic_outcome": "Sidetrack required after pack-off"
+    },
+    {
+      "well_id": "ASSAM-03",
+      "data_status": "SYNTHETIC",
+      "basin": "Upper Assam (fictional field)",
+      "formation": "Lower Miocene (modeled on real Naga Thrust lithology)",
+      "scenario": "Abnormal pore pressure kick",
+      "synthetic_telemetry_trend": {"pit_volume": "sudden increase", "flow_out": "exceeds flow_in", "spp": "drop then rise"},
+      "synthetic_outcome": "Well shut in successfully, no NPT beyond kill operation"
+    },
+    {
+      "well_id": "ASSAM-07",
+      "data_status": "SYNTHETIC",
+      "basin": "Upper Assam (fictional field)",
+      "formation": "Upper Oligocene",
+      "scenario": "Tight hole / over-gauge borehole from sub-optimal mud weight",
+      "synthetic_telemetry_trend": {"torque": "erratic increase on connections", "hole_condition": "over-gauge on caliper"},
+      "synthetic_outcome": "Mud weight revised mid-well, NPT of 36 hours"
+    },
+    {
+      "well_id": "GUJARAT-02",
+      "data_status": "SYNTHETIC",
+      "basin": "Cambay (fictional field)",
+      "formation": "generic fractured carbonate (no real Gujarat case study basis)",
+      "scenario": "Severe lost circulation",
+      "synthetic_telemetry_trend": {"pit_volume": "rapid decrease", "returns": "partial to none"},
+      "synthetic_outcome": "LCM pill successful after two attempts"
+    },
+    {
+      "well_id": "GUJARAT-05",
+      "data_status": "SYNTHETIC",
+      "basin": "Cambay (fictional field)",
+      "formation": "generic shale (no real Gujarat case study basis)",
+      "scenario": "Differential sticking",
+      "synthetic_telemetry_trend": {"overpull": "sudden onset", "torque": "normal prior to event"},
+      "synthetic_outcome": "Freed with spotting fluid, 18 hours NPT"
+    }
+  ]
+}

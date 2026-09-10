@@ -1,0 +1,21 @@
+category,subtype,typical_signal,typical_root_cause,evidence_basis
+Well Control,Kick / influx,Pit gain; flow-out exceeds flow-in,Formation pressure exceeds mud hydrostatic pressure,ENGINEERING INTERPRETATION - industry consensus
+Well Control,Underground blowout,Loss of returns combined with pressure signs,Cross-flow between zones behind casing,ENGINEERING INTERPRETATION
+Well Control,Surface blowout,Uncontrolled flow at surface,Failure of all well-control barriers (cement/casing/BOP),SOURCE VERIFIED - Macondo/Montara/Ekofisk Bravo
+Wellbore Instability,Shale instability / shear failure,Over-gauge hole; tight hole; poor log quality,Mud weight below formation shear-failure threshold,SOURCE VERIFIED - OIL Upper Assam geomechanics papers
+Wellbore Instability,Pack-off,SPP increase; torque increase,Cuttings/cavings bridging annulus,ENGINEERING INTERPRETATION
+Stuck Pipe,Differential sticking,Sudden loss of free movement; no torque needed to break,Pipe pressed into filter cake in permeable zone,ENGINEERING INTERPRETATION
+Stuck Pipe,Mechanical sticking,Gradual torque/drag increase then sticking,Wellbore geometry / cuttings accumulation / key seating,SOURCE VERIFIED (basin-level) - OIL Upper Assam papers
+Lost Circulation,Seepage to partial loss,Gradual pit volume decrease,Natural fracture or high-permeability zone,ENGINEERING INTERPRETATION
+Lost Circulation,Severe to total loss,Rapid pit volume loss; no returns,Induced or natural fracture, cavernous formation,ENGINEERING INTERPRETATION
+Mechanical/Equipment,Drill string failure (washout/twist-off),Pressure drop; torque loss,Fatigue, corrosion, connection failure,ENGINEERING INTERPRETATION
+Mechanical/Equipment,BOP failure,Failure to seal on activation,Component wear, control system failure, unrecognized pipe buckling,SOURCE VERIFIED - Macondo (CSB report)
+Mechanical/Equipment,MWD/LWD failure,Loss of telemetry / erratic data,Sensor failure, high temperature, battery/communication loss,ENGINEERING INTERPRETATION
+Drilling Parameter,Stick-slip / vibration,Erratic RPM/torque oscillation,Bit-formation interaction, BHA design mismatch,ENGINEERING INTERPRETATION
+Drilling Parameter,Poor ROP,Declining penetration rate,Bit wear, formation change, inefficient hydraulics,ENGINEERING INTERPRETATION
+Fluids/Mud,Incorrect mud weight,Wellbore instability or losses,Mud program not matched to pore/fracture pressure window,SOURCE VERIFIED - OIL Upper Assam papers found prior mud weights sub-optimal
+Cementing,Poor cement placement / channeling,Failed pressure test; gas migration,Inadequate cement design, contamination, poor centralization,SOURCE VERIFIED - Macondo, Montara
+Casing,Casing integrity failure,Pressure test failure; leak,Deformation, wear, poor connection makeup,ENGINEERING INTERPRETATION
+Directional,Excessive dogleg / trajectory failure,Survey/toolface anomalies,BHA/formation interaction, poor steering,ENGINEERING INTERPRETATION
+Formation/Geological,Abnormal pore pressure,NPT increase; kick risk,Compaction disequilibrium, tectonic compression near thrust belts,SOURCE VERIFIED - Naga Schuppen belt pore pressure study
+Human/Organizational,Procedural / communication failure,N/A (root cause, not a telemetry signal),Inadequate risk assessment, poor supervision, non-adherence to procedure,SOURCE VERIFIED - Macondo, Montara, Ekofisk Bravo all cite this as contributing

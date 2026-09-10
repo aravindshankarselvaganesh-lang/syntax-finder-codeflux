@@ -1,8 +1,8 @@
 import React from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import { 
-  Home, MapPin, BarChart2, FileText, Bell, Sparkles, Settings,
-  ChevronDown, Droplet
+  Activity, MapPin, BarChart2, FileText, Bell, Sparkles, Settings,
+  AlertTriangle, BrainCircuit, Database, ChevronDown, Droplet
 } from 'lucide-react';
 
 export default function Layout() {
@@ -19,13 +19,14 @@ export default function Layout() {
         
         {/* Nav */}
         <nav className="flex-1 py-6 space-y-1 px-3 overflow-y-auto">
-          <NavItem to="/" icon={<Home size={20} />} label="Dashboard" />
-          <NavItem to="/sites" icon={<MapPin size={20} />} label="Drilling Sites" />
-          <NavItem to="/analytics" icon={<BarChart2 size={20} />} label="Analytics" />
-          <NavItem to="/reports" icon={<FileText size={20} />} label="Reports" />
-          <NavItem to="/alerts" icon={<Bell size={20} />} label="Alerts" badge="3" />
-          <NavItem to="/insights" icon={<Sparkles size={20} />} label="AI Insights" />
-          <NavItem to="/settings" icon={<Settings size={20} />} label="Settings" />
+          <NavItem to="/" icon={<Activity size={20} />} label="Live Operations" />
+          <NavItem to="/sites" icon={<MapPin size={20} />} label="Global Assets" />
+          <NavItem to="/analytics" icon={<BarChart2 size={20} />} label="Telemetry Analytics" />
+          <NavItem to="/insights" icon={<BrainCircuit size={20} />} label="AI Predictor" />
+          <NavItem to="/alerts" icon={<AlertTriangle size={20} />} label="Critical Alerts" />
+          <NavItem to="/intelligence" icon={<Database size={20} />} label="Intelligence Base" />
+          <NavItem to="/reports" icon={<FileText size={20} />} label="Daily Reports" />
+          <NavItem to="/settings" icon={<Settings size={20} />} label="System Settings" />
         </nav>
 
         {/* Footer Logo */}
