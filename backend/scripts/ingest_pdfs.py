@@ -1,14 +1,15 @@
 import os
 import glob
 from langchain_community.document_loaders import PyPDFLoader
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.embeddings import HuggingFaceInferenceAPIEmbeddings
 from langchain_community.vectorstores import SupabaseVectorStore
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from supabase.client import Client, create_client
 
 # Environment Variables
-SUPABASE_URL = os.environ.get("SUPABASE_URL")
-SUPABASE_SERVICE_KEY = os.environ.get("SUPABASE_SERVICE_KEY")
+SUPABASE_URL = os.environ.get("SUPABASE_URL", "")
+SUPABASE_SERVICE_KEY = os.environ.get("SUPABASE_SERVICE_KEY", "")
+HF_TOKEN = os.environ.get("HF_TOKEN", "")
 
 WORKSPACE_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'))
 
@@ -17,7 +18,7 @@ def main():
         print("Error: SUPABASE_URL and SUPABASE_SERVICE_KEY environment variables must be set.")
         return
 
-    print("Starting PDF ingestion to Supabase...")
+    print("Starting PDF ingestion to Supabase using Hugging Face API...")
     pdf_files = glob.glob(os.path.join(WORKSPACE_ROOT, '*.pdf'))
     
     if not pdf_files:
@@ -41,8 +42,11 @@ def main():
     chunks = text_splitter.split_documents(documents)
     print(f"Created {len(chunks)} text chunks.")
 
-    print("Initializing embedding model (all-MiniLM-L6-v2)...")
-    embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+    print("Connecting to Hugging Face Inference API...")
+    embeddings = HuggingFaceInferenceAPIEmbeddings(
+        api_key=HF_TOKEN, 
+        model_name="sentence-transformers/all-MiniLM-L6-v2"
+    )
 
     print("Connecting to Supabase...")
     supabase: Client = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
