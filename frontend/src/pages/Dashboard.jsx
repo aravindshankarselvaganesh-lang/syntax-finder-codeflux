@@ -139,14 +139,24 @@ export default function Dashboard() {
               <button onClick={() => setMapMode('satellite')} className={`px-4 py-2 ${mapMode === 'satellite' ? 'bg-brandBlue text-white' : 'text-textMuted hover:text-white'}`}>Satellite</button>
             </div>
 
-            <div className="absolute top-4 left-4 z-[400] flex bg-bgPanel/80 backdrop-blur rounded-md border border-borderC overflow-hidden text-sm shadow-xl items-center px-2 py-1">
-              <span className="text-xs text-textMuted mr-2">Analysis Radius:</span>
-              <select className="bg-transparent text-white text-xs outline-none cursor-pointer" value={radiusKm} onChange={(e) => setRadiusKm(Number(e.target.value))}>
-                <option value={50}>50 km</option>
-                <option value={100}>100 km</option>
-                <option value={300}>300 km</option>
-                <option value={500}>500 km</option>
-              </select>
+            <div className="absolute top-4 left-4 z-[400] flex flex-col bg-bgPanel/80 backdrop-blur rounded-md border border-borderC overflow-hidden text-sm shadow-xl px-4 py-3 w-64 gap-2">
+              <div className="flex justify-between items-center text-xs">
+                <span className="text-textMuted font-medium tracking-wide uppercase">Analysis Radius</span>
+                <span className="font-bold text-brandBlue bg-brandBlue/10 px-2 py-0.5 rounded">{radiusKm} km</span>
+              </div>
+              <input 
+                type="range" 
+                min="10" 
+                max="2000" 
+                step="10" 
+                value={radiusKm} 
+                onChange={(e) => setRadiusKm(Number(e.target.value))}
+                className="w-full h-1 bg-borderC rounded-lg appearance-none cursor-pointer accent-brandBlue outline-none"
+              />
+              <div className="flex justify-between text-[10px] text-textMuted font-medium">
+                <span>10km</span>
+                <span>2000km</span>
+              </div>
             </div>
 
             <MapContainer center={[23.5, 78.0]} zoom={5} style={{ width: '100%', height: '100%' }} zoomControl={false}>
