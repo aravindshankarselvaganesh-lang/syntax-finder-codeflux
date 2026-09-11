@@ -75,6 +75,19 @@ function MapInteractionHandler({ setCustomLocation, setSelectedPinId }) {
   return null;
 }
 
+// Calculate distance in km between two GPS coordinates
+function getDistanceKm(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R * c;
+}
+
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState('Overview');
   const [mapMode, setMapMode] = useState('satellite'); 
@@ -87,33 +100,72 @@ export default function Dashboard() {
   const [demoStage, setDemoStage] = useState(0);
   const mapContainerRef = useRef(null);
 
+  // Calculate nearby offset wells falling inside targeting radius circle
+  const nearbyWells = React.useMemo(() => {
+    if (!customLocation) return [];
+    return pins.filter(p => {
+      const dist = getDistanceKm(customLocation[0], customLocation[1], p.pos[0], p.pos[1]);
+      return dist <= radiusKm;
+    });
+  }, [customLocation, radiusKm, pins]);
+
   const customAnalysis = React.useMemo(() => {
     if (!customLocation) return null;
     const lat = customLocation[0];
     const lng = customLocation[1];
     const isRisky = Math.abs((Math.floor(lat * 100) + Math.floor(lng * 100)) % 3) === 0;
     const maxDepth = Math.floor(1500 + Math.abs(lat * lng) % 3000);
+    
+    const count = nearbyWells.length;
+    let operatorText = "";
+    let safeTdText = "";
+    let statusText = "";
+    let recommendationText = "";
+    let formationText = "";
+
+    if (count > 0) {
+      const names = nearbyWells.map(w => w.name).join(', ');
+      const depths = nearbyWells.map(w => w.td).join(', ');
+      operatorText = `${count} Offset Well(s) Found in Radius (${radiusKm} km)`;
+      safeTdText = `Offset Depths: ${depths}`;
+      formationText = [...new Set(nearbyWells.map(w => w.formation))].join(', ');
+      statusText = `Offset Correlation: ${count} Active/Historical Well(s) [${names}]`;
+      recommendationText = `📍 ${count} nearby offset well(s) identified within ${radiusKm} km targeting circle:\n\n` +
+        nearbyWells.map(w => `• Well ${w.name} (${w.state}): TD ${w.td} — Diagnostic: ${w.rca}`).join('\n') +
+        `\n\nAI Guidance: Correlating pore pressure trends with nearby offset well ${nearbyWells[0].name}. Recommended mud weight baseline: 1.22 - 1.28 SG.`;
+    } else {
+      operatorText = `No Offset Wells Found in Radius (${radiusKm} km)`;
+      safeTdText = isRisky ? 'RISKY (Cannot Drill Safely)' : `${maxDepth.toLocaleString()} m (Predicted Safe TD)`;
+      formationText = isRisky ? 'High Seismic Fault Zone' : 'Analogous Basin Lithology';
+      statusText = isRisky ? 'RISKY — Fault Line Hazard' : `Clearance — Safe up to ${maxDepth.toLocaleString()} m`;
+      recommendationText = `No existing offset drills found within ${radiusKm} km radius circle.\n\n` +
+        (isRisky 
+          ? 'RISKY: Cannot drill safely here due to high fault-line probability and severe geomechanical instability.' 
+          : `Clearance: Safe to drill up to ${maxDepth.toLocaleString()}m vertically based on regional geological analogues. Expect abnormal pore pressures beyond this depth.`);
+    }
+
     return {
+      count,
       isRisky,
       maxDepth,
-      safeTdText: isRisky ? 'RISKY (Cannot Drill Safely)' : `${maxDepth.toLocaleString()} m (Predicted Safe TD)`,
-      statusText: isRisky ? 'RISKY — Fault Line Hazard' : `Clearance — Safe up to ${maxDepth.toLocaleString()} m`,
-      recommendationText: isRisky 
-        ? 'RISKY: Cannot drill safely here due to high fault-line probability and severe geomechanical instability.' 
-        : `No existing drills found in this radius. Based on predictive analogues:\n\nClearance: Safe to drill up to ${maxDepth.toLocaleString()}m vertically. Expect abnormal pore pressures beyond this depth.`
+      operatorText,
+      safeTdText,
+      formationText,
+      statusText,
+      recommendationText
     };
-  }, [customLocation]);
+  }, [customLocation, radiusKm, nearbyWells]);
 
   const activeTarget = selectedPinId 
     ? pins.find(p => p.id === selectedPinId)
     : customLocation && customAnalysis ? {
         id: 'CUSTOM',
         name: `Lat: ${customLocation[0].toFixed(2)}°, Lng: ${customLocation[1].toFixed(2)}°`,
-        state: 'Un-Drilled Sector',
-        operator: 'No Existing Wells in Radius',
-        spud: 'Pre-Drill Evaluation',
+        state: customAnalysis.count > 0 ? `Sector Radius (${radiusKm} km)` : 'Un-Drilled Sector',
+        operator: customAnalysis.operatorText,
+        spud: customAnalysis.count > 0 ? 'Offset Data Hydrated' : 'Pre-Drill Evaluation',
         td: customAnalysis.safeTdText,
-        formation: customAnalysis.isRisky ? 'High Seismic Fault Zone' : 'Analogous Basin Lithology',
+        formation: customAnalysis.formationText,
         status: 'custom',
         rca: customAnalysis.statusText
       } : pins.find(p => p.id === 'AS-07');
@@ -144,9 +196,9 @@ export default function Dashboard() {
       setTimeout(() => {
         if (activeTarget.status === 'custom' && customAnalysis) {
           setAiData({
-            confidence: customAnalysis.isRisky ? 95 : 84,
+            confidence: customAnalysis.count > 0 ? 94 : (customAnalysis.isRisky ? 95 : 84),
             root_cause: customAnalysis.statusText,
-            historical_matches: [4,5],
+            historical_matches: customAnalysis.count > 0 ? nearbyWells.length : 2,
             recommendation: customAnalysis.recommendationText
           });
         } else {
@@ -163,7 +215,7 @@ export default function Dashboard() {
       }, 50);
     };
     fetchAI();
-  }, [selectedPinId, customLocation, pins, customAnalysis]);
+  }, [selectedPinId, customLocation, pins, customAnalysis, nearbyWells]);
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
