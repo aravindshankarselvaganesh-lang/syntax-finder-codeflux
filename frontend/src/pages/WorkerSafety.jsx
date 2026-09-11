@@ -16,11 +16,11 @@ const INITIAL_CREW = [
 
 export default function WorkerSafety() {
   const [hazards, setHazards] = useState(() => {
-    const saved = localStorage.getItem('nwis_hazards');
+    const saved = localStorage.getItem('psm_hazards');
     return saved ? JSON.parse(saved) : INITIAL_HAZARDS;
   });
   const [checklist, setChecklist] = useState(() => {
-    const saved = localStorage.getItem('nwis_checklist');
+    const saved = localStorage.getItem('psm_checklist');
     return saved ? JSON.parse(saved) : { h2s: true, gloves: true, route: true, jsa: false };
   });
 
@@ -61,7 +61,7 @@ export default function WorkerSafety() {
   const toggleCheck = (key) => {
     setChecklist(prev => {
       const updated = { ...prev, [key]: !prev[key] };
-      localStorage.setItem('nwis_checklist', JSON.stringify(updated));
+      localStorage.setItem('psm_checklist', JSON.stringify(updated));
       return updated;
     });
   };
@@ -79,7 +79,7 @@ export default function WorkerSafety() {
       status: 'Active'
     }, ...hazards];
     setHazards(updated);
-    localStorage.setItem('nwis_hazards', JSON.stringify(updated));
+    localStorage.setItem('psm_hazards', JSON.stringify(updated));
     setShowHazardModal(false);
     setNewHazardTitle('');
     setNewHazardDesc('');

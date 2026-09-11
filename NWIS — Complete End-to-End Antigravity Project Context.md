@@ -1,4 +1,4 @@
-# NWIS
+# PSM
 # Intelligent Drilling Intelligence System
 
 ## MASTER PROJECT CONTEXT FOR ANTIGRAVITY
@@ -17,7 +17,7 @@
 
 You are working on a project called:
 
-# NWIS — Intelligent Drilling Intelligence System
+# PSM — Intelligent Drilling Intelligence System
 
 Do not treat this project as a generic CRUD application.
 
@@ -27,7 +27,7 @@ Do not build a generic AI chatbot.
 
 Do not build a static UI mockup.
 
-Build NWIS as a:
+Build PSM as a:
 
 > **Map-first, AI-native, real-time drilling operational intelligence and decision-support platform.**
 
@@ -67,7 +67,7 @@ Every major feature should support this workflow.
 
 # 1. PRODUCT VISION
 
-NWIS brings drilling information from multiple sources into one intelligent operational environment.
+PSM brings drilling information from multiple sources into one intelligent operational environment.
 
 It combines:
 
@@ -133,13 +133,13 @@ find the affected well
 → decide what to investigate
 ```
 
-NWIS compresses this process into one integrated system.
+PSM compresses this process into one integrated system.
 
 ---
 
 # 3. CORE VALUE PROPOSITION
 
-NWIS is not merely:
+PSM is not merely:
 
 > "A dashboard showing drilling data."
 
@@ -374,7 +374,7 @@ Recommended high-level architecture:
 ```text
                         ┌──────────────────────┐
                         │       React          │
-                        │   NWIS Frontend      │
+                        │   PSM Frontend      │
                         └──────────┬───────────┘
                                    │
                                    ▼
@@ -886,7 +886,7 @@ Do not pretend the score is an officially validated Oil India risk model.
 Clearly treat it as:
 
 ```text
-NWIS DEMO RISK MODEL
+PSM DEMO RISK MODEL
 ```
 
 ---
@@ -1732,7 +1732,7 @@ Date:
 
 Name:
 
-# NWIS INTELLIGENCE COPILOT
+# PSM INTELLIGENCE COPILOT
 
 It must not look like a generic chatbot.
 
@@ -3056,7 +3056,7 @@ ChatGPT clone
 Instead create:
 
 ```text
-NWIS INTELLIGENCE COPILOT
+PSM INTELLIGENCE COPILOT
 ```
 
 with:
@@ -3103,7 +3103,7 @@ Do not claim:
 
 # 107. OIL BRANDING
 
-NWIS is a project designed for an Oil India Limited context.
+PSM is a project designed for an Oil India Limited context.
 
 Do not falsely claim the system is officially deployed by OIL.
 
@@ -3116,7 +3116,7 @@ Designed for Oil India Limited
 or:
 
 ```text
-NWIS
+PSM
 Intelligent Drilling Intelligence System
 
 Demo / Simulation
@@ -3204,7 +3204,7 @@ These are demo/system-status values unless backed by real measurements.
 Recommended structure:
 
 ```text
-nwis/
+psm/
 │
 ├── frontend/
 │   ├── src/
@@ -3709,7 +3709,7 @@ ENVIRONMENT.md
 
 # 128. README MUST EXPLAIN
 
-- what NWIS is
+- what PSM is
 - why it exists
 - architecture
 - setup
@@ -3829,7 +3829,7 @@ Never represent demo output as certified drilling advice.
 
 # 134. FUTURE EXTENSIONS
 
-Future NWIS versions could include:
+Future PSM versions could include:
 
 - actual telemetry integration
 - advanced predictive models
@@ -3878,13 +3878,13 @@ It can identify:
 
 However:
 
-# DO NOT MIX THIS INTO NWIS MVP.
+# DO NOT MIX THIS INTO PSM MVP.
 
 Keep it as a separate future product direction.
 
 ---
 
-# 136. RELATIONSHIP TO NWIS
+# 136. RELATIONSHIP TO PSM
 
 The shared conceptual idea is:
 
@@ -3898,7 +3898,7 @@ OPERATIONAL UNDERSTANDING
 ACTIONABLE DECISION
 ```
 
-NWIS applies this to:
+PSM applies this to:
 
 # DRILLING
 
@@ -3910,7 +3910,7 @@ The second concept applies it to:
 
 # 137. PRODUCT DIFFERENTIATION
 
-NWIS should not compete with ordinary dashboards.
+PSM should not compete with ordinary dashboards.
 
 Its differentiation is:
 
@@ -3933,7 +3933,7 @@ EXPLAINABLE AI
 The entire system can be summarized as:
 
 ```text
-                NWIS
+                PSM
                  │
         ┌────────┴─────────┐
         │                  │
@@ -3963,7 +3963,7 @@ The entire system can be summarized as:
 
 Use this whenever a concise project description is needed:
 
-> **NWIS is an AI-powered drilling intelligence platform that combines real-time or simulated drilling telemetry, historical drilling knowledge, RAG-based retrieval, risk analysis, root-cause intelligence, and geospatial visualization to help operational teams understand current drilling conditions, identify emerging risks, learn from historical incidents, and make faster, evidence-supported decisions.**
+> **PSM is an AI-powered drilling intelligence platform that combines real-time or simulated drilling telemetry, historical drilling knowledge, RAG-based retrieval, risk analysis, root-cause intelligence, and geospatial visualization to help operational teams understand current drilling conditions, identify emerging risks, learn from historical incidents, and make faster, evidence-supported decisions.**
 
 ---
 
@@ -3971,7 +3971,7 @@ Use this whenever a concise project description is needed:
 
 Short pitch:
 
-> **NWIS turns drilling data into operational intelligence. It combines live telemetry with historical drilling knowledge and AI to detect anomalies, explain risk, retrieve similar incidents, identify probable root causes, and guide operators toward the right investigation — all through a single map-based command center.**
+> **PSM turns drilling data into operational intelligence. It combines live telemetry with historical drilling knowledge and AI to detect anomalies, explain risk, retrieve similar incidents, identify probable root causes, and guide operators toward the right investigation — all through a single map-based command center.**
 
 ---
 
@@ -4148,7 +4148,7 @@ Everything else is secondary.
 
 # 149. FINAL IMPLEMENTATION CHECKLIST
 
-Before considering NWIS complete, verify:
+Before considering PSM complete, verify:
 
 ## PRODUCT
 
@@ -4273,12 +4273,12 @@ If any answer is NO:
 
 ---
 
-# 151. FINAL NWIS DEFINITION
+# 151. FINAL PSM DEFINITION
 
-NWIS is:
+PSM is:
 
 > **A map-first, AI-native drilling operational intelligence platform that unifies current drilling telemetry and historical organizational knowledge to detect anomalies, assess risk, explain potential causes, retrieve relevant historical evidence, and provide human-centered operational recommendations across drilling operations in Assam and Gujarat.**
 
 ---
 
-# END OF NWIS MASTER CONTEXT
+# END OF PSM MASTER CONTEXT

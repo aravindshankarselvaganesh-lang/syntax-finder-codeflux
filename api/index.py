@@ -4,7 +4,7 @@ import os
 
 from api.ai_routes import router as ai_router
 
-app = FastAPI(title="NWIS API", description="Intelligent Drilling Intelligence System API")
+app = FastAPI(title="PSM API", description="Intelligent Drilling Intelligence System API")
 
 app.add_middleware(
     CORSMiddleware,
@@ -18,6 +18,6 @@ app.include_router(ai_router, prefix="/api/ai", tags=["ai"])
 
 @app.get("/api/health")
 def health_check():
-    return {"status": "ok", "service": "NWIS Backend on Vercel"}
+    return {"status": "ok", "service": "PSM Backend on Vercel"}
 
 # Vercel needs 'app' to be exported. The file being named index.py makes it the default entrypoint for /api

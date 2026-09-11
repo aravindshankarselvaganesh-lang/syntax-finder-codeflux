@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const md = fs.readFileSync('files/NWIS_Research_Report.md', 'utf8');
+const md = fs.readFileSync('files/PSM_Research_Report.md', 'utf8');
 const demoData = JSON.parse(fs.readFileSync('files/demo_data_assam_gujarat.json', 'utf8'));
 
 // Convert CSV to JSON roughly

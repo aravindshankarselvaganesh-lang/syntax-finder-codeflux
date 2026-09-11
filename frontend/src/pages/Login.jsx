@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Shield, Lock, User, Activity, AlertTriangle, ArrowRight } from 'lucide-react';
 
 export default function Login({ onLogin }) {
-  const [email, setEmail] = useState('astha@nwis.com');
+  const [email, setEmail] = useState('astha@psm.com');
   const [password, setPassword] = useState('demo');
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -12,13 +12,13 @@ export default function Login({ onLogin }) {
     e.preventDefault();
     // Demo accounts
     if (
-      (email === 'astha@nwis.com' && password === 'demo') ||
-      (email === 'admin@nwis.com' && password === 'admin123')
+      (email === 'astha@psm.com' && password === 'demo') ||
+      (email === 'admin@psm.com' && password === 'admin123')
     ) {
       onLogin(email);
       navigate('/');
     } else {
-      setError('Invalid demo credentials. Try astha@nwis.com / demo');
+      setError('Invalid demo credentials. Try astha@psm.com / demo');
     }
   };
 
@@ -44,7 +44,7 @@ export default function Login({ onLogin }) {
             <div className="w-12 h-12 bg-brandBlue rounded-lg flex items-center justify-center shadow-[0_0_20px_rgba(44,129,255,0.4)]">
               <Shield size={28} className="text-white" />
             </div>
-            <h1 className="text-4xl font-bold tracking-tight">NWIS <span className="text-brandBlue">Copilot</span></h1>
+            <h1 className="text-4xl font-bold tracking-tight">PSM <span className="text-brandBlue">Copilot</span></h1>
           </div>
           
           <h2 className="text-3xl font-bold mb-4">Intelligent Drilling<br/>Command Center</h2>
@@ -96,7 +96,7 @@ export default function Login({ onLogin }) {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full bg-bgPanel border border-borderC rounded-lg py-2.5 pl-10 pr-4 focus:outline-none focus:border-brandBlue focus:ring-1 focus:ring-brandBlue transition-all"
-                  placeholder="operator@nwis.com"
+                  placeholder="operator@psm.com"
                   required
                 />
               </div>
@@ -137,22 +137,22 @@ export default function Login({ onLogin }) {
             <p className="text-xs text-textMuted mb-3 uppercase tracking-wider font-semibold">Available Demo Accounts</p>
             <div className="space-y-2">
               <div 
-                onClick={() => { setEmail('astha@nwis.com'); setPassword('demo'); }}
+                onClick={() => { setEmail('astha@psm.com'); setPassword('demo'); }}
                 className="bg-bgPanel border border-borderC p-3 rounded-lg flex justify-between items-center cursor-pointer hover:border-brandBlue transition-colors"
               >
                 <div>
                   <p className="text-sm font-medium">Astha (Lead Engineer)</p>
-                  <p className="text-xs text-textMuted">astha@nwis.com</p>
+                  <p className="text-xs text-textMuted">astha@psm.com</p>
                 </div>
                 <span className="text-xs bg-brandBlue/20 text-brandBlue px-2 py-1 rounded font-mono">pwd: demo</span>
               </div>
               <div 
-                onClick={() => { setEmail('admin@nwis.com'); setPassword('admin123'); }}
+                onClick={() => { setEmail('admin@psm.com'); setPassword('admin123'); }}
                 className="bg-bgPanel border border-borderC p-3 rounded-lg flex justify-between items-center cursor-pointer hover:border-brandBlue transition-colors"
               >
                 <div>
                   <p className="text-sm font-medium">System Admin</p>
-                  <p className="text-xs text-textMuted">admin@nwis.com</p>
+                  <p className="text-xs text-textMuted">admin@psm.com</p>
                 </div>
                 <span className="text-xs bg-brandBlue/20 text-brandBlue px-2 py-1 rounded font-mono">pwd: admin123</span>
               </div>

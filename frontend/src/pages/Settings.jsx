@@ -43,7 +43,7 @@ export default function Settings() {
               </div>
               <div>
                 <label className="block text-xs font-medium text-textMuted mb-1 uppercase tracking-wider">Email Address</label>
-                <input type="email" value="astha@nwis.com" readOnly className="w-full bg-bgPanel border border-borderC rounded-lg py-2 px-3 text-sm text-textMuted" />
+                <input type="email" value="astha@psm.com" readOnly className="w-full bg-bgPanel border border-borderC rounded-lg py-2 px-3 text-sm text-textMuted" />
               </div>
               <div>
                 <label className="block text-xs font-medium text-textMuted mb-1 uppercase tracking-wider">Role</label>

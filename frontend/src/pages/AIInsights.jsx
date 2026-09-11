@@ -165,7 +165,7 @@ export default function AIInsights() {
           `2. **Torque & Drag Analysis:** Monitor hook load trends during trips. Rising pick-up weights indicate hole cleaning deficiency or ledge formation.\n` +
           `3. **Mud Weight Window:** Verify that equivalent circulating density (ECD) stays strictly between formation pore pressure ($P_{\\text{pore}}$) and fracture gradient ($P_{\\text{frac}}$).\n\n` +
           `*Recommendation:* Cross-check with regional offset well logs in the DGH NDR database.`;
-        citedSources.push("NWIS Global Drilling Intelligence Base");
+        citedSources.push("PSM Global Drilling Intelligence Base");
         citedSources.push("IADC DDR Plus Drilling Taxonomy Specifications");
       }
 

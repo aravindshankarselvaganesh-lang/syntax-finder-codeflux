@@ -10,7 +10,7 @@ const INITIAL_ALERTS = [
 
 export default function Alerts() {
   const [alerts, setAlerts] = useState(() => {
-    const saved = localStorage.getItem('nwis_alerts');
+    const saved = localStorage.getItem('psm_alerts');
     return saved ? JSON.parse(saved) : INITIAL_ALERTS;
   });
   const [selectedAlert, setSelectedAlert] = useState(null);
@@ -18,7 +18,7 @@ export default function Alerts() {
   const markAllRead = () => {
     setAlerts(prev => {
       const updated = prev.map(a => ({ ...a, status: a.status === 'Unresolved' ? 'Investigating' : a.status }));
-      localStorage.setItem('nwis_alerts', JSON.stringify(updated));
+      localStorage.setItem('psm_alerts', JSON.stringify(updated));
       return updated;
     });
   };
@@ -26,7 +26,7 @@ export default function Alerts() {
   const resolveAlert = (id) => {
     setAlerts(prev => {
       const updated = prev.map(a => a.id === id ? { ...a, status: 'Resolved' } : a);
-      localStorage.setItem('nwis_alerts', JSON.stringify(updated));
+      localStorage.setItem('psm_alerts', JSON.stringify(updated));
       return updated;
     });
     setSelectedAlert(prev => prev && prev.id === id ? { ...prev, status: 'Resolved' } : prev);

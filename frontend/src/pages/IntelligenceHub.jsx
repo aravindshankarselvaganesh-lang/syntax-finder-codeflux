@@ -52,7 +52,7 @@ export default function IntelligenceHub() {
                     <th className="px-4 py-3">Title / Link</th>
                     <th className="px-4 py-3">Type</th>
                     <th className="px-4 py-3">Reliability</th>
-                    <th className="px-4 py-3">NWIS Limitation</th>
+                    <th className="px-4 py-3">PSM Limitation</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-borderC">

@@ -1,5 +1,5 @@
 
-export const RESEARCH_REPORT = `# NWIS — Global Drilling History & Failure Intelligence
+export const RESEARCH_REPORT = `# PSM — Global Drilling History & Failure Intelligence
 ## Phase 1 Research Deliverable (Scoped, Evidence-Grounded)
 
 **Status:** This is a deliberately scoped subset of the 38-section brief. Sections requiring exhaustive proprietary telemetry data (detailed WOB/torque/SPP curves per historical well) are marked \`NO RELIABLE PUBLIC DATA FOUND\` rather than filled with invented numbers. See the Executive Summary and Data Quality Audit at the end for exactly what was cut and why.
@@ -10,11 +10,11 @@ export const RESEARCH_REPORT = `# NWIS — Global Drilling History & Failure Int
 
 **FACT:** Detailed technical postmortems with cause chains exist publicly for a small number of major, government-investigated well-control incidents (Macondo/Deepwater Horizon 2010, Montara H1 2009, Ekofisk Bravo 1977). These are Tier-1 quality: full investigation reports, cross-checkable across multiple independent inquiries.
 
-**FACT:** For everyday drilling problems (stuck pipe, lost circulation, NPT) at the level of granularity NWIS wants (numeric telemetry thresholds, well-by-well WOB/torque/SPP), the public literature contains *engineering principles and qualitative signatures*, not operator-specific historical time-series. That data lives inside operator/service-company systems (Petrolink, Landmark, Halliburton DecisionSpace, etc.) and SPE papers that describe methodology, not raw well logs.
+**FACT:** For everyday drilling problems (stuck pipe, lost circulation, NPT) at the level of granularity PSM wants (numeric telemetry thresholds, well-by-well WOB/torque/SPP), the public literature contains *engineering principles and qualitative signatures*, not operator-specific historical time-series. That data lives inside operator/service-company systems (Petrolink, Landmark, Halliburton DecisionSpace, etc.) and SPE papers that describe methodology, not raw well logs.
 
 **FACT:** For India specifically — Oil India Limited (OIL) publishes real, verifiable detail about its **digital drilling infrastructure** (eRTMAC, WITS/WITSML real-time data centers, RSS/LWD adoption, DRIVE 2.0 command center) and its geoscience teams publish real SPE/SPG papers on **Upper Assam Basin drilling challenges** (Naga Thrust wellbore instability, stuck pipe, tight hole, abnormal pore pressure). This is genuinely useful, citable material — better than the Gujarat/Cambay side, where public material skews toward exploration geology rather than drilling-failure case studies.
 
-**Biggest gap:** There is no public, incident-level, telemetry-tagged drilling failure database anywhere in the world that NWIS could ingest directly. Every serious drilling-analytics company (Corva, Datagumbo, Sekur, DrillingInfo/Enverus) built theirs from **proprietary operator data**, not public sources. NWIS's real data strategy has to be: (a) use public sources for taxonomy, engineering signatures, and a handful of deeply-documented major incidents; (b) get OIL's own historical WITSML/NPT logs under an actual data-sharing agreement for anything realistic; (c) use synthetic data, clearly labeled, to prototype the pipeline in the meantime. Sections 14–23 below are designed around that reality.
+**Biggest gap:** There is no public, incident-level, telemetry-tagged drilling failure database anywhere in the world that PSM could ingest directly. Every serious drilling-analytics company (Corva, Datagumbo, Sekur, DrillingInfo/Enverus) built theirs from **proprietary operator data**, not public sources. PSM's real data strategy has to be: (a) use public sources for taxonomy, engineering signatures, and a handful of deeply-documented major incidents; (b) get OIL's own historical WITSML/NPT logs under an actual data-sharing agreement for anything realistic; (c) use synthetic data, clearly labeled, to prototype the pipeline in the meantime. Sections 14–23 below are designed around that reality.
 
 ---
 
@@ -38,7 +38,7 @@ India-specific: **FACT** — commercial oil was first discovered in Digboi, Assa
 
 ## DELIVERABLE 3 — GLOBAL DRILLING FAILURE TAXONOMY (Organized, not re-invented)
 
-Your brief's taxonomy (Sections A–L) is already structurally sound — this is standard IADC/SPE categorization. I've kept it but collapsed it to what NWIS actually needs as top-level ontology nodes (see \`failure_taxonomy.csv\` for the full flattened version with ~90 leaf nodes):
+Your brief's taxonomy (Sections A–L) is already structurally sound — this is standard IADC/SPE categorization. I've kept it but collapsed it to what PSM actually needs as top-level ontology nodes (see \`failure_taxonomy.csv\` for the full flattened version with ~90 leaf nodes):
 
 1. **Well Control** (kick → influx → blowout spectrum)
 2. **Wellbore Instability** (mechanical/chemical shale failure, breakout, pack-off)
@@ -72,11 +72,11 @@ Full records in \`historical_incidents.csv\`. Three incidents met the bar for ge
 - FACT: <cite index="5-1">A later (2025-reported) Chemical Safety Board investigation attributed the blowout preventer's failure to seal the well to unrecognized drill-pipe buckling in the BOP.</cite>
 - CONCLUSION where sources differ in emphasis: cement failure was the *initiating* barrier failure; BOP/drill-pipe buckling explains why the *last-resort* barrier also failed. Both are documented, not competing theories. **CONFIDENCE: High** on both, since they address different points in the causal chain.
 
-**Ekofisk Bravo, root cause:** an incorrectly installed downhole safety valve and incorrectly installed master valve meant the well could not be shut in once mud began flowing back during a workover (tubing pull), and warning signs (mud returning through a control line) were reportedly not acted on. <cite index="70-1,70-1">Faulty installation of the downhole ball valve was one of the causes of the Bravo blowout, and the automatic master valve — the second barrier — was also incorrectly installed, directly preventing the well from being shut in.</cite> **Note:** this is a *workover/wireline* incident, not an active-drilling incident — still highly relevant to NWIS's well-control taxonomy but should be tagged \`workover\` not \`drilling\` in metadata.
+**Ekofisk Bravo, root cause:** an incorrectly installed downhole safety valve and incorrectly installed master valve meant the well could not be shut in once mud began flowing back during a workover (tubing pull), and warning signs (mud returning through a control line) were reportedly not acted on. <cite index="70-1,70-1">Faulty installation of the downhole ball valve was one of the causes of the Bravo blowout, and the automatic master valve — the second barrier — was also incorrectly installed, directly preventing the well from being shut in.</cite> **Note:** this is a *workover/wireline* incident, not an active-drilling incident — still highly relevant to PSM's well-control taxonomy but should be tagged \`workover\` not \`drilling\` in metadata.
 
 **Montara, root cause:** the Commission of Inquiry found the primary well-control barrier (cementing) had failed and that PTTEP's own well-control procedures, if followed, would most likely have prevented the blowout. <cite index="66-1">The inquiry found the blowout resulted from failure of the primary well-control barrier and that well-control practices approved by the regulator would most likely have been sufficient to prevent it had the operator adhered to them.</cite>
 
-**Piper Alpha (1988) — explicitly excluded from the incident table, included here as context:** this was a **production-platform process-safety explosion** (a maintenance/permit-to-work failure triggering a gas leak on a producing platform), not a drilling operation. <cite index="52-1">The leak occurred when pipework from which a safety valve had been removed for maintenance was pressurized at pump start-up.</cite> It belongs in an OIL/gas process-safety knowledge base, not a drilling-failure one — flagging this because your Section 12 brief would likely pull it in by reputation alone, and mis-tagging it would corrupt NWIS's failure-category metadata.
+**Piper Alpha (1988) — explicitly excluded from the incident table, included here as context:** this was a **production-platform process-safety explosion** (a maintenance/permit-to-work failure triggering a gas leak on a producing platform), not a drilling operation. <cite index="52-1">The leak occurred when pipework from which a safety valve had been removed for maintenance was pressurized at pump start-up.</cite> It belongs in an OIL/gas process-safety knowledge base, not a drilling-failure one — flagging this because your Section 12 brief would likely pull it in by reputation alone, and mis-tagging it would corrupt PSM's failure-category metadata.
 
 **What's missing and why:** hundreds of other public "incident write-ups" exist (SPE case-study papers), but almost all describe **generic or anonymized** wells ("Well A in the North Sea") without operator, exact location, or verifiable telemetry — i.e., they're useful for the *signal library* (Deliverable 5) but not for the *incident database* as your schema defines it (which wants named wells, coordinates, real BHA specs). Treat these as two different data tiers, not one.
 
@@ -92,7 +92,7 @@ Full records in \`historical_incidents.csv\`. Three incidents met the bar for ge
 | Lost circulation | Pit volume, flow-out | Decreasing | During the event, sometimes preceded by ROP increase (drilling break into a fracture) | High | Universal industry principle; ~75% of wells encounter some lost-circulation issue industry-wide per patent-literature background sections — **this figure is from an equipment-patent's background section, not a peer-reviewed statistic; treat as [Possible], not [Certain]** |
 | Kick / well control | Pit gain, flow-out > flow-in, SPP drop then rise | — | Real-time, seconds to minutes | High | Universal, and central to both Macondo and Montara post-incident findings |
 
-**Numeric thresholds:** \`NO RELIABLE PUBLIC DATA FOUND\`. Thresholds are basin-, mud-system-, and rig-specific by design (this is explicitly stated in OIL's own tender documents, which describe real-time ECD/pore-pressure/fracture-pressure trend *monitoring* rather than fixed thresholds) — <cite index="17-1">OIL's real-time drilling optimization scope of work covers ECD management, pore-pressure and fracture-pressure trend analysis, and downhole WOB/torque/drag/vibration/stick-slip monitoring, all trend-based rather than fixed-threshold</cite>. NWIS should design its similarity engine (Deliverable 17) around *rate-of-change and trend deviation from that well's own baseline*, not universal thresholds.
+**Numeric thresholds:** \`NO RELIABLE PUBLIC DATA FOUND\`. Thresholds are basin-, mud-system-, and rig-specific by design (this is explicitly stated in OIL's own tender documents, which describe real-time ECD/pore-pressure/fracture-pressure trend *monitoring* rather than fixed thresholds) — <cite index="17-1">OIL's real-time drilling optimization scope of work covers ECD management, pore-pressure and fracture-pressure trend analysis, and downhole WOB/torque/drag/vibration/stick-slip monitoring, all trend-based rather than fixed-threshold</cite>. PSM should design its similarity engine (Deliverable 17) around *rate-of-change and trend deviation from that well's own baseline*, not universal thresholds.
 
 ---
 
@@ -100,17 +100,17 @@ Full records in \`historical_incidents.csv\`. Three incidents met the bar for ge
 
 These three sections are standard drilling-engineering knowledge (bit wear modes, BHA failure modes, NPT categorization) that doesn't require incident-specific citation — it's textbook/SPE-consensus material. I've put the structured version directly into \`failure_taxonomy.csv\` (columns: category, subtype, typical_signal, typical_cause) rather than repeating three near-identical tables here. One evidence-backed NPT data point worth flagging:
 
-**DERIVED (from Assam-specific sources):** In the Naga Thrust Belt / Upper Assam Basin, the *dominant* documented NPT drivers are wellbore instability, over-gauge borehole, and stuck pipe — this is stated directly by OIL's own engineers, not inferred: <cite index="26-1">drilling issues such as shear failure, wellbore collapse, stuck pipe incidents, and tight holes are observed very often in the Upper Assam basin, in one case leading to a sidetrack, causing significant loss of time and resources.</cite> This is a genuinely strong, basin-specific NPT signal for NWIS's India module — far stronger than anything generic Section 8 of your brief would produce.
+**DERIVED (from Assam-specific sources):** In the Naga Thrust Belt / Upper Assam Basin, the *dominant* documented NPT drivers are wellbore instability, over-gauge borehole, and stuck pipe — this is stated directly by OIL's own engineers, not inferred: <cite index="26-1">drilling issues such as shear failure, wellbore collapse, stuck pipe incidents, and tight holes are observed very often in the Upper Assam basin, in one case leading to a sidetrack, causing significant loss of time and resources.</cite> This is a genuinely strong, basin-specific NPT signal for PSM's India module — far stronger than anything generic Section 8 of your brief would produce.
 
 ---
 
 ## DELIVERABLE 9–11 — INDIA / ASSAM / GUJARAT DRILLING INTELLIGENCE
 
-**Assam — [Likely] the most usable regional dataset for NWIS's first version.** OIL's own engineers have published multiple SPE/SPG papers on:
+**Assam — [Likely] the most usable regional dataset for PSM's first version.** OIL's own engineers have published multiple SPE/SPG papers on:
 - Upper Assam Basin geomechanics and wellbore-stability modeling near the Naga Thrust <cite index="21-1">describing complex geological settings near the Naga thrust belt that create high costs and drilling risk, with the Oligocene reservoir sealed by a shale layer prone to significant drilling challenges</cite>
 - Abnormal pore pressure as a driver of NPT and well-control incidents in the Naga Schuppen belt <cite index="29-1">noting that abnormal pore pressures, particularly overpressures, can greatly increase drilling non-productive time and cause serious incidents including blowouts, pressure kicks, and fluid influx</cite>
 
-**Gujarat/Cambay — weaker for drilling-failure purposes.** Public material here is dominated by ONGC exploration/geology papers (play concepts, reservoir characterization), not drilling-incident case studies. \`NO RELIABLE PUBLIC DATA FOUND\` for Cambay-specific stuck-pipe/lost-circulation case histories at the depth Assam has. If Gujarat coverage matters to NWIS's roadmap, that's a gap to solve via direct ONGC/data-sharing engagement, not more web search.
+**Gujarat/Cambay — weaker for drilling-failure purposes.** Public material here is dominated by ONGC exploration/geology papers (play concepts, reservoir characterization), not drilling-incident case studies. \`NO RELIABLE PUBLIC DATA FOUND\` for Cambay-specific stuck-pipe/lost-circulation case histories at the depth Assam has. If Gujarat coverage matters to PSM's roadmap, that's a gap to solve via direct ONGC/data-sharing engagement, not more web search.
 
 **India public well database — this is real and important:** the DGH's **National Data Repository (NDR)** is the actual candidate data source, not a fictional one. As of DGH's 2024–25 annual report: <cite index="44-1">1,785 wells were studied for core-report compilation in FY 2024–25 alone, with core data found for 879 of them</cite>, and per DGH's 2017 policy document the repository held <cite index="45-1">4,500 exploratory wells, 2,500 development wells, and 65,292 well logs</cite> at that time (an earlier count than the 14,415-well figure reported elsewhere for 2018 — **source conflict, flagged below**). NDR access has tiers: free for recognized university researchers up to 50 sq km, commercial licensing otherwise. **This is your most realistic path to real Indian well data — not open API, but a genuine, named, government-run repository you could formally request access to.**
 
@@ -133,16 +133,16 @@ PUBLIC OIL INFORMATION (verified via oil-india.com and OIL's own e-tender portal
 - **2025 wellhead digitalization** (production side, adjacent to drilling): OIL partnered with Kellton to deploy edge-to-cloud telemetry across <cite index="19-1">77 production wells across 46 well plinths, using 482 field devices including wireless/wired sensors, gauges, and telemetry gateways, completed within a six-month deployment.</cite>
 
 \`\`\`
-NWIS DEMO DATA: see Deliverable 18 — never conflate the above real, public program descriptions with actual telemetry values, which are not public.
+PSM DEMO DATA: see Deliverable 18 — never conflate the above real, public program descriptions with actual telemetry values, which are not public.
 \`\`\`
 
-**Design implication:** OIL's own tender language already names the exact parameters (WOB, torque, drag, ECD, pore/fracture pressure trends, stick-slip, vibration) that NWIS's similarity engine should track — this is a strong, low-risk signal that NWIS's planned feature set matches what OIL's own engineers already consider standard practice, which is useful validation to put in front of a decision-maker.
+**Design implication:** OIL's own tender language already names the exact parameters (WOB, torque, drag, ECD, pore/fracture pressure trends, stick-slip, vibration) that PSM's similarity engine should track — this is a strong, low-risk signal that PSM's planned feature set matches what OIL's own engineers already consider standard practice, which is useful validation to put in front of a decision-maker.
 
 ---
 
 ## DELIVERABLE 13 — DATA SOURCE CATALOG
 
-| Source | Tier | Scope | Access | NWIS Value |
+| Source | Tier | Scope | Access | PSM Value |
 |---|---|---|---|---|
 | BOEMRE/USCG Joint Investigation Report (Macondo) | 1 | Global reference incident | Free PDF (bsee.gov) | Highly useful — gold-standard cause-chain example |
 | US Chemical Safety Board reports | 1 | US incidents, BOP/equipment focus | Free | Highly useful |
@@ -153,14 +153,14 @@ NWIS DEMO DATA: see Deliverable 18 — never conflate the above real, public pro
 | SPE / SPG India (OnePetro, spgindia.org) | 2 | Global + India-specific technical papers | Mostly paywalled (SPE); SPG India abstracts often free | Highly useful for signal library; incident-level detail limited to abstracts unless paid |
 | IADC | 2 | Global | Membership/paywalled | Optional — good for standardized NPT/incident taxonomy conventions |
 | BOEM/BSEE public data (US) | 1 | US Gulf of Mexico wells | Free, API-ish | Optional — different regulatory regime than India, useful as taxonomy cross-check |
-| NPD FactPages (Norway) | 1 | Norway | Free, strong API | Optional — best global example of an open well database if NWIS ever needs a design template |
+| NPD FactPages (Norway) | 1 | Norway | Free, strong API | Optional — best global example of an open well database if PSM ever needs a design template |
 | Equipment/service-company patents (USPTO) | 4 | Global | Free | Difficult/restricted for engineering data — patents describe inventions, not incident histories; treat with caution, as seen in the "~75% of wells" statistic above |
 
 Full list with URLs in \`sources.csv\`.
 
 ---
 
-## DELIVERABLE 14 — NWIS DATABASE SCHEMA (Relational — real design work, no data dependency)
+## DELIVERABLE 14 — PSM DATABASE SCHEMA (Relational — real design work, no data dependency)
 
 Core entities (PostgreSQL-ready):
 
@@ -243,11 +243,11 @@ Every record uses \`"data_status": "SYNTHETIC"\`. Fields mirror the real schema 
 
 ---
 
-## DELIVERABLE 20 — TOP FAILURE MODES FOR NWIS (Prioritized by usefulness, not fabricated frequency)
+## DELIVERABLE 20 — TOP FAILURE MODES FOR PSM (Prioritized by usefulness, not fabricated frequency)
 
 **INTERPRETATION, not frequency statistics** (per Section 25's own instruction — \`NOT ENOUGH PUBLIC DATA\` for true frequency ranking):
 
-1. Wellbore instability / stuck pipe — highest priority for NWIS's India module specifically, because it's the one failure mode with genuine basin-specific public evidence (Assam).
+1. Wellbore instability / stuck pipe — highest priority for PSM's India module specifically, because it's the one failure mode with genuine basin-specific public evidence (Assam).
 2. Well control (kick/blowout) — highest safety consequence, best global documentation (3 real incidents), most valuable for the failure-chain modeling approach in Deliverable 16.
 3. Lost circulation — well-understood signal (pit volume/flow-out), globally consistent, but no India-specific public case data.
 4. Cementing/casing integrity — directly implicated in 2 of 3 real incidents (Macondo, Montara) — disproportionately important relative to how often your brief's taxonomy weights it.
@@ -256,11 +256,11 @@ Every record uses \`"data_status": "SYNTHETIC"\`. Fields mirror the real schema 
 
 ---
 
-## FINAL NWIS DESIGN QUESTION (Section 36)
+## FINAL PSM DESIGN QUESTION (Section 36)
 
 **Minimum viable dataset:** the 3 real incidents + Assam geomechanics papers + OIL's public eRTMAC/tender specs, structured into the schema above. Enough to demo the RAG retrieval pattern and the failure-chain UI convincingly to a stakeholder.
 
-**Recommended dataset:** the above, plus a formal data-sharing conversation with OIL (or DGH/NDR under academic terms if Aravind has a university affiliation for it) to get even a few dozen real historical WITSML/NPT records from Upper Assam. This is the single highest-leverage next step — it converts NWIS from "demo built on public disaster reports" to "tool trained on the operator's own historical near-misses," which is the actual product.
+**Recommended dataset:** the above, plus a formal data-sharing conversation with OIL (or DGH/NDR under academic terms if Aravind has a university affiliation for it) to get even a few dozen real historical WITSML/NPT records from Upper Assam. This is the single highest-leverage next step — it converts PSM from "demo built on public disaster reports" to "tool trained on the operator's own historical near-misses," which is the actual product.
 
 **Advanced dataset:** full NDR access + multi-year OIL real-time data feed integration, enabling the similarity engine to be genuinely backtested.
 
@@ -283,7 +283,7 @@ Every record uses \`"data_status": "SYNTHETIC"\`. Fields mirror the real schema 
 | RAG readiness | 65 | Schema and chunking strategy are solid; corpus size is the limiting factor, not design |
 | Dataset completeness | 35 | By design — see Executive Summary. Complete relative to what's *achievable* publicly, incomplete relative to the original 38-section brief |
 
-**Overall honest assessment:** this is a well-sourced *seed* for NWIS's knowledge base and a solid *architecture*, not the "global drilling failure database" the original brief describes. Closing that gap requires a real data partnership, not more searching.
+**Overall honest assessment:** this is a well-sourced *seed* for PSM's knowledge base and a solid *architecture*, not the "global drilling failure database" the original brief describes. Closing that gap requires a real data partnership, not more searching.
 `;
 export const DEMO_DATA = {
   "notice": "ALL RECORDS BELOW ARE FICTIONAL. Well names, dates, depths, and telemetry values are invented for pipeline-testing purposes only. Assam wells are loosely modeled on the real Naga Thrust wellbore-instability pattern described in OIL's own published geomechanics papers (see rag_records.jsonl); Gujarat wells are fully synthetic with no real case-study basis, since no public Gujarat drilling-failure case studies were found.",
@@ -883,7 +883,7 @@ export const RAG_RECORDS = [
     "mitigation": [
       "post-incident tightening of training/competence requirements for oil personnel in Norway"
     ],
-    "lesson_learned": "The gap between first anomaly and irreversible failure can be short; NWIS's value proposition is compressing operator response time in that exact window",
+    "lesson_learned": "The gap between first anomaly and irreversible failure can be short; PSM's value proposition is compressing operator response time in that exact window",
     "source": "Norwegian Petroleum Museum",
     "source_url": "https://ekofisk.industriminne.no/en/2022/06/",
     "confidence": "High",

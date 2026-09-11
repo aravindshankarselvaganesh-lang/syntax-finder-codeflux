@@ -154,7 +154,7 @@ function StatusDot({ state, size = 8, pulse = false }) {
         <span
           style={{
             position: 'absolute', inset: -4, borderRadius: '9999px', background: color,
-            opacity: 0.35, animation: 'nwisPulse 2s ease-out infinite',
+            opacity: 0.35, animation: 'psmPulse 2s ease-out infinite',
           }}
         />
       )}
@@ -215,7 +215,7 @@ function Metric({ label, value, unit, trend, trendGood }) {
 }
 
 /* ============================== MAIN APP ============================== */
-export default function NWISCommandCenter() {
+export default function PSMCommandCenter() {
   const [sites, setSites] = useState(BASE_SITES);
   const [collapsed, setCollapsed] = useState(false);
   const [activeNav, setActiveNav] = useState('overview');
@@ -310,8 +310,8 @@ export default function NWISCommandCenter() {
     <div style={{ fontFamily: FONT, background: C.bg0, color: C.tx0, width: '100%', height: '100vh', display: 'flex', overflow: 'hidden', position: 'relative' }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
-        @keyframes nwisPulse { 0% { transform: scale(0.6); opacity: 0.5; } 100% { transform: scale(2.2); opacity: 0; } }
-        @keyframes nwisFade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes psmPulse { 0% { transform: scale(0.6); opacity: 0.5; } 100% { transform: scale(2.2); opacity: 0; } }
+        @keyframes psmFade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
         * { box-sizing: border-box; }
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-thumb { background: ${C.b2}; border-radius: 4px; }
@@ -325,7 +325,7 @@ export default function NWISCommandCenter() {
           {!collapsed && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <div style={{ width: 22, height: 22, borderRadius: 5, background: `linear-gradient(135deg, ${C.amber}, ${C.amberDark})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 800, color: '#1a1200' }}>N</div>
-              <span style={{ fontSize: 13, fontWeight: 700, letterSpacing: 0.5 }}>NWIS</span>
+              <span style={{ fontSize: 13, fontWeight: 700, letterSpacing: 0.5 }}>PSM</span>
             </div>
           )}
           <button onClick={() => setCollapsed((c) => !c)} style={{ background: 'none', border: 'none', color: C.tx3, padding: 4 }}>
@@ -431,7 +431,7 @@ export default function NWISCommandCenter() {
                   {NAV.flatMap((g) => g.items).find((i) => i.id === activeNav)?.label}
                 </div>
                 <p style={{ fontSize: 12, color: C.tx3, lineHeight: 1.6 }}>
-                  This screen is defined in the NWIS specification but isn't built out in this prototype —
+                  This screen is defined in the PSM specification but isn't built out in this prototype —
                   it focuses on the Command Center to demonstrate the core map → telemetry → risk → AI chain.
                 </p>
                 <button
@@ -509,7 +509,7 @@ export default function NWISCommandCenter() {
                         >
                           <span style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                             {(s.state === 'CRITICAL' || s.state === 'HIGH') && (
-                              <span style={{ position: 'absolute', width: 22, height: 22, borderRadius: 9999, background: STATE_COLOR[s.state], opacity: 0.3, animation: 'nwisPulse 1.8s ease-out infinite' }} />
+                              <span style={{ position: 'absolute', width: 22, height: 22, borderRadius: 9999, background: STATE_COLOR[s.state], opacity: 0.3, animation: 'psmPulse 1.8s ease-out infinite' }} />
                             )}
                             <span style={{ width: 10, height: 10, borderRadius: 9999, background: STATE_COLOR[s.state], border: `2px solid ${C.bg0}`, position: 'relative', boxShadow: `0 0 0 1px ${STATE_COLOR[s.state]}55` }} />
                           </span>
@@ -661,8 +661,8 @@ export default function NWISCommandCenter() {
       {/* SITE DRAWER */}
       {drawerSite && (
         <>
-          <div onClick={() => setDrawerId(null)} style={{ position: 'absolute', inset: 0, background: '#00000066', animation: 'nwisFade 150ms ease' }} />
-          <div style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: 380, background: C.bg1, borderLeft: `1px solid ${C.b2}`, display: 'flex', flexDirection: 'column', animation: 'nwisFade 200ms ease', boxShadow: '-8px 0 24px #00000055' }}>
+          <div onClick={() => setDrawerId(null)} style={{ position: 'absolute', inset: 0, background: '#00000066', animation: 'psmFade 150ms ease' }} />
+          <div style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: 380, background: C.bg1, borderLeft: `1px solid ${C.b2}`, display: 'flex', flexDirection: 'column', animation: 'psmFade 200ms ease', boxShadow: '-8px 0 24px #00000055' }}>
             <div style={{ padding: 16, borderBottom: `1px solid ${C.b1}`, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <div>
                 <div style={{ fontSize: 15, fontWeight: 700, fontFamily: MONO }}>{drawerSite.id}</div>
@@ -838,7 +838,7 @@ function AlertRow({ severity, title, meta, time, onClick, highlight }) {
       style={{
         textAlign: 'left', display: 'flex', gap: 10, padding: 10, borderRadius: 6,
         border: `1px solid ${highlight ? color + '55' : C.b1}`, background: highlight ? `${color}12` : C.s2,
-        animation: highlight ? 'nwisFade 300ms ease' : undefined,
+        animation: highlight ? 'psmFade 300ms ease' : undefined,
       }}
     >
       <StatusDot state={severity} size={7} pulse={severity === 'CRITICAL' || severity === 'HIGH'} />
