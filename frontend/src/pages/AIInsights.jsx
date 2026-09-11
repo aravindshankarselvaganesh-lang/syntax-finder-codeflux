@@ -191,7 +191,7 @@ export default function AIInsights() {
         </div>
       </div>
 
-      <div className="flex gap-6 h-[550px]">
+      <div className="flex flex-col lg:flex-row gap-6 min-h-[550px] lg:h-[550px]">
         {/* Chat / Query Area */}
         <div className="flex-[2] bg-bgCard rounded-xl border border-borderC p-0 flex flex-col relative overflow-hidden shadow-lg">
           

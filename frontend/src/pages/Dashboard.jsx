@@ -460,8 +460,8 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-6 h-64">
-        <div className="bg-bgCard rounded-xl border border-borderC p-5 flex flex-col">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-bgCard rounded-xl border border-borderC p-5 flex flex-col h-64">
           <div className="flex justify-between items-center mb-4 relative">
             <h3 className="font-semibold flex items-center gap-2"><BarChart2 size={18} className="text-textMuted"/> Drilling Activity</h3>
           </div>

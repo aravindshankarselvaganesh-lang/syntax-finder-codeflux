@@ -23,6 +23,14 @@ export default function Layout() {
   return (
     <div className="flex h-screen bg-bgMain text-textMain font-sans overflow-hidden">
       
+      {/* MOBILE BACKDROP OVERLAY */}
+      {mobileMenuOpen && (
+        <div 
+          onClick={() => setMobileMenuOpen(false)} 
+          className="fixed inset-0 bg-black/70 backdrop-blur-xs z-20 md:hidden transition-opacity"
+        />
+      )}
+
       {/* SIDEBAR */}
       <div className={`fixed inset-y-0 left-0 w-64 bg-bgPanel border-r border-borderC flex flex-col z-30 transition-transform duration-300 md:static md:translate-x-0 ${
         mobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
@@ -31,12 +39,12 @@ export default function Layout() {
           <div className="flex items-center">
             <img src="/logo.png" alt="PSM Probing Snag Map" className="h-9 object-contain mix-blend-screen" />
           </div>
-          <button onClick={() => setMobileMenuOpen(false)} className="md:hidden text-textMuted hover:text-white">
+          <button onClick={() => setMobileMenuOpen(false)} className="md:hidden text-textMuted hover:text-white cursor-pointer">
             <X size={20} />
           </button>
         </div>
         
-        <nav className="flex-1 py-6 px-4 space-y-1 overflow-y-auto">
+        <nav className="flex-1 py-6 px-4 space-y-1 overflow-y-auto" onClick={() => setMobileMenuOpen(false)}>
           <NavLink to="/" className={({isActive}) => `flex items-center px-3 py-2.5 rounded-lg transition-colors font-medium text-sm ${isActive ? 'bg-brandBlue text-white' : 'text-textMuted hover:bg-white/5 hover:text-textMain'}`}><MapPin className="mr-3" size={18}/> Global Assets</NavLink>
           <NavLink to="/analytics" className={({isActive}) => `flex items-center px-3 py-2.5 rounded-lg transition-colors font-medium text-sm ${isActive ? 'bg-brandBlue text-white' : 'text-textMuted hover:bg-white/5 hover:text-textMain'}`}><BarChart2 className="mr-3" size={18}/> Telemetry Analytics</NavLink>
           <NavLink to="/insights" className={({isActive}) => `flex items-center px-3 py-2.5 rounded-lg transition-colors font-medium text-sm ${isActive ? 'bg-brandBlue text-white' : 'text-textMuted hover:bg-white/5 hover:text-textMain'}`}><BrainCircuit className="mr-3" size={18}/> AI Predictor</NavLink>
@@ -131,7 +139,7 @@ export default function Layout() {
         </header>
 
         {/* Dynamic Page Content */}
-        <main className="flex-1 overflow-hidden p-6 relative">
+        <main className="flex-1 overflow-hidden p-3 sm:p-6 relative">
           <Outlet />
         </main>
         
