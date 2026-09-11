@@ -2,7 +2,7 @@ import React from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import { 
   Activity, MapPin, BarChart2, FileText, Bell, Sparkles, Settings,
-  AlertTriangle, BrainCircuit, Database, ChevronDown, Droplet
+  AlertTriangle, BrainCircuit, Database, ChevronDown, Droplet, BookOpen
 } from 'lucide-react';
 
 export default function Layout() {
@@ -54,26 +54,23 @@ export default function Layout() {
           </div>
           <div className="flex items-center space-x-6 text-sm text-textMuted hidden md:flex">
             <span>Smarter Insights</span>
-            <span className="text-borderC">|</span>
-            <span>Safer Operations</span>
-            <span className="text-borderC">|</span>
-            <span>Sustainable Energy</span>
+            <span>Faster Responses</span>
+            <span>Zero Failures</span>
           </div>
+
           <div className="flex items-center space-x-4">
-            <button className="text-textMuted hover:text-textMain"><Bell size={20} /></button>
-            <div className="flex items-center space-x-3 border-l border-borderC pl-4 cursor-pointer">
-              <div className="w-8 h-8 bg-brandBlue rounded-full flex items-center justify-center text-sm font-bold">A</div>
-              <div className="text-sm hidden sm:block">
-                <p className="font-semibold text-textMain">Astha</p>
-                <p className="text-xs text-textMuted scale-90 origin-left">Operations Analyst</p>
-              </div>
-              <ChevronDown size={16} className="text-textMuted" />
-            </div>
+            <NavLink to="/manual" className="flex items-center gap-2 text-sm text-brandBlue hover:text-white bg-brandBlue/10 hover:bg-brandBlue px-4 py-2 rounded-lg border border-brandBlue/20 transition-colors font-medium">
+              <BookOpen size={16} /> User Manual
+            </NavLink>
+            <button className="text-textMuted hover:text-white transition-colors relative p-2">
+              <Bell size={20} />
+              <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-accentRed rounded-full border-2 border-bgPanel"></span>
+            </button>
           </div>
         </header>
 
-        {/* OUTLET SCROLL AREA */}
-        <main className="flex-1 overflow-y-auto p-6">
+        {/* Dynamic Page Content */}
+        <main className="flex-1 overflow-hidden p-6 relative">
           <Outlet />
         </main>
         
