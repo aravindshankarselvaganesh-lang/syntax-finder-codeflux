@@ -236,10 +236,10 @@ export default function Dashboard() {
     <div className="h-full flex flex-col space-y-6 overflow-y-auto pb-8">
       
       {/* TOP SECTION */}
-      <div className="flex flex-col lg:flex-row gap-6 min-h-[580px]">
+      <div className="flex flex-col xl:flex-row gap-6 mb-6">
         
         {/* MAP SECTION */}
-        <div className="flex-[2] flex flex-col space-y-4">
+        <div className="flex-[2] flex flex-col space-y-4 min-w-0">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-bgCard p-4 rounded-xl border border-borderC">
             <div>
               <h2 className="text-2xl font-bold">Global Operations Map</h2>
@@ -277,7 +277,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div ref={mapContainerRef} className="flex-1 bg-bgCard rounded-xl border border-borderC overflow-hidden relative shadow-lg min-h-[480px]">
+          <div ref={mapContainerRef} className="h-[440px] w-full bg-bgCard rounded-xl border border-borderC overflow-hidden relative shadow-lg shrink-0">
             
             <MapContainer center={[20, 0]} zoom={2} style={{ width: '100%', height: '100%' }} zoomControl={false} minZoom={2}>
               <MapInteractionHandler setCustomLocation={setCustomLocation} setSelectedPinId={setSelectedPinId} />
