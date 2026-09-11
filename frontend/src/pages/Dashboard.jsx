@@ -159,11 +159,21 @@ export default function Dashboard() {
             });
           }
           setLoadingAi(false);
-        }, 800);
+        }, 1200);
       }
     };
     fetchAI();
   }, [selectedPinId, customLocation, pins]);
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      mapContainerRef.current?.requestFullscreen().catch(err => {
+        console.warn(`Error attempting to enable fullscreen: ${err.message}`);
+      });
+    } else {
+      document.exitFullscreen();
+    }
+  };
 
   return (
     <div className="h-full flex flex-col space-y-6 overflow-y-auto pb-8">
