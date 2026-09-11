@@ -353,16 +353,17 @@ export default function LearningLab() {
 
   if (activeView === 'course' && selectedCourse) {
     return (
-      <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md overflow-y-auto p-4 md:p-8 flex justify-center items-start animate-fadeIn">
-        <div className="bg-bgCard border border-purple-500/30 rounded-2xl w-full max-w-5xl p-6 md:p-8 shadow-2xl relative my-auto min-h-[70vh] space-y-6">
-          <div className="flex justify-between items-center pb-4 border-b border-borderC">
+      <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md p-4 md:p-8 flex justify-center items-center animate-fadeIn overflow-hidden">
+        <div className="bg-bgCard border border-purple-500/30 rounded-2xl w-full max-w-5xl h-[88vh] flex flex-col p-6 md:p-8 shadow-2xl relative overflow-hidden">
+          {/* Fixed Header */}
+          <div className="flex justify-between items-center pb-4 border-b border-borderC shrink-0">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-purple-500/20 text-purple-400">
                 <BookOpen size={24} />
               </div>
               <div>
                 <span className="text-[10px] font-mono font-bold text-purple-400 uppercase tracking-widest block">PSM Study Guide & Technical Manual</span>
-                <h2 className="text-xl md:text-2xl font-bold text-white">{selectedCourse.title}</h2>
+                <h2 className="text-lg md:text-2xl font-bold text-white">{selectedCourse.title}</h2>
               </div>
             </div>
             <button 
@@ -370,22 +371,25 @@ export default function LearningLab() {
                 setSelectedCourse(null);
                 setActiveView('home');
               }}
-              className="p-2.5 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer flex items-center gap-1.5 text-xs font-bold shadow-md"
+              className="p-2.5 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer flex items-center gap-1.5 text-xs font-bold shadow-md shrink-0"
             >
               <X size={18} />
               <span>Close Study Guide</span>
             </button>
           </div>
 
-          <CourseViewer 
-            course={selectedCourse} 
-            progress={courseProgress[selectedCourse.id] || 0} 
-            onUpdateProgress={(p) => handleUpdateProgress(selectedCourse.id, p)}
-            onBack={() => {
-              setSelectedCourse(null);
-              setActiveView('home');
-            }} 
-          />
+          {/* Scrollable Body */}
+          <div className="flex-1 overflow-y-auto pr-2 mt-4 space-y-6">
+            <CourseViewer 
+              course={selectedCourse} 
+              progress={courseProgress[selectedCourse.id] || 0} 
+              onUpdateProgress={(p) => handleUpdateProgress(selectedCourse.id, p)}
+              onBack={() => {
+                setSelectedCourse(null);
+                setActiveView('home');
+              }} 
+            />
+          </div>
         </div>
       </div>
     );
@@ -562,7 +566,7 @@ function CourseViewer({ course, progress, onUpdateProgress, onBack }) {
   };
 
   return (
-    <div className="h-full flex flex-col space-y-6 overflow-y-auto pb-8 pr-2">
+    <div className="space-y-6 pb-8 pr-2">
       <button onClick={onBack} className="flex items-center gap-2 text-textMuted hover:text-white w-fit transition-colors text-sm font-medium cursor-pointer">
         <ArrowLeft size={16}/> Back to Learning Lab
       </button>
