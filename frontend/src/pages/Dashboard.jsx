@@ -75,6 +75,20 @@ function MapInteractionHandler({ setCustomLocation, setSelectedPinId }) {
   return null;
 }
 
+// Haversine formula to compute distance in km between two lat/lng points
+function getDistanceKm(lat1, lon1, lat2, lon2) {
+  if (lat1 == null || lon1 == null || lat2 == null || lon2 == null) return Infinity;
+  const R = 6371; // Earth radius in km
+  const dLat = (lat2 - lat1) * (Math.PI / 180);
+  const dLon = (lon2 - lon1) * (Math.PI / 180);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
 // Reverse geocoding helper to return place/region names for lat/lng coordinates
 function getPlaceName(lat, lng) {
   if (lat >= 24 && lat <= 29 && lng >= 90 && lng <= 97) return "Upper Assam Basin (Assam, India)";
@@ -103,8 +117,9 @@ export default function Dashboard() {
 
   // Calculate nearby offset wells falling inside targeting radius circle
   const nearbyWells = React.useMemo(() => {
-    if (!customLocation) return [];
+    if (!customLocation || !Array.isArray(customLocation)) return [];
     return pins.filter(p => {
+      if (!p || !Array.isArray(p.pos) || p.pos.length < 2) return false;
       const dist = getDistanceKm(customLocation[0], customLocation[1], p.pos[0], p.pos[1]);
       return dist <= radiusKm;
     });
@@ -161,9 +176,8 @@ export default function Dashboard() {
     };
   }, [customLocation, radiusKm, nearbyWells]);
 
-  const activeTarget = selectedPinId 
-    ? pins.find(p => p.id === selectedPinId)
-    : customLocation && customAnalysis ? {
+  const activeTarget = (selectedPinId ? pins.find(p => p.id === selectedPinId) : null)
+    || (customLocation && customAnalysis ? {
         id: 'CUSTOM',
         name: customAnalysis.placeName,
         state: `Clicked Target [${customLocation[0].toFixed(4)}°, ${customLocation[1].toFixed(4)}°]`,
@@ -173,14 +187,17 @@ export default function Dashboard() {
         formation: customAnalysis.formationText,
         status: 'custom',
         rca: customAnalysis.statusText
-      } : pins.find(p => p.id === 'AS-07');
+      } : null)
+    || pins.find(p => p.id === 'AS-07')
+    || pins[0]
+    || { id: 'DEFAULT', name: 'Assam-07', state: 'Assam', operator: 'Oil India Ltd', spud: '12 Aug 2026', td: '3,102 m', formation: 'RDFC', status: 'red', rca: 'Pressure Anomaly / Instability' };
 
   const triggerDemoSequence = () => {
     const nextStage = (demoStage + 1) % 4;
     setDemoStage(nextStage);
     
     setPins(prev => prev.map(p => {
-      if (p.id === 'ASSAM-07') {
+      if (p.id === 'AS-07' || p.id === 'ASSAM-07') {
         if (nextStage === 0) return { ...p, status: 'green', rca: 'Normal Drilling' };
         if (nextStage === 1) return { ...p, status: 'yellow', rca: 'Anomaly Detected: ROP dropping, Torque rising' };
         if (nextStage === 2) return { ...p, status: 'red', rca: 'CRITICAL: Stuck Pipe Risk. AI RAG match found.' };
@@ -189,7 +206,7 @@ export default function Dashboard() {
       return p;
     }));
     
-    if (nextStage > 0) setSelectedPinId('ASSAM-07');
+    if (nextStage > 0) setSelectedPinId('AS-07');
   };
 
   useEffect(() => {
