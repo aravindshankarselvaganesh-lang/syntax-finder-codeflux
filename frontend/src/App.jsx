@@ -27,6 +27,7 @@ export default function App() {
           <Route path="manual" element={<Manual />} />
           <Route path="settings" element={<Settings />} />
         </Route>
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
   );
