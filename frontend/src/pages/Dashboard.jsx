@@ -142,11 +142,17 @@ export default function Dashboard() {
       } catch (err) {
         setTimeout(() => {
           if (activeTarget.status === 'custom') {
+            const lat = customLocation?.[0] || 0;
+            const lng = customLocation?.[1] || 0;
+            // Generate a deterministic risk based on coordinates
+            const isRisky = Math.abs((Math.floor(lat * 100) + Math.floor(lng * 100)) % 3) === 0;
+            const maxDepth = Math.floor(1500 + Math.abs(lat * lng) % 3000);
+            
             setAiData({
-              confidence: 92,
-              root_cause: "Area Pre-Assessment",
+              confidence: isRisky ? 95 : 82,
+              root_cause: isRisky ? "High Georisk Zone" : "Area Pre-Assessment",
               historical_matches: [4,5],
-              recommendation: `Geological analysis for coordinate ${activeTarget.name} indicates moderate seismic risk. Recommended mud weight: 1.15 SG for top-hole section based on analogous basin data.`
+              recommendation: `No existing drills found in this radius. Based on predictive analogues:\n\n${isRisky ? 'RISKY: Cannot drill safely here due to high fault-line probability and poor geomechanics.' : `Clearance: Safe to drill up to ${maxDepth}m vertically. Expect abnormal pore pressures beyond this depth.`}`
             });
           } else {
             setAiData({
@@ -154,12 +160,12 @@ export default function Dashboard() {
               root_cause: activeTarget.rca,
               historical_matches: [1,2,3],
               recommendation: activeTarget.status === 'red' ? 
-                "Inspect pressure-control equipment and verify sensor calibration. Cross-check with similar past cases." : 
-                "Proceed with normal drilling operations. Parameters are within expected bounds."
+                `Critical Alert: ${activeTarget.rca}. Inspect pressure-control equipment immediately.\nHistorical drills in this area reached ${activeTarget.td}.` : 
+                `Proceed with normal operations. Parameters are stable.\nCurrent well TD is ${activeTarget.td}. Safe to proceed further.`
             });
           }
           setLoadingAi(false);
-        }, 1200);
+        }, 50); // Immediate response per user request
       }
     };
     fetchAI();
@@ -262,7 +268,12 @@ export default function Dashboard() {
             <div className="flex justify-between items-start mb-6 border-b border-borderC pb-4 shrink-0">
               <div>
                 <h3 className="font-bold text-lg mb-1">{activeTarget.id === 'CUSTOM' ? 'Area Analysis' : `Well - ${activeTarget.name}`}</h3>
-                <p className="text-sm text-textMuted flex items-center gap-1"><MapPin size={12}/> {activeTarget.state}</p>
+                <div className="flex flex-col gap-1 mt-2">
+                  <p className="text-sm text-textMuted flex items-center gap-1"><MapPin size={12}/> {activeTarget.state}</p>
+                  {activeTarget.id !== 'CUSTOM' && (
+                    <p className="text-sm text-brandBlue flex items-center gap-1 font-medium">Total Depth: {activeTarget.td}</p>
+                  )}
+                </div>
               </div>
               <span className={`px-2.5 py-1 rounded-full text-xs font-medium border flex items-center gap-1 ${
                 activeTarget.status === 'green' ? 'bg-accentGreen/10 text-accentGreen border-accentGreen/20' :

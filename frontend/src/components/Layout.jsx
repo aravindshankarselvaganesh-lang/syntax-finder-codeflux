@@ -1,74 +1,118 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import { 
   Activity, MapPin, BarChart2, FileText, Bell, Sparkles, Settings,
-  AlertTriangle, BrainCircuit, Database, ChevronDown, Droplet, BookOpen, ShieldAlert, Users
+  AlertTriangle, BrainCircuit, Database, ChevronDown, Droplet, BookOpen, ShieldAlert, Users, X
 } from 'lucide-react';
 
 export default function Layout() {
+  const [showNotifs, setShowNotifs] = useState(false);
+  const notifRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (notifRef.current && !notifRef.current.contains(event.target)) {
+        setShowNotifs(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
-    <div className="flex h-screen bg-bgMain text-textMain overflow-hidden font-sans">
+    <div className="flex h-screen bg-bgMain text-textMain font-sans overflow-hidden">
       
       {/* SIDEBAR */}
-      <div className="w-64 bg-bgPanel flex flex-col border-r border-borderC">
-        {/* Logo */}
+      <div className="w-64 bg-bgPanel border-r border-borderC flex flex-col z-20">
         <div className="h-16 flex items-center px-6 border-b border-borderC shrink-0">
-          <Droplet className="text-brandBlue mr-3" fill="currentColor" size={24} />
-          <span className="text-xl font-bold tracking-wide">NWIS</span>
+          <Droplet className="text-brandBlue mr-2" fill="currentColor" />
+          <h1 className="text-xl font-bold tracking-tight">NWIS</h1>
         </div>
         
-        {/* Nav */}
-        <nav className="flex-1 py-6 space-y-1 px-3 overflow-y-auto">
-          <NavItem to="/" icon={<Activity size={20} />} label="Live Operations" />
-          <NavItem to="/sites" icon={<MapPin size={20} />} label="Global Assets" />
-          <NavItem to="/analytics" icon={<BarChart2 size={20} />} label="Telemetry Analytics" />
-          <NavItem to="/insights" icon={<BrainCircuit size={20} />} label="AI Predictor" />
-          <NavItem to="/alerts" icon={<AlertTriangle size={20} />} label="Critical Alerts" />
-          <NavItem to="/intelligence" icon={<Database size={20} />} label="Intelligence Base" />
-          <NavItem to="/worker" icon={<ShieldAlert size={20} />} label="Worker Safety" />
-          <NavItem to="/community" icon={<Users size={20} />} label="Community Portal" />
-          <NavItem to="/learning" icon={<BookOpen size={20} />} label="Learning Lab" />
-          <NavItem to="/reports" icon={<FileText size={20} />} label="Daily Reports" />
-          <NavItem to="/settings" icon={<Settings size={20} />} label="System Settings" />
+        <nav className="flex-1 py-6 px-4 space-y-1 overflow-y-auto">
+          <NavLink to="/" className={({isActive}) => `flex items-center px-3 py-2.5 rounded-lg transition-colors font-medium text-sm ${isActive ? 'bg-brandBlue text-white' : 'text-textMuted hover:bg-white/5 hover:text-textMain'}`}><MapPin className="mr-3" size={18}/> Global Assets</NavLink>
+          <NavLink to="/analytics" className={({isActive}) => `flex items-center px-3 py-2.5 rounded-lg transition-colors font-medium text-sm ${isActive ? 'bg-brandBlue text-white' : 'text-textMuted hover:bg-white/5 hover:text-textMain'}`}><BarChart2 className="mr-3" size={18}/> Telemetry Analytics</NavLink>
+          <NavLink to="/insights" className={({isActive}) => `flex items-center px-3 py-2.5 rounded-lg transition-colors font-medium text-sm ${isActive ? 'bg-brandBlue text-white' : 'text-textMuted hover:bg-white/5 hover:text-textMain'}`}><BrainCircuit className="mr-3" size={18}/> AI Predictor</NavLink>
+          <NavLink to="/alerts" className={({isActive}) => `flex items-center px-3 py-2.5 rounded-lg transition-colors font-medium text-sm ${isActive ? 'bg-brandBlue text-white' : 'text-textMuted hover:bg-white/5 hover:text-textMain'}`}><AlertTriangle className="mr-3" size={18}/> Critical Alerts</NavLink>
+          <NavLink to="/intelligence" className={({isActive}) => `flex items-center px-3 py-2.5 rounded-lg transition-colors font-medium text-sm ${isActive ? 'bg-brandBlue text-white' : 'text-textMuted hover:bg-white/5 hover:text-textMain'}`}><Database className="mr-3" size={18}/> Intelligence Base</NavLink>
+          
+          <div className="mt-6 mb-2 px-3 text-xs font-semibold text-textMuted uppercase tracking-wider">Portals</div>
+          <NavLink to="/worker" className={({isActive}) => `flex items-center px-3 py-2.5 rounded-lg transition-colors font-medium text-sm ${isActive ? 'bg-brandBlue text-white' : 'text-textMuted hover:bg-white/5 hover:text-textMain'}`}><ShieldAlert className="mr-3" size={18}/> Worker Safety</NavLink>
+          <NavLink to="/community" className={({isActive}) => `flex items-center px-3 py-2.5 rounded-lg transition-colors font-medium text-sm ${isActive ? 'bg-brandBlue text-white' : 'text-textMuted hover:bg-white/5 hover:text-textMain'}`}><Users className="mr-3" size={18}/> Community Portal</NavLink>
+          <NavLink to="/learning" className={({isActive}) => `flex items-center px-3 py-2.5 rounded-lg transition-colors font-medium text-sm ${isActive ? 'bg-brandBlue text-white' : 'text-textMuted hover:bg-white/5 hover:text-textMain'}`}><BookOpen className="mr-3" size={18}/> Learning Lab</NavLink>
+          
+          <div className="mt-6 mb-2 px-3 text-xs font-semibold text-textMuted uppercase tracking-wider">System</div>
+          <NavLink to="/reports" className={({isActive}) => `flex items-center px-3 py-2.5 rounded-lg transition-colors font-medium text-sm ${isActive ? 'bg-brandBlue text-white' : 'text-textMuted hover:bg-white/5 hover:text-textMain'}`}><FileText className="mr-3" size={18}/> Daily Reports</NavLink>
+          <NavLink to="/settings" className={({isActive}) => `flex items-center px-3 py-2.5 rounded-lg transition-colors font-medium text-sm ${isActive ? 'bg-brandBlue text-white' : 'text-textMuted hover:bg-white/5 hover:text-textMain'}`}><Settings className="mr-3" size={18}/> System Settings</NavLink>
         </nav>
-
-        {/* Footer Logo */}
-        <div className="p-6 border-t border-borderC shrink-0">
-          <div className="flex items-center space-x-3 text-xs text-textMuted">
-            <div className="w-8 h-8 rounded-full border border-borderC flex items-center justify-center">
-              <div className="w-4 h-4 bg-accentRed rounded-full" />
-            </div>
-            <div>
-              <p className="font-semibold text-textMain">Enterprise Operations</p>
-              <p className="scale-90 origin-left whitespace-nowrap">Energy Intelligence Platform</p>
+        
+        <div className="p-4 border-t border-borderC">
+          <div className="flex items-center gap-3">
+            <div className="w-2 h-2 rounded-full bg-accentGreen animate-pulse"></div>
+            <div className="text-xs">
+              <p className="font-semibold">Enterprise Operations</p>
+              <p className="text-textMuted">Energy Intelligence Platform</p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* MAIN CONTENT */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      {/* MAIN CONTENT AREA */}
+      <div className="flex-1 flex flex-col min-w-0">
         
         {/* HEADER */}
-        <header className="h-16 bg-bgPanel flex items-center justify-between px-6 border-b border-borderC shrink-0">
+        <header className="h-16 bg-bgPanel border-b border-borderC flex items-center justify-between px-8 shrink-0 z-10 relative">
           <div>
-            <h1 className="text-sm font-semibold">Intelligent Drilling Intelligence System</h1>
-            <p className="text-xs text-textMuted">Global Energy Operations</p>
+            <h2 className="text-lg font-bold">Intelligent Drilling Intelligence System</h2>
+            <p className="text-xs text-brandBlue uppercase tracking-widest font-semibold mt-0.5">Global Energy Operations</p>
           </div>
-          <div className="flex items-center space-x-6 text-sm text-textMuted hidden md:flex font-medium uppercase tracking-wider text-xs">
+          <div className="hidden md:flex gap-8 text-xs font-bold text-textMuted uppercase tracking-widest">
             <span>Understand the Drill.</span>
             <span>Predict the Risk.</span>
             <span>Protect the People.</span>
           </div>
-
           <div className="flex items-center space-x-4">
             <NavLink to="/manual" className="flex items-center gap-2 text-sm text-brandBlue hover:text-white bg-brandBlue/10 hover:bg-brandBlue px-4 py-2 rounded-lg border border-brandBlue/20 transition-colors font-medium">
               <BookOpen size={16} /> User Manual
             </NavLink>
-            <button className="text-textMuted hover:text-white transition-colors relative p-2">
-              <Bell size={20} />
-              <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-accentRed rounded-full border-2 border-bgPanel"></span>
-            </button>
+            
+            <div className="relative" ref={notifRef}>
+              <button onClick={() => setShowNotifs(!showNotifs)} className={`text-textMuted hover:text-white transition-colors relative p-2 rounded-full ${showNotifs ? 'bg-white/10' : ''}`}>
+                <Bell size={20} />
+                <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-accentRed rounded-full border-2 border-bgPanel"></span>
+              </button>
+              
+              {showNotifs && (
+                <div className="absolute top-full right-0 mt-2 w-80 bg-bgCard border border-borderC rounded-xl shadow-xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2">
+                  <div className="px-4 py-3 border-b border-borderC flex justify-between items-center bg-bgPanel">
+                    <h3 className="font-bold text-sm">Notifications</h3>
+                    <button onClick={() => setShowNotifs(false)} className="text-textMuted hover:text-white"><X size={14}/></button>
+                  </div>
+                  <div className="max-h-64 overflow-y-auto">
+                    <div className="p-4 border-b border-borderC/50 hover:bg-white/5 transition-colors cursor-pointer">
+                      <div className="flex gap-3">
+                        <AlertTriangle className="text-accentRed shrink-0 mt-0.5" size={16}/>
+                        <div>
+                          <p className="text-sm font-semibold text-white">Assam-07 Pressure Anomaly</p>
+                          <p className="text-xs text-textMuted mt-1">High risk of wellbore instability detected. AI recommends checking mud weight.</p>
+                          <p className="text-[10px] text-textMuted mt-2">Just now</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="p-4 hover:bg-white/5 transition-colors cursor-pointer">
+                      <div className="flex gap-3">
+                        <Sparkles className="text-brandBlue shrink-0 mt-0.5" size={16}/>
+                        <div>
+                          <p className="text-sm font-semibold text-white">New Risk Model Deployed</p>
+                          <p className="text-xs text-textMuted mt-1">Canonical Data Catalog successfully ingested and synced globally.</p>
+                          <p className="text-[10px] text-textMuted mt-2">2h ago</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </header>
 
