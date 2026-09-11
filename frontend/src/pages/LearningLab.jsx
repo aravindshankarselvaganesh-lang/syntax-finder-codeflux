@@ -25,14 +25,18 @@ export default function LearningLab() {
       </div>
 
       {/* Simulator Hero */}
-      <div className="bg-bgCard border border-borderC rounded-xl p-10 flex flex-col items-center justify-center text-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-brandBlue/5 pointer-events-none"></div>
-        <PlayCircle className="text-purple-400 mb-4" size={48} />
-        <h3 className="text-2xl font-bold mb-2">Interactive Drilling Simulator</h3>
-        <p className="text-textMuted max-w-lg mb-8">Experiment with Weight on Bit (WOB), RPM, and Mud Weight. Learn how telemetry anomalies like pressure spikes and lost circulation unfold in a safe environment.</p>
+      <div className="bg-bgCard border border-borderC rounded-xl p-8 flex flex-col items-center text-center relative overflow-hidden shrink-0 shadow-lg">
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-500/15 via-transparent to-brandBlue/10 pointer-events-none"></div>
+        <div className="w-14 h-14 rounded-full bg-purple-500/20 border border-purple-500/30 flex items-center justify-center mb-4 shrink-0">
+          <PlayCircle className="text-purple-400" size={32} />
+        </div>
+        <h3 className="text-2xl font-bold text-white mb-3">Interactive Drilling Simulator</h3>
+        <p className="text-textMuted max-w-xl text-sm mb-6 leading-relaxed">
+          Experiment with Weight on Bit (WOB), RPM, and Mud Weight. Learn how telemetry anomalies like pressure spikes and lost circulation unfold in a safe environment.
+        </p>
         <button 
           onClick={() => setActiveView('simulator')}
-          className="bg-purple-500 hover:bg-purple-600 text-white font-bold py-3 px-8 rounded-lg shadow-[0_0_15px_rgba(168,85,247,0.4)] transition-all flex items-center gap-2"
+          className="bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 px-8 rounded-lg shadow-lg shadow-purple-500/25 transition-all flex items-center gap-2 cursor-pointer z-10"
         >
           Launch Simulator <ArrowRight size={18} />
         </button>
