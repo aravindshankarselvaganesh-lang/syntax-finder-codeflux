@@ -160,14 +160,36 @@ export default function Dashboard() {
       <div className="flex gap-6 h-[500px]">
         
         {/* MAP SECTION */}
-        <div className="flex-[2] flex flex-col">
-          <div className="flex justify-between items-center mb-4">
+        <div className="flex-[2] flex flex-col space-y-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-bgCard p-4 rounded-xl border border-borderC">
             <div>
               <h2 className="text-2xl font-bold">Global Operations Map</h2>
               <p className="text-textMuted text-sm">Real-time geospatial tracking of all energy assets.</p>
             </div>
-            <div className="flex gap-2">
-              <button onClick={toggleFullscreen} className="flex items-center gap-2 bg-bgPanel hover:bg-white/5 border border-borderC px-3 py-1.5 rounded-lg text-sm transition-colors">
+            
+            <div className="flex flex-wrap items-center gap-4 w-full sm:w-auto">
+              {/* Radius Slider (Now outside map) */}
+              <div className="flex items-center gap-3 bg-bgPanel border border-borderC rounded-lg px-4 py-2 w-full sm:w-64">
+                <span className="text-xs text-textMuted font-medium uppercase tracking-wide shrink-0">Radius</span>
+                <input 
+                  type="range" 
+                  min="10" 
+                  max="2000" 
+                  step="10" 
+                  value={radiusKm} 
+                  onChange={(e) => setRadiusKm(Number(e.target.value))}
+                  className="flex-1 h-1 bg-borderC rounded-lg appearance-none cursor-pointer accent-brandBlue outline-none"
+                />
+                <span className="font-bold text-brandBlue bg-brandBlue/10 px-2 py-0.5 rounded text-xs shrink-0">{radiusKm} km</span>
+              </div>
+
+              {/* Map/Satellite Toggle (Now outside map) */}
+              <div className="flex bg-bgPanel rounded-md border border-borderC overflow-hidden text-sm shrink-0">
+                <button onClick={() => setMapMode('map')} className={`px-4 py-1.5 ${mapMode === 'map' ? 'bg-brandBlue text-white' : 'text-textMuted hover:text-white transition-colors'}`}>Map</button>
+                <button onClick={() => setMapMode('satellite')} className={`px-4 py-1.5 ${mapMode === 'satellite' ? 'bg-brandBlue text-white' : 'text-textMuted hover:text-white transition-colors'}`}>Satellite</button>
+              </div>
+
+              <button onClick={toggleFullscreen} className="flex items-center gap-2 bg-bgPanel hover:bg-white/5 border border-borderC px-3 py-1.5 rounded-md text-sm transition-colors shrink-0">
                 <Maximize2 size={16}/> Expand
               </button>
             </div>
@@ -175,31 +197,6 @@ export default function Dashboard() {
 
           <div ref={mapContainerRef} className="flex-1 bg-bgCard rounded-xl border border-borderC overflow-hidden relative shadow-lg">
             
-            <div className="absolute top-4 right-4 z-[400] flex bg-bgPanel/80 backdrop-blur rounded-md border border-borderC overflow-hidden text-sm shadow-xl">
-              <button onClick={() => setMapMode('map')} className={`px-4 py-2 ${mapMode === 'map' ? 'bg-brandBlue text-white' : 'text-textMuted hover:text-white'}`}>Map</button>
-              <button onClick={() => setMapMode('satellite')} className={`px-4 py-2 ${mapMode === 'satellite' ? 'bg-brandBlue text-white' : 'text-textMuted hover:text-white'}`}>Satellite</button>
-            </div>
-
-            <div className="absolute top-4 left-4 z-[400] flex flex-col bg-bgPanel/80 backdrop-blur rounded-md border border-borderC overflow-hidden text-sm shadow-xl px-4 py-3 w-64 gap-2">
-              <div className="flex justify-between items-center text-xs">
-                <span className="text-textMuted font-medium tracking-wide uppercase">Analysis Radius</span>
-                <span className="font-bold text-brandBlue bg-brandBlue/10 px-2 py-0.5 rounded">{radiusKm} km</span>
-              </div>
-              <input 
-                type="range" 
-                min="10" 
-                max="2000" 
-                step="10" 
-                value={radiusKm} 
-                onChange={(e) => setRadiusKm(Number(e.target.value))}
-                className="w-full h-1 bg-borderC rounded-lg appearance-none cursor-pointer accent-brandBlue outline-none"
-              />
-              <div className="flex justify-between text-[10px] text-textMuted font-medium">
-                <span>10km</span>
-                <span>2000km</span>
-              </div>
-            </div>
-
             <MapContainer center={[20, 0]} zoom={2} style={{ width: '100%', height: '100%' }} zoomControl={false} minZoom={2}>
               <MapInteractionHandler setCustomLocation={setCustomLocation} setSelectedPinId={setSelectedPinId} />
               
