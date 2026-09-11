@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Sparkles, FileText, Search, Activity, ChevronRight, Send, Loader2 } from 'lucide-react';
-import { RAG_RECORDS, HISTORICAL_INCIDENTS, SOURCES } from '../data/intelligenceData';
+import { RAG_RECORDS, HISTORICAL_INCIDENTS, SOURCES, CANONICAL_SOURCES } from '../data/intelligenceData';
 
 export default function AIInsights() {
   const [query, setQuery] = useState('');
@@ -46,12 +46,26 @@ export default function AIInsights() {
         i.root_cause.toLowerCase().includes(lowerQ)
       );
 
+      const sourceMatches = typeof CANONICAL_SOURCES !== 'undefined' ? CANONICAL_SOURCES.filter(s =>
+        s.organisation.toLowerCase().includes(lowerQ) ||
+        s.title.toLowerCase().includes(lowerQ) ||
+        lowerQ.includes('source') || lowerQ.includes('catalog')
+      ) : [];
+
       let aiResponse = "";
       let citedSources = [];
 
-      if (matches.length > 0 || incidentMatches.length > 0) {
+      if (matches.length > 0 || incidentMatches.length > 0 || sourceMatches.length > 0) {
         aiResponse = "I found relevant historical intelligence in the vector database.\n\n";
         
+        if (sourceMatches.length > 0) {
+          aiResponse += "**Verified Canonical Sources:**\n";
+          sourceMatches.slice(0, 3).forEach(s => {
+            aiResponse += `- [${s.id}] ${s.organisation}: [${s.title}](${s.url}) (Tier: ${s.reliability})\n`;
+          });
+          aiResponse += "\n";
+        }
+
         if (incidentMatches.length > 0) {
           const inc = incidentMatches[0];
           aiResponse += `**Incident Match: ${inc.incident_name} (${inc.year})**\n`;

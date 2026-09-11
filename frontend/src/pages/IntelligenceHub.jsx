@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { BookOpen, Database, AlertTriangle, Layers, FileText, ExternalLink } from 'lucide-react';
+import { BookOpen, Database, AlertTriangle, Layers, FileText, ExternalLink, Info } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
-import { RESEARCH_REPORT, HISTORICAL_INCIDENTS, FAILURE_TAXONOMY, RAG_RECORDS } from '../data/intelligenceData';
+import { RESEARCH_REPORT, HISTORICAL_INCIDENTS, FAILURE_TAXONOMY, RAG_RECORDS, CANONICAL_SOURCES } from '../data/intelligenceData';
 
 export default function IntelligenceHub() {
   const [activeTab, setActiveTab] = useState('report');
@@ -20,6 +20,7 @@ export default function IntelligenceHub() {
       {/* TABS */}
       <div className="flex gap-4 border-b border-borderC pb-px">
         <TabButton id="report" label="Research Report" icon={<BookOpen size={16}/>} active={activeTab} set={setActiveTab} />
+        <TabButton id="sources" label="Sources" icon={<FileText size={16}/>} active={activeTab} set={setActiveTab} />
         <TabButton id="incidents" label="Major Incidents" icon={<AlertTriangle size={16}/>} active={activeTab} set={setActiveTab} />
         <TabButton id="taxonomy" label="Failure Taxonomy" icon={<Layers size={16}/>} active={activeTab} set={setActiveTab} />
         <TabButton id="rag" label="RAG Knowledge Base" icon={<FileText size={16}/>} active={activeTab} set={setActiveTab} />
@@ -28,9 +29,50 @@ export default function IntelligenceHub() {
       {/* CONTENT */}
       <div className="flex-1 bg-bgCard rounded-xl border border-borderC p-6 overflow-y-auto relative min-h-[500px]">
         
+        {/* RESEARCH REPORT */}
         {activeTab === 'report' && (
-          <div className="prose prose-invert prose-brand max-w-4xl mx-auto">
+          <div className="bg-bgCard border border-borderC rounded-xl p-8 max-w-4xl prose prose-invert prose-blue">
             <ReactMarkdown>{RESEARCH_REPORT}</ReactMarkdown>
+          </div>
+        )}
+
+        {/* SOURCES */}
+        {activeTab === 'sources' && (
+          <div className="space-y-4 max-w-6xl">
+            <div className="bg-brandBlue/10 border border-brandBlue/20 rounded-lg p-4 mb-6 flex gap-3 text-sm text-brandBlue">
+              <Info className="shrink-0 mt-0.5" />
+              <p><strong>Canonical Source Catalog:</strong> This table explicitly maps the exact provenance of all external constraints used by the AI engine. Every URL is verified. Tiers indicate data reliability and permissible AI use-cases.</p>
+            </div>
+            <div className="bg-bgCard border border-borderC rounded-xl overflow-hidden">
+              <table className="w-full text-left text-sm">
+                <thead className="bg-bgPanel text-textMuted text-xs uppercase tracking-wider border-b border-borderC">
+                  <tr>
+                    <th className="px-4 py-3">ID</th>
+                    <th className="px-4 py-3">Organisation</th>
+                    <th className="px-4 py-3">Title / Link</th>
+                    <th className="px-4 py-3">Type</th>
+                    <th className="px-4 py-3">Reliability</th>
+                    <th className="px-4 py-3">NWIS Limitation</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-borderC">
+                  {CANONICAL_SOURCES.map(s => (
+                    <tr key={s.id} className="hover:bg-white/5 transition-colors">
+                      <td className="px-4 py-3 font-mono text-xs">{s.id}</td>
+                      <td className="px-4 py-3 font-semibold">{s.organisation}</td>
+                      <td className="px-4 py-3"><a href={s.url} target="_blank" rel="noreferrer" className="text-brandBlue hover:underline">{s.title}</a></td>
+                      <td className="px-4 py-3 text-xs text-textMuted">{s.type}</td>
+                      <td className="px-4 py-3">
+                        <span className={`px-2 py-1 rounded text-[10px] font-bold ${s.reliability === 'Tier 1' ? 'bg-accentGreen/10 text-accentGreen' : 'bg-accentYellow/10 text-accentYellow'}`}>
+                          {s.reliability}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-xs text-textMuted max-w-xs truncate" title={s.limitation}>{s.limitation}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
 

@@ -935,3 +935,335 @@ export const RAG_RECORDS = [
     "data_status": "SOURCE_REPORTED"
   }
 ];
+export const CANONICAL_SOURCES = [
+  {
+    "id": "D01",
+    "organisation": "DGH",
+    "title": "Operational Model of NDR",
+    "url": "https://ndr.dghindia.gov.in/operationalModel",
+    "type": "Government / data repository",
+    "geography": "India",
+    "access": "Registered / ordered",
+    "reliability": "Tier 1",
+    "limitation": "NDR scope and acquisition route"
+  },
+  {
+    "id": "D02",
+    "organisation": "DGH",
+    "title": "National Data Repository overview",
+    "url": "https://dghindia.gov.in/ndr",
+    "type": "Government portal",
+    "geography": "India",
+    "access": "Public portal",
+    "reliability": "Tier 1",
+    "limitation": "Catalogue scale; not raw open data"
+  },
+  {
+    "id": "D03",
+    "organisation": "DGH",
+    "title": "NDR Price List for Data Sale",
+    "url": "https://www.dghindia.gov.in/assets/downloads/5d68b90f876d3Price_List_for_NDR_Data_Sale_30-08-2019-Final.pdf",
+    "type": "Government PDF",
+    "geography": "India",
+    "access": "Paid / terms verify",
+    "reliability": "Tier 1",
+    "limitation": "Data formats and controlled access"
+  },
+  {
+    "id": "D04",
+    "organisation": "GSI",
+    "title": "BHUKOSH",
+    "url": "https://ap.data.gov.in/catalog/bhukosh",
+    "type": "Government catalogue",
+    "geography": "India",
+    "access": "Layer dependent",
+    "reliability": "Tier 1",
+    "limitation": "Geology / geophysics gateway"
+  },
+  {
+    "id": "D05",
+    "organisation": "Survey of India",
+    "title": "Online Maps Portal",
+    "url": "https://onlinemaps.surveyofindia.gov.in/",
+    "type": "Government portal",
+    "geography": "India",
+    "access": "Product dependent",
+    "reliability": "Tier 1",
+    "limitation": "Base mapping"
+  },
+  {
+    "id": "D06",
+    "organisation": "ISRIC",
+    "title": "SoilGrids FAQ",
+    "url": "https://docs.isric.org/globaldata/soilgrids/SoilGrids_faqs_04.html",
+    "type": "Scientific data docs",
+    "geography": "Global",
+    "access": "CC BY 4.0",
+    "reliability": "Tier 2",
+    "limitation": "Surface-soil model and limits"
+  },
+  {
+    "id": "D07",
+    "organisation": "USGS",
+    "title": "Earthquake Catalog API",
+    "url": "https://earthquake.usgs.gov/fdsnws/event/1/wsdl",
+    "type": "Government API",
+    "geography": "Global",
+    "access": "Public service",
+    "reliability": "Tier 1",
+    "limitation": "Seismicity context"
+  },
+  {
+    "id": "D08",
+    "organisation": "WorldPop",
+    "title": "Introduction to API",
+    "url": "https://www.worldpop.org/sdi/introapi/",
+    "type": "Research data docs",
+    "geography": "Global",
+    "access": "CC BY 4.0 cited release",
+    "reliability": "Tier 2",
+    "limitation": "Population exposure model"
+  },
+  {
+    "id": "D09",
+    "organisation": "UNEP-WCMC",
+    "title": "WDPCA Data License",
+    "url": "https://www.unep-wcmc.org/en/wdpa-data-license",
+    "type": "Licence",
+    "geography": "Global",
+    "access": "Restricted terms",
+    "reliability": "Tier 1",
+    "limitation": "Protected-area constraint"
+  },
+  {
+    "id": "D10",
+    "organisation": "IADC",
+    "title": "DDR Plus XML Guide",
+    "url": "https://iadc.org/wp-content/uploads/2019/01/DRAFT-IADC_DDR_Plus_XML_Guide_v1.0-1-24-20191.pdf",
+    "type": "Industry specification",
+    "geography": "Global",
+    "access": "Publisher terms",
+    "reliability": "Tier 2",
+    "limitation": "DDR taxonomy"
+  },
+  {
+    "id": "D11",
+    "organisation": "SPE",
+    "title": "Wired drillpipe performance",
+    "url": "https://jpt.spe.org/real-time-data-wired-drillpipe-leads-improvement-drilling-performance",
+    "type": "Technical publication",
+    "geography": "Global",
+    "access": "Publisher terms",
+    "reliability": "Tier 2",
+    "limitation": "Downhole dynamics context"
+  },
+  {
+    "id": "D12",
+    "organisation": "SPE",
+    "title": "Vibration and logging reliability",
+    "url": "https://jpt.spe.org/twa/drilling-and-logging-equipment-reliability-in-a-downhole-vibration-environment",
+    "type": "Technical publication",
+    "geography": "Global",
+    "access": "Publisher terms",
+    "reliability": "Tier 2",
+    "limitation": "Vibration signals"
+  },
+  {
+    "id": "D13",
+    "organisation": "BSEE",
+    "title": "Offshore Data and Tools",
+    "url": "https://www.bsee.gov/offshore-data-tools",
+    "type": "Regulator portal",
+    "geography": "US OCS",
+    "access": "Public",
+    "reliability": "Tier 1",
+    "limitation": "eWell / incident discovery"
+  },
+  {
+    "id": "D14",
+    "organisation": "BSEE",
+    "title": "South Timbalier investigation",
+    "url": "https://www.bsee.gov/sites/bsee.gov/files/panel-investigation/incident-and-investigations/st-220-panel-report9-8-2015.pdf",
+    "type": "Investigation",
+    "geography": "US OCS",
+    "access": "Public",
+    "reliability": "Tier 1",
+    "limitation": "Well-control case evidence"
+  },
+  {
+    "id": "D15",
+    "organisation": "Oil India Limited",
+    "title": "Drilling",
+    "url": "https://www.oil-india.com/drilling",
+    "type": "Operator public page",
+    "geography": "India",
+    "access": "Public page",
+    "reliability": "Tier 1",
+    "limitation": "Public eRTMAC statement only"
+  },
+  {
+    "id": "D16",
+    "organisation": "Oil India Limited",
+    "title": "Digitalization",
+    "url": "https://www.oil-india.com/digitalfootprint",
+    "type": "Operator public page",
+    "geography": "India",
+    "access": "Public page",
+    "reliability": "Tier 1",
+    "limitation": "Public DRIVE statement only"
+  },
+  {
+    "id": "D17",
+    "organisation": "NSTA",
+    "title": "OGA Wells ETRS89",
+    "url": "https://www.data.gov.uk/dataset/00051383-9782-4a52-bce6-f0528a9eecbe/oga-wells-etrs89",
+    "type": "Regulator open data",
+    "geography": "UKCS",
+    "access": "UK OGL",
+    "reliability": "Tier 1",
+    "limitation": "Well spatial index"
+  },
+  {
+    "id": "D18",
+    "organisation": "Norwegian Offshore Directorate",
+    "title": "FactMaps DataService",
+    "url": "https://factmaps.sodir.no/api/rest/services/DataService/Data/MapServer",
+    "type": "Regulator API",
+    "geography": "Norway",
+    "access": "Released-data conditions",
+    "reliability": "Tier 1",
+    "limitation": "Wellbore / geology tables"
+  },
+  {
+    "id": "D19",
+    "organisation": "DGH",
+    "title": "Assam Arakan Basin",
+    "url": "https://www.dghindia.gov.in/assets/downloads/56cc43934337fAssam-Arakan_Basin.pdf",
+    "type": "Government report",
+    "geography": "Assam-Arakan",
+    "access": "Public document",
+    "reliability": "Tier 1",
+    "limitation": "Regional basin context"
+  },
+  {
+    "id": "D20",
+    "organisation": "DGH",
+    "title": "Hydrocarbon Outlook Assam",
+    "url": "https://www.dghindia.gov.in/assets/downloads/ar/2023-24/64/",
+    "type": "Government report",
+    "geography": "Assam",
+    "access": "Public document",
+    "reliability": "Tier 1",
+    "limitation": "Regional context"
+  },
+  {
+    "id": "D21",
+    "organisation": "DGH",
+    "title": "E and P Activities Cambay",
+    "url": "https://dghindia.gov.in/assets/downloads/ar/2024-25/annual_report24-25.pdf",
+    "type": "Government report",
+    "geography": "Cambay",
+    "access": "Public document",
+    "reliability": "Tier 1",
+    "limitation": "Regional context"
+  },
+  {
+    "id": "A01",
+    "organisation": "OSHA",
+    "title": "Hydrogen Sulfide Evaluating and Controlling Exposure",
+    "url": "https://www.osha.gov/hydrogen-sulfide/evaluating-controlling-exposure",
+    "type": "Safety guidance",
+    "geography": "US",
+    "access": "Public",
+    "reliability": "Tier 1",
+    "limitation": "Controls / monitoring; not India legal limit"
+  },
+  {
+    "id": "A02",
+    "organisation": "OSHA",
+    "title": "Oil and Gas Drilling Well Control",
+    "url": "https://www.osha.gov/etools/oil-and-gas/drilling/well-control",
+    "type": "Safety guidance",
+    "geography": "US",
+    "access": "Public",
+    "reliability": "Tier 1",
+    "limitation": "Well control and BOP context"
+  },
+  {
+    "id": "A03",
+    "organisation": "OSHA",
+    "title": "Oil and Gas Extraction Hazards",
+    "url": "https://www.osha.gov/oil-and-gas-extraction/hazards",
+    "type": "Safety guidance",
+    "geography": "US",
+    "access": "Public",
+    "reliability": "Tier 1",
+    "limitation": "Worker hazard taxonomy"
+  },
+  {
+    "id": "A04",
+    "organisation": "NIST",
+    "title": "AI Risk Management Framework 1.0",
+    "url": "https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf",
+    "type": "Government framework",
+    "geography": "Global",
+    "access": "Public",
+    "reliability": "Tier 1",
+    "limitation": "AI governance functions"
+  },
+  {
+    "id": "A05",
+    "organisation": "OWASP",
+    "title": "Top 10 for LLM and GenAI",
+    "url": "https://genai.owasp.org/initiatives/top-10-for-llm-and-genai/",
+    "type": "Security guidance",
+    "geography": "Global",
+    "access": "Public",
+    "reliability": "Tier 2",
+    "limitation": "LLM threat model"
+  },
+  {
+    "id": "A06",
+    "organisation": "PostgreSQL",
+    "title": "Row Security Policies",
+    "url": "https://www.postgresql.org/docs/17/ddl-rowsecurity.html",
+    "type": "Official documentation",
+    "geography": "Global",
+    "access": "Open docs",
+    "reliability": "Tier 1",
+    "limitation": "RLS capability"
+  },
+  {
+    "id": "A07",
+    "organisation": "India Code",
+    "title": "Digital Personal Data Protection Act 2023",
+    "url": "https://www.indiacode.nic.in/indiacode/handle/123456789/22037?view_type=browse",
+    "type": "Statute",
+    "geography": "India",
+    "access": "Official text",
+    "reliability": "Tier 1",
+    "limitation": "Privacy review anchor"
+  },
+  {
+    "id": "A08",
+    "organisation": "US EPA",
+    "title": "EJScreen Technical Documentation",
+    "url": "https://nepis.epa.gov/Exe/ZyPURL.cgi?Dockey=P101AWSX.txt",
+    "type": "Government technical documentation",
+    "geography": "US",
+    "access": "Public",
+    "reliability": "Tier 1",
+    "limitation": "Screening limitations principle"
+  },
+  {
+    "id": "A09",
+    "organisation": "NDMA",
+    "title": "Guidelines for Chemical Disaster Management",
+    "url": "https://nidm.gov.in/pdf/guidelines/new/chemicaldisaster.pdf",
+    "type": "Government guideline",
+    "geography": "India",
+    "access": "Public",
+    "reliability": "Tier 1",
+    "limitation": "On/off-site planning context"
+  }
+];
