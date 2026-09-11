@@ -27,19 +27,19 @@ export default function Layout() {
       {mobileMenuOpen && (
         <div 
           onClick={() => setMobileMenuOpen(false)} 
-          className="fixed inset-0 bg-black/70 backdrop-blur-xs z-20 md:hidden transition-opacity"
+          className="fixed inset-0 bg-black/80 backdrop-blur-xs z-[9998] md:hidden transition-opacity"
         />
       )}
 
       {/* SIDEBAR */}
-      <div className={`fixed inset-y-0 left-0 w-64 bg-bgPanel border-r border-borderC flex flex-col z-30 transition-transform duration-300 md:static md:translate-x-0 ${
+      <div className={`fixed inset-y-0 left-0 w-64 bg-bgPanel border-r border-borderC flex flex-col z-[9999] md:z-30 transition-transform duration-300 md:static md:translate-x-0 ${
         mobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
       }`}>
         <div className="h-16 flex items-center justify-between px-6 border-b border-borderC shrink-0">
           <div className="flex items-center">
             <img src="/logo.png" alt="PSM Probing Snag Map" className="h-9 object-contain mix-blend-screen" />
           </div>
-          <button onClick={() => setMobileMenuOpen(false)} className="md:hidden text-textMuted hover:text-white cursor-pointer">
+          <button onClick={() => setMobileMenuOpen(false)} className="md:hidden text-textMuted hover:text-white cursor-pointer p-1">
             <X size={20} />
           </button>
         </div>
@@ -78,14 +78,14 @@ export default function Layout() {
         {/* HEADER */}
         <header className="h-16 bg-bgPanel border-b border-borderC flex items-center justify-between px-4 sm:px-8 shrink-0 z-10 relative">
           <div className="flex items-center gap-3">
-            <button onClick={() => setMobileMenuOpen(true)} className="md:hidden text-textMuted hover:text-white p-1">
+            <button onClick={() => setMobileMenuOpen(true)} className="md:hidden text-textMuted hover:text-white p-1 cursor-pointer">
               <Menu size={22} />
             </button>
             <div>
               <h2 className="text-sm sm:text-lg font-bold flex items-center gap-2">
                 <span className="bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent font-extrabold">PSM</span> — Probing Snag Map
               </h2>
-              <p className="text-[10px] sm:text-xs text-brandBlue uppercase tracking-widest font-semibold mt-0.5">Intelligent Drilling & Georisk Intelligence Platform</p>
+              <p className="hidden sm:block text-[10px] sm:text-xs text-brandBlue uppercase tracking-widest font-semibold mt-0.5">Intelligent Drilling & Georisk Intelligence Platform</p>
             </div>
           </div>
           <div className="hidden md:flex gap-8 text-xs font-bold text-textMuted uppercase tracking-widest">
@@ -93,9 +93,9 @@ export default function Layout() {
             <span>Predict the Risk.</span>
             <span>Protect the People.</span>
           </div>
-          <div className="flex items-center space-x-4">
-            <NavLink to="/manual" className="flex items-center gap-2 text-sm text-brandBlue hover:text-white bg-brandBlue/10 hover:bg-brandBlue px-4 py-2 rounded-lg border border-brandBlue/20 transition-colors font-medium">
-              <BookOpen size={16} /> User Manual
+          <div className="flex items-center space-x-3 sm:space-x-4">
+            <NavLink to="/manual" className="flex items-center gap-1.5 text-xs sm:text-sm text-brandBlue hover:text-white bg-brandBlue/10 hover:bg-brandBlue px-2.5 py-1.5 sm:px-4 sm:py-2 rounded-lg border border-brandBlue/20 transition-colors font-medium shrink-0">
+              <BookOpen size={16} /> <span className="hidden sm:inline">User Manual</span>
             </NavLink>
             
             <div className="relative" ref={notifRef}>

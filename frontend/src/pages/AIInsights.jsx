@@ -181,17 +181,17 @@ export default function AIInsights() {
 
   return (
     <div className="flex flex-col h-full space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
         <div>
-          <h2 className="text-2xl font-bold flex items-center gap-2"><Sparkles className="text-brandBlue"/> AI Predictor Copilot</h2>
-          <p className="text-textMuted text-sm">Query historical drilling reports and real-time telemetry natively from the browser.</p>
+          <h2 className="text-xl sm:text-2xl font-bold flex items-center gap-2"><Sparkles className="text-brandBlue"/> AI Predictor Copilot</h2>
+          <p className="text-textMuted text-xs sm:text-sm">Query historical drilling reports and real-time telemetry natively from the browser.</p>
         </div>
-        <div className="bg-brandBlue/10 border border-brandBlue/30 text-brandBlue px-3 py-1 rounded text-xs font-bold flex items-center gap-1.5">
+        <div className="bg-brandBlue/10 border border-brandBlue/30 text-brandBlue px-3 py-1 rounded text-xs font-bold flex items-center gap-1.5 shrink-0">
           <Zap size={14} className="text-brandBlue fill-brandBlue"/> Response Speed: Instant (&lt;50ms)
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-6 min-h-[550px] lg:h-[550px]">
+      <div className="flex flex-col lg:flex-row gap-6 min-h-[480px] lg:h-[550px]">
         {/* Chat / Query Area */}
         <div className="flex-[2] bg-bgCard rounded-xl border border-borderC p-0 flex flex-col relative overflow-hidden shadow-lg">
           

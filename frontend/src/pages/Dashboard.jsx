@@ -263,12 +263,12 @@ export default function Dashboard() {
               <p className="text-textMuted text-sm">Real-time geospatial tracking of all energy assets.</p>
             </div>
             
-            <div className="flex flex-wrap items-center gap-4 w-full sm:w-auto">
-              <button onClick={triggerDemoSequence} className="bg-accentRed hover:bg-red-600 text-white px-3 py-1.5 rounded-md text-sm font-bold shadow-[0_0_10px_rgba(244,63,94,0.4)] transition-colors animate-pulse">
+            <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 w-full sm:w-auto">
+              <button onClick={triggerDemoSequence} className="w-full sm:w-auto bg-accentRed hover:bg-red-600 text-white px-3 py-2 sm:py-1.5 rounded-md text-xs sm:text-sm font-bold shadow-[0_0_10px_rgba(244,63,94,0.4)] transition-colors animate-pulse text-center">
                 [{demoStage}] TRIGGER SCENARIO
               </button>
               {/* Radius Slider (Now outside map) */}
-              <div className="flex items-center gap-2.5 bg-bgPanel border border-borderC rounded-lg px-3.5 py-2 w-full sm:w-[270px] shrink-0 overflow-hidden">
+              <div className="flex items-center gap-2.5 bg-bgPanel border border-borderC rounded-lg px-3.5 py-1.5 sm:py-2 w-full sm:w-[270px] shrink-0 overflow-hidden">
                 <span className="text-xs text-textMuted font-medium uppercase tracking-wide shrink-0">Radius</span>
                 <input 
                   type="range" 
@@ -282,19 +282,21 @@ export default function Dashboard() {
                 <span className="font-bold text-brandBlue bg-brandBlue/10 px-2 py-0.5 rounded text-xs shrink-0 whitespace-nowrap">{radiusKm} km</span>
               </div>
 
-              {/* Map/Satellite Toggle (Now outside map) */}
-              <div className="flex bg-bgPanel rounded-md border border-borderC overflow-hidden text-sm shrink-0">
-                <button onClick={() => setMapMode('map')} className={`px-4 py-1.5 ${mapMode === 'map' ? 'bg-brandBlue text-white' : 'text-textMuted hover:text-white transition-colors'}`}>Map</button>
-                <button onClick={() => setMapMode('satellite')} className={`px-4 py-1.5 ${mapMode === 'satellite' ? 'bg-brandBlue text-white' : 'text-textMuted hover:text-white transition-colors'}`}>Satellite</button>
-              </div>
+              {/* Map/Satellite Toggle & Expand row on mobile */}
+              <div className="flex items-center justify-between sm:justify-start gap-2.5 w-full sm:w-auto">
+                <div className="flex bg-bgPanel rounded-md border border-borderC overflow-hidden text-xs sm:text-sm flex-1 sm:flex-initial">
+                  <button onClick={() => setMapMode('map')} className={`flex-1 sm:flex-initial px-3 sm:px-4 py-1.5 ${mapMode === 'map' ? 'bg-brandBlue text-white' : 'text-textMuted hover:text-white transition-colors'}`}>Map</button>
+                  <button onClick={() => setMapMode('satellite')} className={`flex-1 sm:flex-initial px-3 sm:px-4 py-1.5 ${mapMode === 'satellite' ? 'bg-brandBlue text-white' : 'text-textMuted hover:text-white transition-colors'}`}>Satellite</button>
+                </div>
 
-              <button onClick={toggleFullscreen} className="flex items-center gap-2 bg-bgPanel hover:bg-white/5 border border-borderC px-3 py-1.5 rounded-md text-sm transition-colors shrink-0">
-                <Maximize2 size={16}/> Expand
-              </button>
+                <button onClick={toggleFullscreen} className="flex items-center justify-center gap-1.5 bg-bgPanel hover:bg-white/5 border border-borderC px-3 py-1.5 rounded-md text-xs sm:text-sm transition-colors shrink-0">
+                  <Maximize2 size={15}/> <span>Expand</span>
+                </button>
+              </div>
             </div>
           </div>
 
-          <div ref={mapContainerRef} className="h-[440px] w-full bg-bgCard rounded-xl border border-borderC overflow-hidden relative shadow-lg shrink-0">
+          <div ref={mapContainerRef} className="h-[340px] sm:h-[440px] w-full bg-bgCard rounded-xl border border-borderC overflow-hidden relative shadow-lg shrink-0">
             
             <MapContainer center={[20, 0]} zoom={2} style={{ width: '100%', height: '100%' }} zoomControl={false} minZoom={2}>
               <MapInteractionHandler setCustomLocation={setCustomLocation} setSelectedPinId={setSelectedPinId} />
