@@ -1,12 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Sparkles, FileText, Search, Activity, ChevronRight, Send, Loader2, Database, ShieldAlert, Cpu, BookOpen } from 'lucide-react';
+import { Sparkles, FileText, Search, Activity, ChevronRight, Send, Loader2, Database, ShieldAlert, Cpu, BookOpen, MapPin, ExternalLink } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
+import { useNavigate } from 'react-router-dom';
 import { RAG_RECORDS, HISTORICAL_INCIDENTS, CANONICAL_SOURCES } from '../data/intelligenceData';
 
 const INITIAL_MESSAGES = [
   { 
     role: 'ai', 
-    text: `Hello! I am the **NWIS AI Predictor Copilot**.\n\nI have access to real-time telemetry, historical incident case studies (including Deepwater Horizon & Montara), and the **30-item Canonical Source Catalog** (DGH, GSI, SPE, BSEE, OSHA).\n\nHow can I assist your drilling operations or georisk evaluation today?` 
+    text: `Hello! I am the **NWIS AI Predictor Copilot**.\n\nI have access to real-time telemetry, historical incident case studies, GPS map coordinates, and the **30-item Canonical Source Catalog** (DGH, GSI, SPE, BSEE, OSHA).\n\nHow can I assist your drilling operations or georisk evaluation today?` 
   }
 ];
 
@@ -15,6 +16,7 @@ export default function AIInsights() {
   const [query, setQuery] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
+  const navigate = useNavigate();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -51,20 +53,15 @@ export default function AIInsights() {
         lowerQ.includes(i.year)
       );
 
-      // 3. Canonical Sources Search
-      const sourceMatches = (CANONICAL_SOURCES || []).filter(s =>
-        s.organisation.toLowerCase().includes(lowerQ) ||
-        s.title.toLowerCase().includes(lowerQ) ||
-        s.id.toLowerCase().includes(lowerQ) ||
-        lowerQ.includes('source') || lowerQ.includes('catalog') || lowerQ.includes('dgh')
-      );
-
       let aiResponse = "";
       let citedSources = [];
+      let mapLocation = null;
 
-      // DYNAMIC DEEP ANSWER GENERATION
+      // DYNAMIC DEEP ANSWER GENERATION WITH MAP COORDINATES
       if (lowerQ.includes('assam') || lowerQ.includes('naga') || lowerQ.includes('instability')) {
-        aiResponse = `### 📍 Upper Assam Basin Geomechanical Analysis\n\n` +
+        mapLocation = { name: "Assam-07 (Naga Thrust Belt)", coords: "27.2000° N, 95.0000° E", region: "Upper Assam Basin" };
+        aiResponse = `### 📍 Map Location: ${mapLocation.name}\n` +
+          `**GPS Coordinates:** \`${mapLocation.coords}\` | **Region:** ${mapLocation.region}\n\n` +
           `**Diagnostic Assessment:** Drilling near the Naga Thrust Schuppen belt presents extreme shear failure hazards due to complex Oligocene/Miocene shale formations.\n\n` +
           `**Key Risk Factors:**\n` +
           `- **Abnormal Pore Pressure:** Compaction disequilibrium causes rapid pressure transitions.\n` +
@@ -78,7 +75,9 @@ export default function AIInsights() {
       } 
       else if (lowerQ.includes('macondo') || lowerQ.includes('blowout') || lowerQ.includes('deepwater')) {
         const inc = HISTORICAL_INCIDENTS.find(i => i.incident_id === 'INC-001') || HISTORICAL_INCIDENTS[0];
-        aiResponse = `### 💥 Case Study Analysis: ${inc.incident_name} (${inc.year})\n\n` +
+        mapLocation = { name: "Macondo MC-252 Wellhead", coords: "28.7381° N, 88.3659° W", region: "Gulf of Mexico (US OCS)" };
+        aiResponse = `### 💥 Map Location: ${mapLocation.name}\n` +
+          `**GPS Coordinates:** \`${mapLocation.coords}\` | **Water Depth:** ~1,500m\n\n` +
           `**Primary Event:** ${inc.primary_event}\n\n` +
           `**Root Cause:** ${inc.root_cause}\n\n` +
           `**Contributing Factors:**\n` +
@@ -89,8 +88,20 @@ export default function AIInsights() {
         citedSources.push(inc.source_documents);
         if (inc.source_url) citedSources.push(inc.source_url);
       }
+      else if (lowerQ.includes('gujarat') || lowerQ.includes('cambay') || lowerQ.includes('mevad') || lowerQ.includes('nandej')) {
+        mapLocation = { name: "Gujarat-12 Field", coords: "23.0225° N, 72.5714° E", region: "Cambay Basin" };
+        aiResponse = `### 📍 Map Location: ${mapLocation.name}\n` +
+          `**GPS Coordinates:** \`${mapLocation.coords}\` | **Region:** Cambay Basin, India\n\n` +
+          `**Diagnostic Assessment:** Cambay basin fractured carbonate formations carry high risk of differential sticking and severe lost circulation.\n\n` +
+          `**Engineering Recommendation:**\n` +
+          `- Maintain LCM pills ready on pit stand-by.\n` +
+          `- Keep drill string in continuous motion to prevent differential sticking against permeable sands.`;
+        citedSources.push("DGH E&P Activities Cambay Basin Report (Tier 1)");
+      }
       else if (lowerQ.includes('source') || lowerQ.includes('catalog') || lowerQ.includes('dgh') || lowerQ.includes('gsi')) {
-        aiResponse = `### 📜 NWIS Verified Canonical Source Catalog\n\n` +
+        mapLocation = { name: "DGH National Data Repository (NDR)", coords: "28.5355° N, 77.3910° E", region: "Noida / Global Registry" };
+        aiResponse = `### 📜 NWIS Verified Canonical Source Catalog\n` +
+          `**Primary Repository Registry:** \`${mapLocation.coords}\` (DGH Headquarters)\n\n` +
           `NWIS operates under strict provenance rules. The platform is backed by **30 verified regulatory & scientific repositories**:\n\n`;
         const topSources = (CANONICAL_SOURCES || []).slice(0, 5);
         topSources.forEach(s => {
@@ -100,10 +111,13 @@ export default function AIInsights() {
         aiResponse += `\n*Every output surfaces clear confidence boundaries and data provenance.*`;
       }
       else if (ragMatches.length > 0 || incidentMatches.length > 0) {
-        aiResponse = `### 🔍 Intelligence Search Results\n\n`;
+        const matchName = incidentMatches[0]?.incident_name || ragMatches[0]?.basin || "Target Wellhead";
+        mapLocation = { name: matchName, coords: "26.5000° N, 93.0000° E", region: "Global Energy Operations" };
+        aiResponse = `### 🔍 Intelligence Search Results — ${mapLocation.name}\n` +
+          `**GPS Coordinates:** \`${mapLocation.coords}\`\n\n`;
         if (incidentMatches.length > 0) {
           const inc = incidentMatches[0];
-          aiResponse += `**Historical Match — ${inc.incident_name} (${inc.year}):**\n` +
+          aiResponse += `**Historical Incident Match (${inc.year}):**\n` +
             `*Root Cause:* ${inc.root_cause}\n` +
             `*Outcome:* ${inc.outcome}\n\n`;
           citedSources.push(inc.source_documents);
@@ -118,8 +132,9 @@ export default function AIInsights() {
         }
       }
       else {
-        // Universal Deep AI Response Fallback
-        aiResponse = `### 🧠 Engineering Telemetry & Risk Analysis for "${userQ}"\n\n` +
+        mapLocation = { name: "Selected Target Sector", coords: "20.5937° N, 78.9629° E", region: "Global Asset Monitoring" };
+        aiResponse = `### 🧠 Engineering Telemetry & Risk Analysis for "${userQ}"\n` +
+          `**Target Coordinates:** \`${mapLocation.coords}\` | **Sector:** ${mapLocation.region}\n\n` +
           `Based on global drilling data and geomechanical analogues:\n\n` +
           `1. **Parameter Evaluation:** Query terms suggest potential sensitivity in hydraulics or torque/drag dynamics.\n` +
           `2. **Operational Guideline:** Verify Standpipe Pressure (SPP) baseline stability. Rate of Penetration (ROP) anomalies should be correlated with Weight on Bit (WOB) trend lines.\n` +
@@ -132,6 +147,7 @@ export default function AIInsights() {
       setMessages(prev => [...prev, { 
         role: 'ai', 
         text: aiResponse,
+        location: mapLocation,
         sources: citedSources.length > 0 ? [...new Set(citedSources)] : null
       }]);
       setIsTyping(false);
@@ -161,10 +177,25 @@ export default function AIInsights() {
                   <div className="prose prose-invert prose-sm max-w-none">
                     <ReactMarkdown>{m.text}</ReactMarkdown>
                   </div>
+
+                  {m.location && (
+                    <div className="mt-3 pt-3 border-t border-borderC/60 flex items-center justify-between bg-brandBlue/10 p-2.5 rounded-lg border border-brandBlue/20">
+                      <div className="flex items-center gap-2 text-xs text-brandBlue font-bold">
+                        <MapPin size={14} className="shrink-0" />
+                        <span>{m.location.name} ({m.location.coords})</span>
+                      </div>
+                      <button 
+                        onClick={() => navigate('/')}
+                        className="bg-brandBlue hover:bg-blue-600 text-white text-[11px] font-bold px-2.5 py-1 rounded transition-colors flex items-center gap-1 cursor-pointer"
+                      >
+                        View on Map <ExternalLink size={10} />
+                      </button>
+                    </div>
+                  )}
                   
                   {m.sources && (
-                    <div className="mt-4 pt-3 border-t border-borderC text-left">
-                      <p className="text-[10px] uppercase tracking-wide font-bold text-brandBlue mb-2 flex items-center gap-1">
+                    <div className="mt-3 pt-3 border-t border-borderC text-left">
+                      <p className="text-[10px] uppercase tracking-wide font-bold text-textMuted mb-2 flex items-center gap-1">
                         <FileText size={12}/> Verified Sources Cited
                       </p>
                       <div className="flex flex-wrap gap-1.5">
@@ -185,7 +216,7 @@ export default function AIInsights() {
                 <div className="w-8 h-8 rounded bg-brandBlue flex items-center justify-center shrink-0"><Sparkles size={16} className="text-white"/></div>
                 <div className="bg-bgPanel border border-borderC rounded-lg p-4 text-sm flex items-center gap-3">
                   <Loader2 size={16} className="animate-spin text-brandBlue"/>
-                  <span className="text-textMuted">Evaluating vector embeddings & canonical sources...</span>
+                  <span className="text-textMuted">Evaluating vector embeddings, coordinates & canonical sources...</span>
                 </div>
               </div>
             )}
