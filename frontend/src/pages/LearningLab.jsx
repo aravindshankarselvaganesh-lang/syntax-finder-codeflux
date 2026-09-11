@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { 
   BookOpen, Award, PlayCircle, ShieldAlert, ArrowRight, ArrowLeft, 
   Activity, AlertTriangle, ChevronRight, FileText, CheckCircle2, 
-  HelpCircle, Sparkles, Check, RefreshCw
+  HelpCircle, Sparkles, Check, RefreshCw, ExternalLink, Compass, 
+  Terminal, Layers
 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { HISTORICAL_INCIDENTS } from '../data/intelligenceData';
@@ -10,9 +11,40 @@ import { HISTORICAL_INCIDENTS } from '../data/intelligenceData';
 const INITIAL_COURSES = [
   {
     id: 1,
-    title: "Level 1: Geology Basics",
-    description: "Geological formations, pore pressure, rock strength, fault lines, and lithology identification in onshore basins.",
+    title: "Level 1: Geology Basics & Subsurface Formations",
+    description: "Master sedimentary rock layers, pore pressure calculations, fault traps, and lithology identification in regional basins.",
     defaultProgress: 100,
+    roadmap: [
+      "Step 1: Learn lithology identification (Sandstone vs Shale vs Carbonates)",
+      "Step 2: Understand Hydrostatic Pressure vs Pore Pressure gradients (0.433 - 0.465 psi/ft)",
+      "Step 3: Analyze seismic fault trap mechanics and fault-line hazards",
+      "Step 4: Explore DGH NDR Indian Basin lithology records and USGS geological maps"
+    ],
+    studyNotes: [
+      {
+        section: "Lithology Classification & Reservoirs",
+        content: "Sedimentary rocks constitute over 90% of petroleum reservoirs globally. Sandstone offers high intergranular porosity (15-30%), while tight shale acts as an impermeable seal (permeability < 0.001 mD). Carbonate reservoirs (limestone/dolomite) rely heavily on secondary fracture porosity."
+      },
+      {
+        section: "Subsurface Pressure Windows",
+        content: "Normal hydrostatic pressure gradient in fresh water is 0.433 psi/ft (0.098 bar/m) and saline water is 0.465 psi/ft. When clay compaction is hindered during rapid burial, undercompacted shales retain trapped pore fluids, causing abnormal high pore pressure (P_pore > P_hydrostatic)."
+      },
+      {
+        section: "Fault Traps & Georisk Signals",
+        content: "Fault lines can act as either permeable fluid migration conduits or impermeable structural traps. Drilling near active seismic fault zones introduces severe risk of lost circulation and wellbore instability."
+      }
+    ],
+    tools: [
+      "Schlumberger Oilfield Log Interpreter Handbook",
+      "DGH NDR (National Data Repository India) Geospatial Viewer",
+      "USGS Global Subsurface Stratigraphy Maps"
+    ],
+    referenceLinks: [
+      { name: "DGH India National Data Repository (NDR)", url: "https://ndr.dghindia.gov.in/", desc: "Official Indian basin lithology & well log data repository (Assam, Cambay, KG Basin)." },
+      { name: "USGS Energy Resources Program", url: "https://www.usgs.gov/energy-and-minerals/energy-resources-program", desc: "Free public geological surveys, subsurface stratigraphy maps, and hydrocarbon assessments." },
+      { name: "SEPM Strata Sequence Stratigraphy Guide", url: "https://www.sepmstrata.org/", desc: "Open-access sequence stratigraphy, sedimentology guides, and depositional models." },
+      { name: "AAPG Educational Resources", url: "https://www.aapg.org/", desc: "American Association of Petroleum Geologists papers on subsurface structural traps." }
+    ],
     concepts: [
       { name: "Lithology & Formation Layers", desc: "Understanding sandstone porosity, tight shale seals, and carbonate reservoir characteristics." },
       { name: "Pore Pressure vs Hydrostatic", desc: "How fluid pressure inside rock pores compares to the hydrostatic column of drilling fluid." },
@@ -32,20 +64,50 @@ const INITIAL_COURSES = [
   },
   {
     id: 2,
-    title: "Level 2: Petroleum Systems",
-    description: "Source rock maturation, migration pathways, reservoir rock porosity, seal integrity, and structural traps.",
+    title: "Level 2: Petroleum Systems & Basin Analysis",
+    description: "Study source rock maturation, kerogen conversion, thermal windows, permeability Darcy laws, and seal integrity.",
     defaultProgress: 80,
+    roadmap: [
+      "Step 1: Understand source rock TOC (Total Organic Carbon) & Vitrinite Reflectance (Ro)",
+      "Step 2: Calculate fluid flow using Darcy's Law: Q = (k * A * ΔP) / (μ * L)",
+      "Step 3: Evaluate migration pathways and seal entry pressure",
+      "Step 4: Study OnePetro SPE technical papers on basin modeling"
+    ],
+    studyNotes: [
+      {
+        section: "Source Rock Maturation & Thermal Window",
+        content: "Hydrocarbon generation requires Total Organic Carbon (TOC > 2%) and thermal maturation within the oil window (60°C - 120°C, Vitrinite Reflectance Ro = 0.6% - 1.3%). Beyond 150°C, thermal cracking converts heavy oil to dry gas (CH4)."
+      },
+      {
+        section: "Fluid Flow & Darcy's Law",
+        content: "Flow rate through porous media is governed by Darcy's Law: Q = (k * A * ΔP) / (μ * L) where k is permeability in Darcys, A is cross-sectional area, ΔP is pressure differential, and μ is fluid viscosity."
+      },
+      {
+        section: "Seal Capacity & Entry Pressure",
+        content: "Capillary entry pressure of top-seal shales dictates the maximum hydrocarbon column height (H_max) a reservoir trap can retain before leaking through pore throats."
+      }
+    ],
+    tools: [
+      "Schlumberger Petrel Basin & Petroleum Systems Modeling",
+      "OnePetro SPE Research Engine",
+      "EIA International Basin Data Explorer"
+    ],
+    referenceLinks: [
+      { name: "SPE OnePetro Research Library", url: "https://www.onepetro.org/", desc: "Global repository of over 200,000 peer-reviewed Society of Petroleum Engineers technical papers." },
+      { name: "Schlumberger Oilfield Glossary", url: "https://glossary.slb.com/", desc: "Definitive technical glossary of petroleum engineering, well logging, and geology." },
+      { name: "EIA International Energy Data Explorer", url: "https://www.eia.gov/international/data/explorer", desc: "US Energy Information Administration global production and basin statistics." }
+    ],
     concepts: [
       { name: "Source Rock Maturation", desc: "Organic-rich shale buried under heat and pressure over geological time scales." },
       { name: "Porosity vs Permeability", desc: "Porosity measures void storage space; permeability measures how easily fluids flow through interconnected pores." },
       { name: "Trap Structures", desc: "Anticlinal folds, salt domes, and stratigraphic traps holding oil and gas deposits." }
     ],
     quiz: {
-      question: "Which rock property determines how easily oil and gas flow through subsurface reservoir pores?",
+      question: "Which rock property determines how easily oil and gas flow through subsurface reservoir pores under pressure?",
       options: [
-        "A) Rock Density",
+        "A) Rock Bulk Density",
         "B) Permeability (Correct)",
-        "C) Mohs Hardness",
+        "C) Mohs Hardness Scale",
         "D) Thermal Conductivity"
       ],
       correctIndex: 1,
@@ -54,9 +116,39 @@ const INITIAL_COURSES = [
   },
   {
     id: 3,
-    title: "Level 3: Drilling Mechanics",
-    description: "Weight on Bit (WOB), Torque, RPM, Rate of Penetration (ROP), and Bottom Hole Assembly (BHA) optimization.",
+    title: "Level 3: Drilling Mechanics & Rig Hydraulics",
+    description: "Master Weight-on-Bit (WOB), Torque & Drag, RPM, Rate of Penetration (ROP), and Equivalent Circulating Density (ECD).",
     defaultProgress: 30,
+    roadmap: [
+      "Step 1: Master bit mechanics (PDC vs Roller-Cone cutter interaction)",
+      "Step 2: Calculate Standpipe Pressure (SPP) and Equivalent Circulating Density (ECD)",
+      "Step 3: Diagnose telemetry anomalies (Bit balling, stick-slip vibration, tight hole)",
+      "Step 4: Practice real-time parameter tuning in the PSM Drilling Simulator"
+    ],
+    studyNotes: [
+      {
+        section: "Hydraulics & Equivalent Circulating Density (ECD)",
+        content: "Circulating mud exerts dynamic pressure on the formation. ECD accounts for annular friction loss: ECD = MW + (ΔP_annular / (0.052 * TVD)). Maintaining ECD strictly between Pore Pressure (P_pore) and Fracture Gradient (P_frac) prevents lost circulation and well kicks."
+      },
+      {
+        section: "Torque & Drag Modeling",
+        content: "Excessive pick-up or slack-off hook load weight indicates differential sticking or keyseating. Torque spikes accompanied by ROP drops indicate bit balling in sticky clay shales."
+      },
+      {
+        section: "BHA Telemetry (MWD/LWD)",
+        content: "Measurement-While-Drilling (MWD) pulse telemetry transmits inclination, azimuth, downhole WOB, and gamma ray logs in real time."
+      }
+    ],
+    tools: [
+      "IADC Drilling Manual & DDR Specifications",
+      "Halliburton Landmark WellPlan & COMPASS",
+      "Corva AI Real-Time Drilling Telemetry Engine"
+    ],
+    referenceLinks: [
+      { name: "IADC (International Association of Drilling Contractors)", url: "https://www.iadc.org/", desc: "Standard industry organization providing drilling manuals, DDR specs, and safety guidelines." },
+      { name: "Corva AI Real-Time Drilling Analytics", url: "https://www.corva.ai/", desc: "Modern cloud platform for rig telemetry visualization, ROP optimization, and BHA tracking." },
+      { name: "Offshore Technology Technical Reports", url: "https://www.offshore-technology.com/", desc: "Technical news and deepwater drilling equipment reviews." }
+    ],
     concepts: [
       { name: "BHA & Bit Selection", desc: "Selecting PDC vs Roller-Cone bits and positioning MWD/LWD telemetry tools." },
       { name: "ROP Optimization", desc: "Balancing WOB and RPM to maximize drilling speed without inducing thermal bit cutter wear." },
@@ -65,7 +157,7 @@ const INITIAL_COURSES = [
     quiz: {
       question: "What is the primary diagnostic signature of bit balling while drilling through sticky shale?",
       options: [
-        "A) Sharp drop in ROP accompanied by rising torque and pressure (Correct)",
+        "A) Sharp drop in ROP accompanied by rising torque and standpipe pressure (Correct)",
         "B) Sudden drop in standpipe pressure",
         "C) Rapid decrease in mud weight",
         "D) Spontaneous increase in rotary RPM"
@@ -77,8 +169,38 @@ const INITIAL_COURSES = [
   {
     id: 4,
     title: "Level 4: Well Control & Kick Mitigation",
-    description: "Primary well barrier mud weight, secondary BOP pipe/shear rams, choke manifolds, and Driller's Method.",
+    description: "Learn primary mud barrier management, secondary BOP ram shut-in procedures, choke manifolds, and Driller's Method.",
     defaultProgress: 0,
+    roadmap: [
+      "Step 1: Recognize primary kick signatures (Pit gain, flow line rise, pump pressure drop)",
+      "Step 2: Practice hard vs soft shut-in procedures on BOP pipe and annular preventers",
+      "Step 3: Calculate Kill Mud Weight (KMW): KMW = MW + (SIDPP / (0.052 * TVD))",
+      "Step 4: Execute two-circulation Driller's Method kick circulation"
+    ],
+    studyNotes: [
+      {
+        section: "Kick Detection Signals",
+        content: "Early kick warning signals include: 1) Increase in flow returns rate, 2) Pit volume gain, 3) Sudden ROP drilling break, 4) Drop in Standpipe Pressure (influx entering annulus)."
+      },
+      {
+        section: "Kill Mud Weight Calculation",
+        content: "To regain primary well control after shutting in a kick, calculate Kill Mud Weight (KMW): KMW = MW + (SIDPP / (0.052 * TVD)) where SIDPP is Shut-In Drill Pipe Pressure and TVD is True Vertical Depth."
+      },
+      {
+        section: "Driller's Method Step-by-Step",
+        content: "1st Circulation: Pump out influx gas using original mud weight while holding ICP (Initial Circulating Pressure). 2nd Circulation: Pump kill mud weight to replace light mud while holding FCP (Final Circulating Pressure)."
+      }
+    ],
+    tools: [
+      "IADC WellSharp Certification Manual",
+      "IWCF Well Control Formula Sheet",
+      "BSEE Offshore Well Control Regulations"
+    ],
+    referenceLinks: [
+      { name: "IWCF (International Well Control Forum)", url: "https://www.iwcf.org/", desc: "Free well control safety manuals, formula sheets, and certification study guides." },
+      { name: "IADC WellSharp Program", url: "https://www.iadc.org/wellsharp/", desc: "Official well control accreditation standards and driller training curriculum." },
+      { name: "BSEE Safety & Environmental Enforcement", url: "https://www.bsee.gov/", desc: "US Federal agency regulating well control safety, BOP testing, and offshore incident investigations." }
+    ],
     concepts: [
       { name: "Primary Hydrostatic Barrier", desc: "Maintaining Equivalent Circulating Density (ECD) inside safe pressure windows." },
       { name: "BOP Stack & Ram Operations", desc: "Pipe rams, blind-shear rams, and annular preventers for emergency well shut-in." },
@@ -99,8 +221,38 @@ const INITIAL_COURSES = [
   {
     id: 5,
     title: "Level 5: AI & Data Science in Energy",
-    description: "Machine learning for predictive drilling, WITSML telemetry anomaly detection, vector RAG embeddings, and digital twins.",
+    description: "Build machine learning models for streaming WITSML telemetry, vector RAG embeddings, and automated anomaly warnings.",
     defaultProgress: 0,
+    roadmap: [
+      "Step 1: Understand WITSML XML/JSON data structures for 1Hz rig sensors",
+      "Step 2: Implement time-series anomaly detection algorithms (Isolation Forests, LSTM, Z-Score)",
+      "Step 3: Download Equinor Volve open dataset (Free well logs & production history)",
+      "Step 4: Build a Retrieval-Augmented Generation (RAG) pipeline for historical incident retrieval"
+    ],
+    studyNotes: [
+      {
+        section: "WITSML Real-Time Telemetry Parsing",
+        content: "WITSML (Wellsite Information Transfer Standard Markup Language) standardizes real-time XML data exchange between rig acquisition systems and cloud analytics platforms."
+      },
+      {
+        section: "Predictive Anomaly Detection",
+        content: "Machine learning algorithms compute rolling statistics over 10-minute sensor windows. Rapid variance spikes in torque combined with ROP drop serve as early indicators of stuck pipe 30-45 minutes before pipe freeze."
+      },
+      {
+        section: "Vector RAG Architectures for Energy",
+        content: "High-dimensional embeddings index historical incident reports (IADC DDR, CSB reports). Cosine similarity enables instant retrieval of matching historical well anomalies."
+      }
+    ],
+    tools: [
+      "Equinor Volve Open Data Repository (Free Norwegian Well Logs)",
+      "Energistics WITSML Standard Schema v1.4 / v2.0",
+      "Python PyDrilling & LASIO Open-Source Libraries"
+    ],
+    referenceLinks: [
+      { name: "Equinor Volve Open Data Sharing", url: "https://www.equinor.com/energy/volve-data-sharing", desc: "Complete real-world Norwegian continental shelf dataset (Well logs, production, seismic) free for AI research." },
+      { name: "Energistics WITSML Data Standard", url: "https://www.energistics.org/witsml-standards/", desc: "Open data standard for real-time wellsite telemetry transmission." },
+      { name: "Python LASIO GitHub Library", url: "https://github.com/kinverarity1/lasio", desc: "Python package for reading and parsing LAS (Log ASCII Standard) borehole log files." }
+    ],
     concepts: [
       { name: "High-Frequency Telemetry Anomaly Detection", desc: "ML models analyzing SPP and torque rolling windows to detect stuck pipe 30 minutes before occurrence." },
       { name: "RAG Vector Architecture", desc: "Retrieving historical disaster case studies and SPE paper embeddings to guide live rig crews." },
@@ -120,9 +272,39 @@ const INITIAL_COURSES = [
   },
   {
     id: 6,
-    title: "Level 6: Real-World Case Studies",
-    description: "Deep-dive investigation of major industrial blowouts (Macondo, Montara, Ekofisk Bravo) and safety management systems.",
+    title: "Level 6: Real-World Case Studies & Forensic Engineering",
+    description: "Analyze major industrial disasters (Macondo, Montara, Ekofisk Bravo) and safety management systems.",
     defaultProgress: 0,
+    roadmap: [
+      "Step 1: Read US Chemical Safety Board (CSB) Deepwater Horizon Investigation",
+      "Step 2: Analyze barrier failure chains (Swiss Cheese Model in industrial HSE)",
+      "Step 3: Study Norwegian Petroleum Directorate (NPD) FactPages incident logs",
+      "Step 4: Apply Stop-Work Authority & Safety Management System (SMS) protocols"
+    ],
+    studyNotes: [
+      {
+        section: "Macondo Deepwater Horizon (2010)",
+        content: "Root Cause: Hydrocarbons bypassed a compromised cement shoe seal into the casing. Negative pressure test results were misinterpreted as 'bladder effect', allowing gas influx to ascend unhindered into the riser."
+      },
+      {
+        section: "Montara Blowout (Timor Sea 2009)",
+        content: "Root Cause: Single pressure barrier installation without secondary cementing verification cap. Influx rose through the 9-5/8'' casing string, resulting in an uncontained 105-day oil spill."
+      },
+      {
+        section: "Swiss Cheese Model & Safety Culture",
+        content: "Industrial disasters occur when multiple independent safety barriers (design, testing, procedure, human vigilance) fail simultaneously. Stop-Work Authority empowers any crew member to halt operations."
+      }
+    ],
+    tools: [
+      "US CSB (Chemical Safety Board) Investigation Reports",
+      "NPD FactPages (Norwegian Petroleum Directorate Database)",
+      "Oil India Limited (OIL) HSE Guidelines"
+    ],
+    referenceLinks: [
+      { name: "US Chemical Safety Board (CSB) Deepwater Horizon Investigation", url: "https://www.csb.gov/", desc: "Official forensic engineering report and video breakdown of the 2010 Macondo blowout." },
+      { name: "Sodir FactPages (Norwegian Petroleum Database)", url: "https://factpages.sodir.no/", desc: "Open Norwegian wellbores, drilling data, and historical incident repository." },
+      { name: "Oil India Limited (OIL) HSE Guidelines", url: "https://www.oil-india.com/", desc: "Safety protocols and HSE policies for onshore Naga thrust belt & Assam drilling operations." }
+    ],
     concepts: [
       { name: "Barrier Failure Chains", desc: "How multiple minor procedural bypasses align to cause catastrophic blowout failures." },
       { name: "Human & Organizational Factors", desc: "Misinterpreted negative pressure tests, fatigue, and bypassed safety alarms." },
@@ -342,28 +524,74 @@ function CourseViewer({ course, progress, onUpdateProgress, onBack }) {
       </button>
 
       {/* Course Banner */}
-      <div className="bg-bgCard border border-borderC rounded-xl p-8 max-w-4xl relative overflow-hidden shadow-lg">
+      <div className="bg-bgCard border border-borderC rounded-xl p-8 max-w-4xl relative overflow-hidden shadow-lg space-y-8">
         <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-transparent to-brandBlue/10 pointer-events-none"></div>
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 relative z-10 border-b border-borderC pb-6 mb-6">
+        
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 relative z-10 border-b border-borderC pb-6">
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span className="text-xs font-mono font-bold text-purple-400 uppercase tracking-widest">PSM Training Curriculum</span>
               {progress === 100 && (
-                <span className="text-[10px] bg-accentGreen/10 text-accentGreen border border-accentGreen/20 px-2 py-0.5 rounded font-bold">COMPLETED & VERIFIED</span>
+                <span className="text-[10px] bg-accentGreen/10 text-accentGreen border border-accentGreen/20 px-2 py-0.5 rounded font-bold flex items-center gap-1">
+                  <CheckCircle2 size={12} /> CERTIFIED
+                </span>
               )}
             </div>
             <h2 className="text-3xl font-bold text-white">{course.title}</h2>
           </div>
 
           <div className="bg-bgPanel border border-borderC px-4 py-2 rounded-lg text-right shrink-0">
-            <span className="text-xs text-textMuted block">Current Status</span>
+            <span className="text-xs text-textMuted block">Completion Status</span>
             <span className="text-lg font-bold text-purple-400">{progress}% Completed</span>
           </div>
         </div>
 
-        <p className="text-sm text-textMuted leading-relaxed mb-6">
+        <p className="text-sm text-textMuted leading-relaxed">
           {course.description}
         </p>
+
+        {/* 1. STEP-BY-STEP LEARNING ROADMAP */}
+        {course.roadmap && (
+          <div className="bg-bgPanel border border-borderC rounded-xl p-6">
+            <h3 className="font-bold text-lg text-white mb-3 flex items-center gap-2">
+              <Compass className="text-brandBlue" size={20} /> 
+              How to Learn This Level (Step-by-Step Roadmap)
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {course.roadmap.map((step, idx) => (
+                <div key={idx} className="bg-bgCard border border-borderC p-3 rounded-lg flex items-start gap-2 text-xs text-slate-200">
+                  <span className="w-5 h-5 rounded-full bg-brandBlue/20 text-brandBlue font-bold flex items-center justify-center shrink-0 mt-0.5">
+                    {idx + 1}
+                  </span>
+                  <span>{step}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* 2. DETAILED STUDY NOTES */}
+        {course.studyNotes && (
+          <div>
+            <h3 className="font-bold text-lg text-white mb-4 flex items-center gap-2">
+              <FileText className="text-purple-400" size={20} /> 
+              Engineering Study Notes & Equations
+            </h3>
+
+            <div className="space-y-4">
+              {course.studyNotes.map((note, idx) => (
+                <div key={idx} className="bg-bgPanel border border-borderC p-5 rounded-xl space-y-2">
+                  <h4 className="font-bold text-sm text-purple-300 flex items-center gap-2">
+                    <Layers size={16} /> {note.section}
+                  </h4>
+                  <p className="text-xs text-slate-300 leading-relaxed font-sans">
+                    {note.content}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Key Concepts Grid */}
         <h3 className="font-bold text-lg text-white mb-4 flex items-center gap-2">
@@ -381,6 +609,60 @@ function CourseViewer({ course, progress, onUpdateProgress, onBack }) {
             </div>
           ))}
         </div>
+
+        {/* 3. AUTHORITATIVE EXTERNAL REFERENCE LINKS */}
+        {course.referenceLinks && (
+          <div className="bg-bgPanel border border-borderC rounded-xl p-6">
+            <h3 className="font-bold text-lg text-white mb-3 flex items-center gap-2">
+              <ExternalLink className="text-accentGreen" size={20} /> 
+              Authoritative External Reference Links & Resources
+            </h3>
+            <p className="text-xs text-textMuted mb-4">
+              Official government databases, SPE research portals, and industry manuals required for mastery:
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {course.referenceLinks.map((link, idx) => (
+                <a 
+                  key={idx}
+                  href={link.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="bg-bgCard border border-borderC hover:border-brandBlue p-4 rounded-xl flex flex-col justify-between transition-all group shadow-md"
+                >
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <h4 className="font-bold text-xs text-brandBlue group-hover:underline flex items-center gap-1.5">
+                        {link.name} <ExternalLink size={12} />
+                      </h4>
+                      <span className="text-[10px] bg-brandBlue/10 text-brandBlue px-2 py-0.5 rounded font-mono">OFFICIAL</span>
+                    </div>
+                    <p className="text-[11px] text-textMuted leading-relaxed">
+                      {link.desc}
+                    </p>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* 4. RECOMMENDED TOOLS & SOFTWARE */}
+        {course.tools && (
+          <div className="bg-bgPanel border border-borderC rounded-xl p-6">
+            <h3 className="font-bold text-sm text-white mb-3 flex items-center gap-2">
+              <Terminal className="text-accentYellow" size={18} /> 
+              Recommended Industry Tools & Data Standards
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {course.tools.map((t, idx) => (
+                <span key={idx} className="bg-bgCard border border-borderC text-slate-200 text-xs px-3 py-1.5 rounded-lg font-mono">
+                  🛠️ {t}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Interactive Knowledge Quiz */}
         <div className="bg-bgPanel border border-borderC rounded-xl p-6">
