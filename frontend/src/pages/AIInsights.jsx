@@ -7,7 +7,7 @@ import { RAG_RECORDS, HISTORICAL_INCIDENTS, CANONICAL_SOURCES } from '../data/in
 const INITIAL_MESSAGES = [
   { 
     role: 'ai', 
-    text: `Hello! I am the **NWIS AI Predictor Copilot**.\n\nI have access to real-time telemetry, historical incident case studies, GPS map coordinates, and the **30-item Canonical Source Catalog** (DGH, GSI, SPE, BSEE, OSHA).\n\nHow can I assist your drilling operations or georisk evaluation today?` 
+    text: `Hello! I am the **PSM (Probing Snag Map) AI Predictor Copilot**.\n\nI have access to real-time telemetry, historical incident case studies, GPS map coordinates, and the **30-item Canonical Source Catalog** (DGH, GSI, SPE, BSEE, OSHA).\n\nHow can I assist your drilling operations or georisk evaluation today?` 
   }
 ];
 

@@ -29,8 +29,11 @@ export default function Layout() {
       }`}>
         <div className="h-16 flex items-center justify-between px-6 border-b border-borderC shrink-0">
           <div className="flex items-center">
-            <Droplet className="text-brandBlue mr-2" fill="currentColor" />
-            <h1 className="text-xl font-bold tracking-tight">NWIS</h1>
+            <img src="/logo.png" alt="PSM Logo" className="h-7 mr-2.5 object-contain" />
+            <div>
+              <h1 className="text-lg font-extrabold tracking-wider leading-none">PSM</h1>
+              <p className="text-[9px] text-textMuted font-bold tracking-widest uppercase mt-0.5">Probing Snag Map</p>
+            </div>
           </div>
           <button onClick={() => setMobileMenuOpen(false)} className="md:hidden text-textMuted hover:text-white">
             <X size={20} />
@@ -75,8 +78,10 @@ export default function Layout() {
               <Menu size={22} />
             </button>
             <div>
-              <h2 className="text-sm sm:text-lg font-bold">Intelligent Drilling Intelligence System</h2>
-              <p className="text-[10px] sm:text-xs text-brandBlue uppercase tracking-widest font-semibold mt-0.5">Global Energy Operations</p>
+              <h2 className="text-sm sm:text-lg font-bold flex items-center gap-2">
+                <span className="bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent font-extrabold">PSM</span> — Probing Snag Map
+              </h2>
+              <p className="text-[10px] sm:text-xs text-brandBlue uppercase tracking-widest font-semibold mt-0.5">Intelligent Drilling & Georisk Intelligence Platform</p>
             </div>
           </div>
           <div className="hidden md:flex gap-8 text-xs font-bold text-textMuted uppercase tracking-widest">
