@@ -29,11 +29,7 @@ export default function Layout() {
       }`}>
         <div className="h-16 flex items-center justify-between px-6 border-b border-borderC shrink-0">
           <div className="flex items-center">
-            <img src="/logo.png" alt="PSM Logo" className="h-7 mr-2.5 object-contain" />
-            <div>
-              <h1 className="text-lg font-extrabold tracking-wider leading-none">PSM</h1>
-              <p className="text-[9px] text-textMuted font-bold tracking-widest uppercase mt-0.5">Probing Snag Map</p>
-            </div>
+            <img src="/logo.png" alt="PSM Probing Snag Map" className="h-9 object-contain mix-blend-screen" />
           </div>
           <button onClick={() => setMobileMenuOpen(false)} className="md:hidden text-textMuted hover:text-white">
             <X size={20} />
