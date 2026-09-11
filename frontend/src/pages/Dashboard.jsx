@@ -3,7 +3,48 @@ import { MapPin, BarChart2, Sparkles, ChevronDown, Droplet, CheckCircle2, AlertT
 import { MapContainer, TileLayer, CircleMarker, Circle, Tooltip, useMapEvents } from 'react-leaflet';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
-import { MOCK_SITES as PINS } from '../data/mockSites';
+import { MOCK_SITES } from '../data/mockSites';
+import { HISTORICAL_INCIDENTS, DEMO_DATA } from '../data/intelligenceData';
+
+// Map uploaded synthetic demo data into map pins
+const demoPins = DEMO_DATA.wells.map((w, i) => {
+  let pos = [26.5 + (i * 0.1), 93.0 + (i * 0.1)]; 
+  if (w.basin.includes('Cambay')) pos = [22.5 + (i * 0.1), 71.5 + (i * 0.1)];
+  return {
+    id: w.well_id,
+    pos,
+    status: w.scenario.includes('kick') ? 'yellow' : 'red',
+    state: w.basin,
+    name: w.well_id,
+    operator: 'Synthetic Demo',
+    spud: 'Simulation',
+    td: 'Unknown',
+    formation: w.formation,
+    rca: w.scenario
+  };
+});
+
+// Map uploaded historical incidents into map pins
+const incidentPins = HISTORICAL_INCIDENTS.map((inc, i) => {
+  let pos = [0, 0];
+  if (inc.region.includes('Gulf of Mexico')) pos = [28.7, -88.3];
+  else if (inc.region.includes('Timor Sea')) pos = [-11.0, 126.0];
+  else if (inc.region.includes('North Sea')) pos = [56.5, 3.2];
+  return {
+    id: inc.incident_id,
+    pos: [pos[0] + (i * 0.05), pos[1] + (i * 0.05)], 
+    status: 'red',
+    state: inc.region,
+    name: inc.incident_name,
+    operator: inc.operator,
+    spud: inc.date,
+    td: inc.water_depth,
+    formation: 'Major Incident',
+    rca: inc.failure_subtype
+  };
+});
+
+const PINS = [...MOCK_SITES, ...demoPins, ...incidentPins];
 
 const BAR_DATA = [
   { day: '3 Sep', active: 10, inactive: 4 },
@@ -159,7 +200,7 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <MapContainer center={[23.5, 78.0]} zoom={5} style={{ width: '100%', height: '100%' }} zoomControl={false}>
+            <MapContainer center={[20, 0]} zoom={2} style={{ width: '100%', height: '100%' }} zoomControl={false} minZoom={2}>
               <MapInteractionHandler setCustomLocation={setCustomLocation} setSelectedPinId={setSelectedPinId} />
               
               {mapMode === 'satellite' ? (
