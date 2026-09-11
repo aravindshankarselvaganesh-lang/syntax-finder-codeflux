@@ -268,18 +268,18 @@ export default function Dashboard() {
                 [{demoStage}] TRIGGER SCENARIO
               </button>
               {/* Radius Slider (Now outside map) */}
-              <div className="flex items-center gap-3 bg-bgPanel border border-borderC rounded-lg px-4 py-2 w-full sm:w-64">
+              <div className="flex items-center gap-2.5 bg-bgPanel border border-borderC rounded-lg px-3.5 py-2 w-full sm:w-[270px] shrink-0 overflow-hidden">
                 <span className="text-xs text-textMuted font-medium uppercase tracking-wide shrink-0">Radius</span>
                 <input 
                   type="range" 
-                  min="10" 
+                  min="5" 
                   max="2000" 
-                  step="10" 
+                  step="5" 
                   value={radiusKm} 
                   onChange={(e) => setRadiusKm(Number(e.target.value))}
-                  className="flex-1 h-1 bg-borderC rounded-lg appearance-none cursor-pointer accent-brandBlue outline-none"
+                  className="flex-1 min-w-0 h-1 bg-borderC rounded-lg appearance-none cursor-pointer accent-brandBlue outline-none"
                 />
-                <span className="font-bold text-brandBlue bg-brandBlue/10 px-2 py-0.5 rounded text-xs shrink-0">{radiusKm} km</span>
+                <span className="font-bold text-brandBlue bg-brandBlue/10 px-2 py-0.5 rounded text-xs shrink-0 whitespace-nowrap">{radiusKm} km</span>
               </div>
 
               {/* Map/Satellite Toggle (Now outside map) */}
