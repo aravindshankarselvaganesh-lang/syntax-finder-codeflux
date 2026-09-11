@@ -3,7 +3,7 @@ import {
   BookOpen, Award, PlayCircle, ShieldAlert, ArrowRight, ArrowLeft, 
   Activity, AlertTriangle, ChevronRight, FileText, CheckCircle2, 
   HelpCircle, Sparkles, Check, RefreshCw, ExternalLink, Compass, 
-  Terminal, Layers
+  Terminal, Layers, X
 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { HISTORICAL_INCIDENTS } from '../data/intelligenceData';
@@ -351,14 +351,43 @@ export default function LearningLab() {
     return <CaseStudyViewer caseData={selectedCase} onBack={() => setActiveView('home')} />;
   }
 
-  if (activeView === 'course') {
+  if (activeView === 'course' && selectedCourse) {
     return (
-      <CourseViewer 
-        course={selectedCourse} 
-        progress={courseProgress[selectedCourse.id] || 0} 
-        onUpdateProgress={(p) => handleUpdateProgress(selectedCourse.id, p)}
-        onBack={() => setActiveView('home')} 
-      />
+      <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md overflow-y-auto p-4 md:p-8 flex justify-center items-start animate-fadeIn">
+        <div className="bg-bgCard border border-purple-500/30 rounded-2xl w-full max-w-5xl p-6 md:p-8 shadow-2xl relative my-auto min-h-[70vh] space-y-6">
+          <div className="flex justify-between items-center pb-4 border-b border-borderC">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-purple-500/20 text-purple-400">
+                <BookOpen size={24} />
+              </div>
+              <div>
+                <span className="text-[10px] font-mono font-bold text-purple-400 uppercase tracking-widest block">PSM Study Guide & Technical Manual</span>
+                <h2 className="text-xl md:text-2xl font-bold text-white">{selectedCourse.title}</h2>
+              </div>
+            </div>
+            <button 
+              onClick={() => {
+                setSelectedCourse(null);
+                setActiveView('home');
+              }}
+              className="p-2.5 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer flex items-center gap-1.5 text-xs font-bold shadow-md"
+            >
+              <X size={18} />
+              <span>Close Study Guide</span>
+            </button>
+          </div>
+
+          <CourseViewer 
+            course={selectedCourse} 
+            progress={courseProgress[selectedCourse.id] || 0} 
+            onUpdateProgress={(p) => handleUpdateProgress(selectedCourse.id, p)}
+            onBack={() => {
+              setSelectedCourse(null);
+              setActiveView('home');
+            }} 
+          />
+        </div>
+      </div>
     );
   }
 
@@ -472,21 +501,36 @@ function CourseCard({ course, progress, onClick }) {
         </p>
       </div>
 
-      <div>
-        <div className="flex justify-between text-xs text-textMuted mb-2 font-medium">
-          <span>Module Progress</span>
-          <span className={isComplete ? "text-accentGreen font-bold" : "text-purple-400 font-bold"}>
-            {progress}% {isComplete && "✓ Passed"}
-          </span>
+      <div className="space-y-4">
+        <div>
+          <div className="flex justify-between text-xs text-textMuted mb-2 font-medium">
+            <span>Module Progress</span>
+            <span className={isComplete ? "text-accentGreen font-bold" : "text-purple-400 font-bold"}>
+              {progress}% {isComplete && "✓ Passed"}
+            </span>
+          </div>
+          <div className="h-2 w-full bg-bgMain rounded-full overflow-hidden border border-borderC/50">
+            <div 
+              className={`h-full transition-all duration-500 rounded-full ${
+                isComplete ? "bg-accentGreen" : "bg-purple-500"
+              }`} 
+              style={{ width: `${progress}%` }}
+            ></div>
+          </div>
         </div>
-        <div className="h-2 w-full bg-bgMain rounded-full overflow-hidden border border-borderC/50">
-          <div 
-            className={`h-full transition-all duration-500 rounded-full ${
-              isComplete ? "bg-accentGreen" : "bg-purple-500"
-            }`} 
-            style={{ width: `${progress}%` }}
-          ></div>
-        </div>
+
+        <button 
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onClick();
+          }}
+          className="w-full py-2.5 px-4 bg-purple-600/20 hover:bg-purple-600 border border-purple-500/40 hover:border-purple-500 text-purple-300 hover:text-white rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm group-hover:bg-purple-600 group-hover:text-white"
+        >
+          <BookOpen size={15} />
+          <span>Open Study Guide, Notes & Quiz</span>
+          <ArrowRight size={14} />
+        </button>
       </div>
     </div>
   );
