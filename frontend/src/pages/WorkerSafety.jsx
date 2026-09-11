@@ -7,12 +7,13 @@ const INITIAL_HAZARDS = [
 ];
 
 export default function WorkerSafety() {
-  const [hazards, setHazards] = useState(INITIAL_HAZARDS);
-  const [checklist, setChecklist] = useState({
-    h2s: true,
-    gloves: true,
-    route: true,
-    jsa: false
+  const [hazards, setHazards] = useState(() => {
+    const saved = localStorage.getItem('nwis_hazards');
+    return saved ? JSON.parse(saved) : INITIAL_HAZARDS;
+  });
+  const [checklist, setChecklist] = useState(() => {
+    const saved = localStorage.getItem('nwis_checklist');
+    return saved ? JSON.parse(saved) : { h2s: true, gloves: true, route: true, jsa: false };
   });
   const [showHazardModal, setShowHazardModal] = useState(false);
   const [newHazardTitle, setNewHazardTitle] = useState('');
@@ -20,7 +21,11 @@ export default function WorkerSafety() {
   const [newHazardType, setNewHazardType] = useState('yellow');
 
   const toggleCheck = (key) => {
-    setChecklist(prev => ({ ...prev, [key]: !prev[key] }));
+    setChecklist(prev => {
+      const updated = { ...prev, [key]: !prev[key] };
+      localStorage.setItem('nwis_checklist', JSON.stringify(updated));
+      return updated;
+    });
   };
 
   const completedCount = Object.values(checklist).filter(Boolean).length;
@@ -28,13 +33,15 @@ export default function WorkerSafety() {
   const handleAddHazard = (e) => {
     e.preventDefault();
     if (!newHazardTitle) return;
-    setHazards([{
+    const updated = [{
       id: Date.now(),
       title: newHazardTitle,
       desc: newHazardDesc || 'Reported by field worker.',
       type: newHazardType,
       status: 'Active'
-    }, ...hazards]);
+    }, ...hazards];
+    setHazards(updated);
+    localStorage.setItem('nwis_hazards', JSON.stringify(updated));
     setShowHazardModal(false);
     setNewHazardTitle('');
     setNewHazardDesc('');

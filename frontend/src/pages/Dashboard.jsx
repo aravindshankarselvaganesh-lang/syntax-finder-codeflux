@@ -123,50 +123,33 @@ export default function Dashboard() {
     const fetchAI = async () => {
       setLoadingAi(true);
       setAiData(null);
-      try {
-        const res = await fetch('/api/ai/analyze', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            well_id: activeTarget.id,
-            region: activeTarget.state,
-            telemetry_state: { spp: 2940, rop: 18.4, torque: 14.8 }
-          })
-        });
-        if (res.ok) {
-          const data = await res.json();
-          setAiData(data);
+
+      // Execute client-side intelligence evaluation instantly (static mode)
+      setTimeout(() => {
+        if (activeTarget.status === 'custom') {
+          const lat = customLocation?.[0] || 0;
+          const lng = customLocation?.[1] || 0;
+          const isRisky = Math.abs((Math.floor(lat * 100) + Math.floor(lng * 100)) % 3) === 0;
+          const maxDepth = Math.floor(1500 + Math.abs(lat * lng) % 3000);
+          
+          setAiData({
+            confidence: isRisky ? 95 : 82,
+            root_cause: isRisky ? "High Georisk Zone" : "Area Pre-Assessment",
+            historical_matches: [4,5],
+            recommendation: `No existing drills found in this radius. Based on predictive analogues:\n\n${isRisky ? 'RISKY: Cannot drill safely here due to high fault-line probability and poor geomechanics.' : `Clearance: Safe to drill up to ${maxDepth}m vertically. Expect abnormal pore pressures beyond this depth.`}`
+          });
         } else {
-          throw new Error("API not ready");
+          setAiData({
+            confidence: activeTarget.status === 'red' ? 87 : activeTarget.status === 'yellow' ? 65 : 95,
+            root_cause: activeTarget.rca,
+            historical_matches: [1,2,3],
+            recommendation: activeTarget.status === 'red' ? 
+              `Critical Alert: ${activeTarget.rca}. Inspect pressure-control equipment immediately.\nHistorical drills in this area reached ${activeTarget.td}.` : 
+              `Proceed with normal operations. Parameters are stable.\nCurrent well TD is ${activeTarget.td}. Safe to proceed further.`
+          });
         }
-      } catch (err) {
-        setTimeout(() => {
-          if (activeTarget.status === 'custom') {
-            const lat = customLocation?.[0] || 0;
-            const lng = customLocation?.[1] || 0;
-            // Generate a deterministic risk based on coordinates
-            const isRisky = Math.abs((Math.floor(lat * 100) + Math.floor(lng * 100)) % 3) === 0;
-            const maxDepth = Math.floor(1500 + Math.abs(lat * lng) % 3000);
-            
-            setAiData({
-              confidence: isRisky ? 95 : 82,
-              root_cause: isRisky ? "High Georisk Zone" : "Area Pre-Assessment",
-              historical_matches: [4,5],
-              recommendation: `No existing drills found in this radius. Based on predictive analogues:\n\n${isRisky ? 'RISKY: Cannot drill safely here due to high fault-line probability and poor geomechanics.' : `Clearance: Safe to drill up to ${maxDepth}m vertically. Expect abnormal pore pressures beyond this depth.`}`
-            });
-          } else {
-            setAiData({
-              confidence: activeTarget.status === 'red' ? 87 : activeTarget.status === 'yellow' ? 65 : 95,
-              root_cause: activeTarget.rca,
-              historical_matches: [1,2,3],
-              recommendation: activeTarget.status === 'red' ? 
-                `Critical Alert: ${activeTarget.rca}. Inspect pressure-control equipment immediately.\nHistorical drills in this area reached ${activeTarget.td}.` : 
-                `Proceed with normal operations. Parameters are stable.\nCurrent well TD is ${activeTarget.td}. Safe to proceed further.`
-            });
-          }
-          setLoadingAi(false);
-        }, 50); // Immediate response per user request
-      }
+        setLoadingAi(false);
+      }, 50);
     };
     fetchAI();
   }, [selectedPinId, customLocation, pins]);

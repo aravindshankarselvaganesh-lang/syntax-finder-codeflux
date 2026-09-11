@@ -2,11 +2,12 @@ import React, { useState, useRef, useEffect } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import { 
   Activity, MapPin, BarChart2, FileText, Bell, Sparkles, Settings,
-  AlertTriangle, BrainCircuit, Database, ChevronDown, Droplet, BookOpen, ShieldAlert, Users, X
+  AlertTriangle, BrainCircuit, Database, ChevronDown, Droplet, BookOpen, ShieldAlert, Users, X, Menu
 } from 'lucide-react';
 
 export default function Layout() {
   const [showNotifs, setShowNotifs] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const notifRef = useRef(null);
 
   useEffect(() => {
@@ -23,10 +24,17 @@ export default function Layout() {
     <div className="flex h-screen bg-bgMain text-textMain font-sans overflow-hidden">
       
       {/* SIDEBAR */}
-      <div className="w-64 bg-bgPanel border-r border-borderC flex flex-col z-20">
-        <div className="h-16 flex items-center px-6 border-b border-borderC shrink-0">
-          <Droplet className="text-brandBlue mr-2" fill="currentColor" />
-          <h1 className="text-xl font-bold tracking-tight">NWIS</h1>
+      <div className={`fixed inset-y-0 left-0 w-64 bg-bgPanel border-r border-borderC flex flex-col z-30 transition-transform duration-300 md:static md:translate-x-0 ${
+        mobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+      }`}>
+        <div className="h-16 flex items-center justify-between px-6 border-b border-borderC shrink-0">
+          <div className="flex items-center">
+            <Droplet className="text-brandBlue mr-2" fill="currentColor" />
+            <h1 className="text-xl font-bold tracking-tight">NWIS</h1>
+          </div>
+          <button onClick={() => setMobileMenuOpen(false)} className="md:hidden text-textMuted hover:text-white">
+            <X size={20} />
+          </button>
         </div>
         
         <nav className="flex-1 py-6 px-4 space-y-1 overflow-y-auto">
@@ -61,10 +69,15 @@ export default function Layout() {
       <div className="flex-1 flex flex-col min-w-0">
         
         {/* HEADER */}
-        <header className="h-16 bg-bgPanel border-b border-borderC flex items-center justify-between px-8 shrink-0 z-10 relative">
-          <div>
-            <h2 className="text-lg font-bold">Intelligent Drilling Intelligence System</h2>
-            <p className="text-xs text-brandBlue uppercase tracking-widest font-semibold mt-0.5">Global Energy Operations</p>
+        <header className="h-16 bg-bgPanel border-b border-borderC flex items-center justify-between px-4 sm:px-8 shrink-0 z-10 relative">
+          <div className="flex items-center gap-3">
+            <button onClick={() => setMobileMenuOpen(true)} className="md:hidden text-textMuted hover:text-white p-1">
+              <Menu size={22} />
+            </button>
+            <div>
+              <h2 className="text-sm sm:text-lg font-bold">Intelligent Drilling Intelligence System</h2>
+              <p className="text-[10px] sm:text-xs text-brandBlue uppercase tracking-widest font-semibold mt-0.5">Global Energy Operations</p>
+            </div>
           </div>
           <div className="hidden md:flex gap-8 text-xs font-bold text-textMuted uppercase tracking-widest">
             <span>Understand the Drill.</span>

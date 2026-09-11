@@ -149,7 +149,28 @@ export default function AIInsights() {
             <div ref={messagesEndRef} />
           </div>
 
-          <div className="p-4 bg-bgPanel border-t border-borderC">
+          <div className="p-4 bg-bgPanel border-t border-borderC space-y-3">
+            <div className="flex gap-2 text-xs overflow-x-auto pb-1 shrink-0">
+              <button 
+                onClick={() => setQuery("Analyze wellbore instability risk for Assam-07")}
+                className="px-2.5 py-1 bg-bgCard hover:bg-brandBlue/20 text-brandBlue border border-brandBlue/30 rounded-full transition-colors whitespace-nowrap cursor-pointer"
+              >
+                ⚡ Assam-07 Risk
+              </button>
+              <button 
+                onClick={() => setQuery("What were the root causes of the Macondo Blowout?")}
+                className="px-2.5 py-1 bg-bgCard hover:bg-accentRed/20 text-accentRed border border-accentRed/30 rounded-full transition-colors whitespace-nowrap cursor-pointer"
+              >
+                💥 Macondo Blowout
+              </button>
+              <button 
+                onClick={() => setQuery("List DGH and OIL canonical source catalogs")}
+                className="px-2.5 py-1 bg-bgCard hover:bg-accentYellow/20 text-accentYellow border border-accentYellow/30 rounded-full transition-colors whitespace-nowrap cursor-pointer"
+              >
+                📜 Canonical Sources
+              </button>
+            </div>
+
             <div className="relative flex items-center">
               <input 
                 type="text" 
@@ -157,15 +178,14 @@ export default function AIInsights() {
                 placeholder="Ask Copilot about Macondo, blowout preventers, or wellbore instability..."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                onKeyDown={handleKeyDown}
-                disabled={isTyping}
+                onKeyDown={(e) => e.key === 'Enter' && handleSend()}
               />
               <button 
                 onClick={handleSend}
-                disabled={isTyping || !query.trim()}
-                className="absolute right-2 w-8 h-8 bg-brandBlue rounded flex items-center justify-center hover:bg-blue-600 transition-colors disabled:opacity-50"
+                disabled={!query.trim() || isTyping}
+                className="absolute right-2 p-2 bg-brandBlue hover:bg-blue-600 disabled:opacity-50 text-white rounded-md transition-colors cursor-pointer"
               >
-                <Send size={14} className="text-white" />
+                <Send size={16} />
               </button>
             </div>
           </div>

@@ -3,7 +3,10 @@ import { Search, Filter, MoreVertical, MapPin, Activity, X, Plus } from 'lucide-
 import { MOCK_SITES } from '../data/mockSites';
 
 export default function DrillingSites() {
-  const [sites, setSites] = useState(MOCK_SITES);
+  const [sites, setSites] = useState(() => {
+    const saved = localStorage.getItem('nwis_sites');
+    return saved ? JSON.parse(saved) : MOCK_SITES;
+  });
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
@@ -28,7 +31,9 @@ export default function DrillingSites() {
       formation: 'Upper Formation',
       rca: newSite.rca
     };
-    setSites([siteObj, ...sites]);
+    const updated = [siteObj, ...sites];
+    setSites(updated);
+    localStorage.setItem('nwis_sites', JSON.stringify(updated));
     setShowAddModal(false);
     setNewSite({ id: '', name: '', state: '', td: '', status: 'green', rca: 'Optimal Operations' });
   };
