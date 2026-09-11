@@ -75,17 +75,18 @@ function MapInteractionHandler({ setCustomLocation, setSelectedPinId }) {
   return null;
 }
 
-// Calculate distance in km between two GPS coordinates
-function getDistanceKm(lat1, lon1, lat2, lon2) {
-  const R = 6371;
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLon = (lon2 - lon1) * Math.PI / 180;
-  const a = 
-    Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-    Math.sin(dLon/2) * Math.sin(dLon/2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-  return R * c;
+// Reverse geocoding helper to return place/region names for lat/lng coordinates
+function getPlaceName(lat, lng) {
+  if (lat >= 24 && lat <= 29 && lng >= 90 && lng <= 97) return "Upper Assam Basin (Assam, India)";
+  if (lat >= 20 && lat <= 25 && lng >= 70 && lng <= 75) return "Cambay Basin (Gujarat, India)";
+  if (lat >= 23 && lat <= 28 && lng >= 69 && lng <= 75) return "Rajasthan Onshore Field (India)";
+  if (lat >= 22 && lat <= 25 && lng >= 91 && lng <= 94) return "Tripura Fold Belt (India)";
+  if (lat >= 15 && lat <= 19 && lng >= 80 && lng <= 86) return "Krishna-Godavari Offshore (KG Basin)";
+  if (lat >= 18 && lat <= 20 && lng >= 70 && lng <= 73) return "Mumbai High Offshore (Arabian Sea)";
+  if (lat >= 25 && lat <= 31 && lng >= -97 && lng <= -85) return "Gulf of Mexico (Deepwater MC-252)";
+  if (lat >= -15 && lat <= -8 && lng >= 120 && lng <= 130) return "Timor Sea (Montara Block)";
+  if (lat >= 54 && lat <= 62 && lng >= -2 && lng <= 6) return "North Sea (Ekofisk Field)";
+  return `Coordinates [${lat >= 0 ? lat.toFixed(2) + '°N' : Math.abs(lat).toFixed(2) + '°S'}, ${lng >= 0 ? lng.toFixed(2) + '°E' : Math.abs(lng).toFixed(2) + '°W'}]`;
 }
 
 export default function Dashboard() {
@@ -113,6 +114,7 @@ export default function Dashboard() {
     if (!customLocation) return null;
     const lat = customLocation[0];
     const lng = customLocation[1];
+    const placeName = getPlaceName(lat, lng);
     const isRisky = Math.abs((Math.floor(lat * 100) + Math.floor(lng * 100)) % 3) === 0;
     const maxDepth = Math.floor(1500 + Math.abs(lat * lng) % 3000);
     
@@ -126,25 +128,28 @@ export default function Dashboard() {
     if (count > 0) {
       const names = nearbyWells.map(w => w.name).join(', ');
       const depths = nearbyWells.map(w => w.td).join(', ');
-      operatorText = `${count} Offset Well(s) Found in Radius (${radiusKm} km)`;
+      operatorText = `${count} Offset Well(s) Found near ${placeName} (${radiusKm} km radius)`;
       safeTdText = `Offset Depths: ${depths}`;
       formationText = [...new Set(nearbyWells.map(w => w.formation))].join(', ');
       statusText = `Offset Correlation: ${count} Active/Historical Well(s) [${names}]`;
-      recommendationText = `📍 ${count} nearby offset well(s) identified within ${radiusKm} km targeting circle:\n\n` +
+      recommendationText = `📍 Location: ${placeName}\n` +
+        `\n${count} nearby offset well(s) identified within ${radiusKm} km targeting circle:\n\n` +
         nearbyWells.map(w => `• Well ${w.name} (${w.state}): TD ${w.td} — Diagnostic: ${w.rca}`).join('\n') +
         `\n\nAI Guidance: Correlating pore pressure trends with nearby offset well ${nearbyWells[0].name}. Recommended mud weight baseline: 1.22 - 1.28 SG.`;
     } else {
-      operatorText = `No Offset Wells Found in Radius (${radiusKm} km)`;
+      operatorText = `No Offset Wells Found near ${placeName} (${radiusKm} km radius)`;
       safeTdText = isRisky ? 'RISKY (Cannot Drill Safely)' : `${maxDepth.toLocaleString()} m (Predicted Safe TD)`;
       formationText = isRisky ? 'High Seismic Fault Zone' : 'Analogous Basin Lithology';
       statusText = isRisky ? 'RISKY — Fault Line Hazard' : `Clearance — Safe up to ${maxDepth.toLocaleString()} m`;
-      recommendationText = `No existing offset drills found within ${radiusKm} km radius circle.\n\n` +
+      recommendationText = `📍 Location: ${placeName}\n\n` +
+        `No existing offset drills found within ${radiusKm} km radius circle.\n\n` +
         (isRisky 
           ? 'RISKY: Cannot drill safely here due to high fault-line probability and severe geomechanical instability.' 
           : `Clearance: Safe to drill up to ${maxDepth.toLocaleString()}m vertically based on regional geological analogues. Expect abnormal pore pressures beyond this depth.`);
     }
 
     return {
+      placeName,
       count,
       isRisky,
       maxDepth,
@@ -160,8 +165,8 @@ export default function Dashboard() {
     ? pins.find(p => p.id === selectedPinId)
     : customLocation && customAnalysis ? {
         id: 'CUSTOM',
-        name: `Lat: ${customLocation[0].toFixed(2)}°, Lng: ${customLocation[1].toFixed(2)}°`,
-        state: customAnalysis.count > 0 ? `Sector Radius (${radiusKm} km)` : 'Un-Drilled Sector',
+        name: customAnalysis.placeName,
+        state: `Clicked Target [${customLocation[0].toFixed(4)}°, ${customLocation[1].toFixed(4)}°]`,
         operator: customAnalysis.operatorText,
         spud: customAnalysis.count > 0 ? 'Offset Data Hydrated' : 'Pre-Drill Evaluation',
         td: customAnalysis.safeTdText,
@@ -283,26 +288,39 @@ export default function Dashboard() {
                 <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}" attribution="Tiles &copy; Esri" />
               )}
               
-              {customLocation && !selectedPinId && (
-                <Circle center={customLocation} radius={radiusKm * 1000} pathOptions={{ color: '#2C81FF', fillColor: '#2C81FF', fillOpacity: 0.15, weight: 2, dashArray: '4 4' }} />
-              )}
-              
-              {pins.map(p => {
-                const isSelected = p.id === selectedPinId;
-                return (
-                  <CircleMarker key={p.id} center={p.pos} radius={isSelected ? 8 : 6} eventHandlers={{ click: () => setSelectedPinId(p.id) }}
-                    pathOptions={{ fillColor: p.status === 'red' ? '#F43F5E' : p.status === 'yellow' ? '#FBBF24' : '#10B981', color: isSelected ? '#fff' : 'rgba(255,255,255,0.2)', weight: isSelected ? 2 : 1, fillOpacity: 0.9 }} className="cursor-pointer">
-                    {isSelected && (
-                      <Tooltip permanent direction="top" className="bg-bgPanel border-borderC text-white font-bold shadow-2xl" offset={[0, -12]}>
+                {customLocation && !selectedPinId && (
+                  <>
+                    <Circle center={customLocation} radius={radiusKm * 1000} pathOptions={{ color: '#2C81FF', fillColor: '#2C81FF', fillOpacity: 0.15, weight: 2, dashArray: '4 4' }} />
+                    <CircleMarker center={customLocation} radius={8} pathOptions={{ fillColor: '#2C81FF', color: '#fff', weight: 3, fillOpacity: 1 }}>
+                      <Tooltip permanent direction="top" className="bg-bgPanel border border-brandBlue/50 text-white font-bold shadow-2xl" offset={[0, -12]}>
                         <div className="flex flex-col items-center">
-                          <span className="text-[10px] uppercase text-textMuted tracking-wider mb-1">{p.name}</span>
-                          <MapPin size={16} className="text-white" />
+                          <span className="text-xs text-brandBlue font-extrabold flex items-center gap-1"><Crosshair size={12}/> {getPlaceName(customLocation[0], customLocation[1])}</span>
+                          <span className="text-[10px] text-textMuted font-mono">[{customLocation[0].toFixed(2)}°, {customLocation[1].toFixed(2)}°]</span>
                         </div>
                       </Tooltip>
-                    )}
-                  </CircleMarker>
-                );
-              })}
+                    </CircleMarker>
+                  </>
+                )}
+                
+                {pins.map(p => {
+                  const isSelected = p.id === selectedPinId;
+                  const isInsideRadius = customLocation && getDistanceKm(customLocation[0], customLocation[1], p.pos[0], p.pos[1]) <= radiusKm;
+                  const showTooltip = isSelected || isInsideRadius;
+                  
+                  return (
+                    <CircleMarker key={p.id} center={p.pos} radius={isSelected ? 9 : isInsideRadius ? 7 : 6} eventHandlers={{ click: () => setSelectedPinId(p.id) }}
+                      pathOptions={{ fillColor: p.status === 'red' ? '#F43F5E' : p.status === 'yellow' ? '#FBBF24' : '#10B981', color: isSelected ? '#fff' : isInsideRadius ? '#2C81FF' : 'rgba(255,255,255,0.2)', weight: isSelected || isInsideRadius ? 2 : 1, fillOpacity: 0.9 }} className="cursor-pointer">
+                      {showTooltip && (
+                        <Tooltip permanent direction="top" className={`border shadow-2xl ${isInsideRadius ? 'bg-bgPanel border-brandBlue text-white' : 'bg-bgPanel border-borderC text-white font-bold'}`} offset={[0, -12]}>
+                          <div className="flex flex-col items-center">
+                            <span className="text-[11px] font-bold text-white tracking-wide">{p.name}</span>
+                            <span className="text-[9px] text-brandBlue font-semibold">TD: {p.td}</span>
+                          </div>
+                        </Tooltip>
+                      )}
+                    </CircleMarker>
+                  );
+                })}
             </MapContainer>
           </div>
         </div>
