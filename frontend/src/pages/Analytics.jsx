@@ -1,98 +1,122 @@
-import React from 'react';
-import { BarChart2, TrendingUp, TrendingDown, Activity, Clock } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
-
-const DEPTH_DATA = [
-  { day: 'Day 1', rop: 12, depth: 500 },
-  { day: 'Day 2', rop: 14, depth: 850 },
-  { day: 'Day 3', rop: 18, depth: 1300 },
-  { day: 'Day 4', rop: 15, depth: 1600 },
-  { day: 'Day 5', rop: 9, depth: 1750 },
-  { day: 'Day 6', rop: 5, depth: 1800 },
-  { day: 'Day 7', rop: 2, depth: 1820 },
-];
+import React, { useState, useEffect } from 'react';
+import { BarChart2, Activity, Play, Pause, RefreshCw } from 'lucide-react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 
 export default function Analytics() {
+  const [data, setData] = useState([]);
+  const [isSimulating, setIsSimulating] = useState(true);
+
+  // Initialize data
+  useEffect(() => {
+    const initialData = Array.from({ length: 30 }, (_, i) => ({
+      time: `-${30 - i}s`,
+      wob: 12 + Math.random() * 2,
+      rpm: 120 + Math.random() * 5,
+      spp: 2800 + Math.random() * 100,
+      torque: 15 + Math.random() * 2
+    }));
+    setData(initialData);
+  }, []);
+
+  // Simulation loop
+  useEffect(() => {
+    if (!isSimulating) return;
+    
+    const interval = setInterval(() => {
+      setData(prev => {
+        const newData = [...prev.slice(1)];
+        const last = prev[prev.length - 1];
+        
+        // Add random walk variations
+        newData.push({
+          time: 'Now',
+          wob: Math.max(5, Math.min(25, last.wob + (Math.random() - 0.5) * 1.5)),
+          rpm: Math.max(60, Math.min(180, last.rpm + (Math.random() - 0.5) * 4)),
+          spp: Math.max(1500, Math.min(3500, last.spp + (Math.random() - 0.5) * 50)),
+          torque: Math.max(5, Math.min(30, last.torque + (Math.random() - 0.5) * 1.5))
+        });
+        
+        // Fix up the time labels for the old points
+        return newData.map((d, i) => ({ ...d, time: i === 29 ? 'Now' : `-${29 - i}s` }));
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [isSimulating]);
+
   return (
     <div className="h-full flex flex-col space-y-6 overflow-y-auto pb-8">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center mb-2">
         <div>
-          <h2 className="text-2xl font-bold">Performance Analytics</h2>
-          <p className="text-textMuted text-sm">Fleet-wide rate of penetration and non-productive time analysis.</p>
+          <h2 className="text-2xl font-bold flex items-center gap-2"><BarChart2 className="text-brandBlue"/> Telemetry Analytics</h2>
+          <p className="text-textMuted text-sm mt-1">Live streaming sensor data from active drilling sites.</p>
         </div>
-        <div className="bg-bgPanel border border-borderC rounded-lg p-1 flex text-sm">
-          <button className="px-4 py-1.5 bg-brandBlue text-white rounded shadow">Fleet View</button>
-          <button className="px-4 py-1.5 text-textMuted hover:text-white transition-colors">Assam-07</button>
+        <div className="flex gap-2">
+          <button 
+            onClick={() => setIsSimulating(!isSimulating)}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-colors ${isSimulating ? 'bg-accentRed/20 text-accentRed hover:bg-accentRed/30' : 'bg-brandBlue/20 text-brandBlue hover:bg-brandBlue/30'}`}
+          >
+            {isSimulating ? <Pause size={16}/> : <Play size={16}/>}
+            {isSimulating ? 'PAUSE STREAM' : 'RESUME STREAM'}
+          </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-6">
-        <StatCard title="Average ROP" value="14.2 m/hr" trend="+2.4%" positive={true} icon={<Activity size={20} className="text-brandBlue"/>} />
-        <StatCard title="Total NPT" value="48 hrs" trend="-12%" positive={true} icon={<Clock size={20} className="text-accentYellow"/>} />
-        <StatCard title="Cost / Meter" value="$1,240" trend="+5.1%" positive={false} icon={<TrendingUp size={20} className="text-accentRed"/>} />
-        <StatCard title="Carbon Footprint" value="412 MT" trend="-2.1%" positive={true} icon={<TrendingDown size={20} className="text-accentGreen"/>} />
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <MetricCard title="Weight on Bit (WOB)" value={data.length ? data[29].wob.toFixed(1) : '0'} unit="klbs" trend="normal" />
+        <MetricCard title="Rotary Speed (RPM)" value={data.length ? data[29].rpm.toFixed(0) : '0'} unit="rpm" trend="normal" />
+        <MetricCard title="Standpipe Pressure (SPP)" value={data.length ? data[29].spp.toFixed(0) : '0'} unit="psi" trend="up" />
+        <MetricCard title="Torque" value={data.length ? data[29].torque.toFixed(1) : '0'} unit="kft-lb" trend="normal" />
       </div>
 
-      <div className="grid grid-cols-2 gap-6 h-[400px]">
-        {/* Chart 1 */}
-        <div className="bg-bgCard border border-borderC rounded-xl p-5 flex flex-col">
-          <h3 className="font-semibold mb-6 flex items-center gap-2"><BarChart2 size={18} className="text-textMuted"/> Depth vs Rate of Penetration</h3>
-          <div className="flex-1 min-h-0">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={DEPTH_DATA} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#23324A" vertical={false} />
-                <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#94A3B8' }} />
-                <YAxis yAxisId="left" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#94A3B8' }} />
-                <YAxis yAxisId="right" orientation="right" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#94A3B8' }} />
-                <RechartsTooltip cursor={{stroke: '#23324A'}} contentStyle={{backgroundColor: '#0E1623', border: '1px solid #23324A'}}/>
-                <Line yAxisId="left" type="monotone" dataKey="depth" stroke="#2C81FF" strokeWidth={3} dot={false} name="Depth (m)" />
-                <Line yAxisId="right" type="monotone" dataKey="rop" stroke="#10B981" strokeWidth={2} dot={false} name="ROP (m/hr)" />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* Chart 2 */}
-        <div className="bg-bgCard border border-borderC rounded-xl p-5 flex flex-col">
-          <h3 className="font-semibold mb-6 flex items-center gap-2"><Activity size={18} className="text-textMuted"/> Fleet Pressure Trends (Standpipe)</h3>
-          <div className="flex-1 min-h-0">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={DEPTH_DATA} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="colorRop" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#F43F5E" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#F43F5E" stopOpacity={0}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#23324A" vertical={false} />
-                <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#94A3B8' }} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#94A3B8' }} />
-                <RechartsTooltip cursor={{stroke: '#23324A'}} contentStyle={{backgroundColor: '#0E1623', border: '1px solid #23324A'}}/>
-                <Area type="monotone" dataKey="rop" stroke="#F43F5E" strokeWidth={2} fillOpacity={1} fill="url(#colorRop)" name="Pressure Anomaly Score" />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <ChartCard title="Weight on Bit vs Time" data={data} dataKey="wob" color="#2C81FF" unit="klbs" yDomain={[0, 30]}/>
+        <ChartCard title="Standpipe Pressure vs Time" data={data} dataKey="spp" color="#10B981" unit="psi" yDomain={[1000, 4000]}/>
+        <ChartCard title="Rotary Speed vs Time" data={data} dataKey="rpm" color="#FBBF24" unit="rpm" yDomain={[0, 200]}/>
+        <ChartCard title="Torque vs Time" data={data} dataKey="torque" color="#F43F5E" unit="kft-lb" yDomain={[0, 40]}/>
       </div>
     </div>
   );
 }
 
-function StatCard({ title, value, trend, positive, icon }) {
+function MetricCard({ title, value, unit, trend }) {
   return (
-    <div className="bg-bgCard border border-borderC rounded-xl p-5 relative overflow-hidden group">
-      <div className="absolute -right-4 -top-4 opacity-5 group-hover:opacity-10 transition-opacity transform group-hover:scale-110">
-        {React.cloneElement(icon, { size: 100 })}
+    <div className="bg-bgCard border border-borderC rounded-xl p-4 flex flex-col justify-between">
+      <h3 className="text-xs font-semibold text-textMuted uppercase tracking-wide mb-2">{title}</h3>
+      <div className="flex items-end gap-2">
+        <span className="text-2xl font-bold font-mono">{value}</span>
+        <span className="text-sm text-textMuted mb-1">{unit}</span>
       </div>
-      <div className="flex justify-between items-start mb-4 relative z-10">
-        <p className="text-sm font-medium text-textMuted">{title}</p>
-        <div className="p-2 rounded-lg bg-bgPanel border border-borderC">{icon}</div>
-      </div>
-      <div className="relative z-10">
-        <h4 className="text-3xl font-bold text-textMain mb-1">{value}</h4>
-        <p className={`text-xs font-semibold ${positive ? 'text-accentGreen' : 'text-accentRed'}`}>
-          {trend} <span className="text-textMuted font-normal ml-1">vs last month</span>
-        </p>
+    </div>
+  );
+}
+
+function ChartCard({ title, data, dataKey, color, unit, yDomain }) {
+  return (
+    <div className="bg-bgCard border border-borderC rounded-xl p-4">
+      <h3 className="text-sm font-semibold mb-4 flex items-center gap-2">
+        <Activity size={16} className="text-textMuted"/> {title}
+      </h3>
+      <div className="h-64 w-full">
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={data}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#2D3748" vertical={false} />
+            <XAxis dataKey="time" stroke="#718096" fontSize={10} tickMargin={10} />
+            <YAxis stroke="#718096" fontSize={10} domain={yDomain} tickFormatter={(val) => `${val} ${unit}`} width={60} />
+            <RechartsTooltip 
+              contentStyle={{ backgroundColor: '#1A202C', borderColor: '#2D3748', borderRadius: '8px' }}
+              itemStyle={{ color: '#E2E8F0' }}
+            />
+            <Line 
+              type="monotone" 
+              dataKey={dataKey} 
+              stroke={color} 
+              strokeWidth={2} 
+              dot={false}
+              isAnimationActive={false} // Disable recharts animation for smoother live updates
+            />
+          </LineChart>
+        </ResponsiveContainer>
       </div>
     </div>
   );

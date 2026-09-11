@@ -2,7 +2,7 @@ import React from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import { 
   Activity, MapPin, BarChart2, FileText, Bell, Sparkles, Settings,
-  AlertTriangle, BrainCircuit, Database, ChevronDown, Droplet, BookOpen
+  AlertTriangle, BrainCircuit, Database, ChevronDown, Droplet, BookOpen, ShieldAlert, Users
 } from 'lucide-react';
 
 export default function Layout() {
@@ -25,6 +25,9 @@ export default function Layout() {
           <NavItem to="/insights" icon={<BrainCircuit size={20} />} label="AI Predictor" />
           <NavItem to="/alerts" icon={<AlertTriangle size={20} />} label="Critical Alerts" />
           <NavItem to="/intelligence" icon={<Database size={20} />} label="Intelligence Base" />
+          <NavItem to="/worker" icon={<ShieldAlert size={20} />} label="Worker Safety" />
+          <NavItem to="/community" icon={<Users size={20} />} label="Community Portal" />
+          <NavItem to="/learning" icon={<BookOpen size={20} />} label="Learning Lab" />
           <NavItem to="/reports" icon={<FileText size={20} />} label="Daily Reports" />
           <NavItem to="/settings" icon={<Settings size={20} />} label="System Settings" />
         </nav>
@@ -52,10 +55,10 @@ export default function Layout() {
             <h1 className="text-sm font-semibold">Intelligent Drilling Intelligence System</h1>
             <p className="text-xs text-textMuted">Global Energy Operations</p>
           </div>
-          <div className="flex items-center space-x-6 text-sm text-textMuted hidden md:flex">
-            <span>Smarter Insights</span>
-            <span>Faster Responses</span>
-            <span>Zero Failures</span>
+          <div className="flex items-center space-x-6 text-sm text-textMuted hidden md:flex font-medium uppercase tracking-wider text-xs">
+            <span>Understand the Drill.</span>
+            <span>Predict the Risk.</span>
+            <span>Protect the People.</span>
           </div>
 
           <div className="flex items-center space-x-4">

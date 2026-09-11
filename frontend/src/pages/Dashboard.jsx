@@ -44,7 +44,9 @@ const incidentPins = HISTORICAL_INCIDENTS.map((inc, i) => {
   };
 });
 
-const PINS = [...MOCK_SITES, ...demoPins, ...incidentPins];
+const INITIAL_PINS = [...MOCK_SITES, ...demoPins, ...incidentPins];
+
+// Inside the Dashboard component, we will use useState(INITIAL_PINS)
 
 const BAR_DATA = [
   { day: '3 Sep', active: 10, inactive: 4 },
@@ -81,21 +83,41 @@ export default function Dashboard() {
   const [selectedPinId, setSelectedPinId] = useState('AS-07');
   const [customLocation, setCustomLocation] = useState(null);
   const [radiusKm, setRadiusKm] = useState(100);
+  const [pins, setPins] = useState(INITIAL_PINS);
+  const [demoStage, setDemoStage] = useState(0);
   const mapContainerRef = useRef(null);
 
   const activeTarget = selectedPinId 
-    ? PINS.find(p => p.id === selectedPinId)
+    ? pins.find(p => p.id === selectedPinId)
     : customLocation ? {
         id: 'CUSTOM',
         name: `Lat: ${customLocation[0].toFixed(2)}, Lng: ${customLocation[1].toFixed(2)}`,
         state: 'Custom Target',
-        operator: 'Global Explorations',
+        operator: 'N/A (No Drilling History)',
         spud: 'Pre-Drill Phase',
         td: 'TBD',
         formation: 'Survey Area',
         status: 'custom',
-        rca: 'Geospatial Assessment'
-      } : PINS.find(p => p.id === 'AS-07');
+        rca: 'Predictive assessment based on regional analogues.'
+      } : pins.find(p => p.id === 'AS-07');
+
+  const triggerDemoSequence = () => {
+    const nextStage = (demoStage + 1) % 4;
+    setDemoStage(nextStage);
+    
+    setPins(prev => prev.map(p => {
+      // Assuming 'ASSAM-07' is the ID in the demo data
+      if (p.id === 'ASSAM-07') {
+        if (nextStage === 0) return { ...p, status: 'green', rca: 'Normal Drilling' };
+        if (nextStage === 1) return { ...p, status: 'yellow', rca: 'Anomaly Detected: ROP dropping, Torque rising' };
+        if (nextStage === 2) return { ...p, status: 'red', rca: 'CRITICAL: Stuck Pipe Risk. AI RAG match found.' };
+        if (nextStage === 3) return { ...p, status: 'red', rca: 'INCIDENT ESCALATED: Worker Safety Evacuation' };
+      }
+      return p;
+    }));
+    
+    if (nextStage > 0) setSelectedPinId('ASSAM-07');
+  };
 
   useEffect(() => {
     const fetchAI = async () => {
@@ -141,17 +163,7 @@ export default function Dashboard() {
       }
     };
     fetchAI();
-  }, [selectedPinId, customLocation]);
-
-  const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      mapContainerRef.current?.requestFullscreen().catch(err => {
-        console.warn(`Error attempting to enable fullscreen: ${err.message}`);
-      });
-    } else {
-      document.exitFullscreen();
-    }
-  };
+  }, [selectedPinId, customLocation, pins]);
 
   return (
     <div className="h-full flex flex-col space-y-6 overflow-y-auto pb-8">
@@ -168,6 +180,9 @@ export default function Dashboard() {
             </div>
             
             <div className="flex flex-wrap items-center gap-4 w-full sm:w-auto">
+              <button onClick={triggerDemoSequence} className="bg-accentRed hover:bg-red-600 text-white px-3 py-1.5 rounded-md text-sm font-bold shadow-[0_0_10px_rgba(244,63,94,0.4)] transition-colors animate-pulse">
+                [{demoStage}] TRIGGER SCENARIO
+              </button>
               {/* Radius Slider (Now outside map) */}
               <div className="flex items-center gap-3 bg-bgPanel border border-borderC rounded-lg px-4 py-2 w-full sm:w-64">
                 <span className="text-xs text-textMuted font-medium uppercase tracking-wide shrink-0">Radius</span>
@@ -210,7 +225,7 @@ export default function Dashboard() {
                 <Circle center={customLocation} radius={radiusKm * 1000} pathOptions={{ color: '#2C81FF', fillColor: '#2C81FF', fillOpacity: 0.15, weight: 2, dashArray: '4 4' }} />
               )}
               
-              {PINS.map(p => {
+              {pins.map(p => {
                 const isSelected = p.id === selectedPinId;
                 return (
                   <CircleMarker key={p.id} center={p.pos} radius={isSelected ? 8 : 6} eventHandlers={{ click: () => setSelectedPinId(p.id) }}

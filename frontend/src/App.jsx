@@ -10,6 +10,9 @@ import Reports from './pages/Reports';
 import Settings from './pages/Settings';
 import IntelligenceHub from './pages/IntelligenceHub';
 import Manual from './pages/Manual';
+import WorkerSafety from './pages/WorkerSafety';
+import CommunityPortal from './pages/CommunityPortal';
+import LearningLab from './pages/LearningLab';
 import './App.css';
 
 export default function App() {
@@ -24,6 +27,9 @@ export default function App() {
           <Route path="insights" element={<AIInsights />} />
           <Route path="reports" element={<Reports />} />
           <Route path="intelligence" element={<IntelligenceHub />} />
+          <Route path="worker" element={<WorkerSafety />} />
+          <Route path="community" element={<CommunityPortal />} />
+          <Route path="learning" element={<LearningLab />} />
           <Route path="manual" element={<Manual />} />
           <Route path="settings" element={<Settings />} />
         </Route>
