@@ -87,18 +87,35 @@ export default function Dashboard() {
   const [demoStage, setDemoStage] = useState(0);
   const mapContainerRef = useRef(null);
 
+  const customAnalysis = React.useMemo(() => {
+    if (!customLocation) return null;
+    const lat = customLocation[0];
+    const lng = customLocation[1];
+    const isRisky = Math.abs((Math.floor(lat * 100) + Math.floor(lng * 100)) % 3) === 0;
+    const maxDepth = Math.floor(1500 + Math.abs(lat * lng) % 3000);
+    return {
+      isRisky,
+      maxDepth,
+      safeTdText: isRisky ? 'RISKY (Cannot Drill Safely)' : `${maxDepth.toLocaleString()} m (Predicted Safe TD)`,
+      statusText: isRisky ? 'RISKY — Fault Line Hazard' : `Clearance — Safe up to ${maxDepth.toLocaleString()} m`,
+      recommendationText: isRisky 
+        ? 'RISKY: Cannot drill safely here due to high fault-line probability and severe geomechanical instability.' 
+        : `No existing drills found in this radius. Based on predictive analogues:\n\nClearance: Safe to drill up to ${maxDepth.toLocaleString()}m vertically. Expect abnormal pore pressures beyond this depth.`
+    };
+  }, [customLocation]);
+
   const activeTarget = selectedPinId 
     ? pins.find(p => p.id === selectedPinId)
-    : customLocation ? {
+    : customLocation && customAnalysis ? {
         id: 'CUSTOM',
-        name: `Lat: ${customLocation[0].toFixed(2)}, Lng: ${customLocation[1].toFixed(2)}`,
-        state: 'Custom Target',
-        operator: 'N/A (No Drilling History)',
-        spud: 'Pre-Drill Phase',
-        td: 'TBD',
-        formation: 'Survey Area',
+        name: `Lat: ${customLocation[0].toFixed(2)}°, Lng: ${customLocation[1].toFixed(2)}°`,
+        state: 'Un-Drilled Sector',
+        operator: 'No Existing Wells in Radius',
+        spud: 'Pre-Drill Evaluation',
+        td: customAnalysis.safeTdText,
+        formation: customAnalysis.isRisky ? 'High Seismic Fault Zone' : 'Analogous Basin Lithology',
         status: 'custom',
-        rca: 'Predictive assessment based on regional analogues.'
+        rca: customAnalysis.statusText
       } : pins.find(p => p.id === 'AS-07');
 
   const triggerDemoSequence = () => {
@@ -106,7 +123,6 @@ export default function Dashboard() {
     setDemoStage(nextStage);
     
     setPins(prev => prev.map(p => {
-      // Assuming 'ASSAM-07' is the ID in the demo data
       if (p.id === 'ASSAM-07') {
         if (nextStage === 0) return { ...p, status: 'green', rca: 'Normal Drilling' };
         if (nextStage === 1) return { ...p, status: 'yellow', rca: 'Anomaly Detected: ROP dropping, Torque rising' };
@@ -126,17 +142,12 @@ export default function Dashboard() {
 
       // Execute client-side intelligence evaluation instantly (static mode)
       setTimeout(() => {
-        if (activeTarget.status === 'custom') {
-          const lat = customLocation?.[0] || 0;
-          const lng = customLocation?.[1] || 0;
-          const isRisky = Math.abs((Math.floor(lat * 100) + Math.floor(lng * 100)) % 3) === 0;
-          const maxDepth = Math.floor(1500 + Math.abs(lat * lng) % 3000);
-          
+        if (activeTarget.status === 'custom' && customAnalysis) {
           setAiData({
-            confidence: isRisky ? 95 : 82,
-            root_cause: isRisky ? "High Georisk Zone" : "Area Pre-Assessment",
+            confidence: customAnalysis.isRisky ? 95 : 84,
+            root_cause: customAnalysis.statusText,
             historical_matches: [4,5],
-            recommendation: `No existing drills found in this radius. Based on predictive analogues:\n\n${isRisky ? 'RISKY: Cannot drill safely here due to high fault-line probability and poor geomechanics.' : `Clearance: Safe to drill up to ${maxDepth}m vertically. Expect abnormal pore pressures beyond this depth.`}`
+            recommendation: customAnalysis.recommendationText
           });
         } else {
           setAiData({
@@ -152,7 +163,7 @@ export default function Dashboard() {
       }, 50);
     };
     fetchAI();
-  }, [selectedPinId, customLocation, pins]);
+  }, [selectedPinId, customLocation, pins, customAnalysis]);
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
@@ -168,7 +179,7 @@ export default function Dashboard() {
     <div className="h-full flex flex-col space-y-6 overflow-y-auto pb-8">
       
       {/* TOP SECTION */}
-      <div className="flex gap-6 h-[500px]">
+      <div className="flex flex-col lg:flex-row gap-6 min-h-[580px]">
         
         {/* MAP SECTION */}
         <div className="flex-[2] flex flex-col space-y-4">
@@ -209,7 +220,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div ref={mapContainerRef} className="flex-1 bg-bgCard rounded-xl border border-borderC overflow-hidden relative shadow-lg">
+          <div ref={mapContainerRef} className="flex-1 bg-bgCard rounded-xl border border-borderC overflow-hidden relative shadow-lg min-h-[480px]">
             
             <MapContainer center={[20, 0]} zoom={2} style={{ width: '100%', height: '100%' }} zoomControl={false} minZoom={2}>
               <MapInteractionHandler setCustomLocation={setCustomLocation} setSelectedPinId={setSelectedPinId} />
@@ -253,9 +264,7 @@ export default function Dashboard() {
                 <h3 className="font-bold text-lg mb-1">{activeTarget.id === 'CUSTOM' ? 'Area Analysis' : `Well - ${activeTarget.name}`}</h3>
                 <div className="flex flex-col gap-1 mt-2">
                   <p className="text-sm text-textMuted flex items-center gap-1"><MapPin size={12}/> {activeTarget.state}</p>
-                  {activeTarget.id !== 'CUSTOM' && (
-                    <p className="text-sm text-brandBlue flex items-center gap-1 font-medium">Total Depth: {activeTarget.td}</p>
-                  )}
+                  <p className="text-sm text-brandBlue flex items-center gap-1 font-bold">Total Depth: {activeTarget.td}</p>
                 </div>
               </div>
               <span className={`px-2.5 py-1 rounded-full text-xs font-medium border flex items-center gap-1 ${
