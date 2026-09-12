@@ -21,6 +21,88 @@ html, body, #root {
   background-color: var(--color-bgMain);
   color: var(--color-textMain);
   font-family: 'Inter', sans-serif;
+  overflow: hidden;
+}
+
+/* Atmospheric Background Image Layer */
+.app-bg-overlay {
+  position: relative;
+  background-color: var(--color-bgMain);
+}
+
+.app-bg-overlay::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url('/bg-hero.jpg');
+  background-size: cover;
+  background-position: center bottom;
+  background-repeat: no-repeat;
+  opacity: 0.22;
+  filter: brightness(0.7) contrast(1.15) saturate(1.1);
+  pointer-events: none;
+  z-index: 0;
+  animation: slowZoom 25s ease-in-out infinite alternate;
+}
+
+.app-bg-overlay::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at 50% 30%, rgba(6, 11, 20, 0.4) 0%, rgba(6, 11, 20, 0.85) 75%, rgba(6, 11, 20, 0.98) 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Animations */
+@keyframes slowZoom {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.04); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.4; filter: drop-shadow(0 0 10px rgba(44, 129, 255, 0.4)); }
+  50% { opacity: 0.85; filter: drop-shadow(0 0 20px rgba(44, 129, 255, 0.8)); }
+}
+
+@keyframes floatLight {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-8px) scale(1.02); }
+}
+
+.animate-slow-zoom {
+  animation: slowZoom 25s ease-in-out infinite alternate;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 4s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: floatLight 6s ease-in-out infinite;
+}
+
+/* Glassmorphism Cards & Panels */
+.glass-panel {
+  background: rgba(14, 22, 35, 0.88) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.glass-card {
+  background: rgba(21, 32, 51, 0.85) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(44, 129, 255, 0.15) !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+  border-color: rgba(44, 129, 255, 0.4) !important;
+  box-shadow: 0 12px 40px 0 rgba(44, 129, 255, 0.18);
+  transform: translateY(-2px);
 }
 
 /* Leaflet dark mode overrides */
@@ -46,4 +128,5 @@ html, body, #root {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-brandBlue);
 }
+
 

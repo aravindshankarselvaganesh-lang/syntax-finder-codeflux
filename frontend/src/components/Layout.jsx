@@ -70,7 +70,7 @@ export default function Layout() {
   };
 
   return (
-    <div className="flex h-[100dvh] bg-bgMain text-textMain font-sans overflow-hidden">
+    <div className="flex h-[100dvh] bg-bgMain text-textMain font-sans overflow-hidden app-bg-overlay">
       
       {/* MOBILE BACKDROP OVERLAY */}
       {mobileMenuOpen && (

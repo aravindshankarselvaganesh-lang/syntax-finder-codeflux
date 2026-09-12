@@ -25,17 +25,18 @@ export default function Login({ onLogin }) {
   return (
     <div className="min-h-[100dvh] bg-bgMain flex text-textMain font-sans">
       
-      {/* Left Side - Visuals */}
-      <div className="hidden lg:flex flex-1 relative overflow-hidden bg-[#0a111c] border-r border-borderC">
-        {/* Abstract Map Background */}
-        <div className="absolute inset-0 opacity-20" style={{ 
-          backgroundImage: 'radial-gradient(circle at 50% 50%, #2C81FF 0%, transparent 60%), linear-gradient(0deg, #060B14 0%, transparent 100%)',
-          backgroundSize: '100% 100%' 
-        }}></div>
+      {/* Left Side - Visuals with Refinery Background */}
+      <div className="hidden lg:flex flex-1 relative overflow-hidden border-r border-borderC">
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-10000 animate-slow-zoom"
+          style={{ backgroundImage: "url('/bg-hero.jpg')" }}
+        ></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-[#060B14]/95 via-[#060B14]/75 to-[#060B14]/90"></div>
+        <div className="absolute inset-0 bg-radial from-transparent via-[#060B14]/50 to-[#060B14]/90"></div>
         
         {/* Grid lines overlay */}
         <div className="absolute inset-0" style={{ 
-          backgroundImage: 'linear-gradient(rgba(35, 50, 74, 0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(35, 50, 74, 0.3) 1px, transparent 1px)', 
+          backgroundImage: 'linear-gradient(rgba(44, 129, 255, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(44, 129, 255, 0.1) 1px, transparent 1px)', 
           backgroundSize: '40px 40px' 
         }}></div>
 
