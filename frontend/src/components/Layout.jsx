@@ -79,9 +79,14 @@ export default function Layout() {
       
       {/* DIRECT VISUAL REFINERY BACKGROUND LAYER */}
       <div 
-        className="fixed inset-0 bg-cover bg-center bg-no-repeat pointer-events-none z-0 opacity-80 animate-slow-zoom"
+        className="fixed inset-0 bg-cover bg-center bg-no-repeat pointer-events-none z-0 opacity-80 animate-slow-zoom animate-water-wave"
         style={{ backgroundImage: `url(${bgHero})` }}
       />
+      
+      {/* ANIMATED WATER SHIMMER & LIGHT REFLECTION OVERLAY */}
+      <div className="fixed bottom-0 left-0 right-0 h-1/2 pointer-events-none z-0 opacity-40 animate-water-shimmer mix-blend-overlay" />
+      <div className="fixed top-12 right-1/4 w-32 h-32 pointer-events-none z-0 rounded-full bg-amber-500/10 blur-2xl animate-flare-flicker" />
+
       <div 
         className="fixed inset-0 pointer-events-none z-0 bg-gradient-to-b from-[#060B14]/15 via-[#060B14]/40 to-[#060B14]/75"
       />
