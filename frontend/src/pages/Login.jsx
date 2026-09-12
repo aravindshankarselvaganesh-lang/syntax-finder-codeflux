@@ -23,7 +23,7 @@ export default function Login({ onLogin }) {
   };
 
   return (
-    <div className="min-h-screen bg-bgMain flex text-textMain font-sans">
+    <div className="min-h-[100dvh] bg-bgMain flex text-textMain font-sans">
       
       {/* Left Side - Visuals */}
       <div className="hidden lg:flex flex-1 relative overflow-hidden bg-[#0a111c] border-r border-borderC">

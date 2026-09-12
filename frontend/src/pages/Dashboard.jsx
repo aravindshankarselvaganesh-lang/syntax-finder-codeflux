@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MapPin, BarChart2, Sparkles, ChevronDown, Droplet, CheckCircle2, AlertTriangle, AlertCircle, Maximize2, FileText, Loader2, Activity, Clock, Crosshair, Filter } from 'lucide-react';
-import { MapContainer, TileLayer, CircleMarker, Circle, Tooltip, useMapEvents } from 'react-leaflet';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { MapContainer, TileLayer, CircleMarker, Circle, Tooltip, useMapEvents, useMap } from 'react-leaflet';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
 
 import { MOCK_SITES } from '../data/mockSites';
 import { HISTORICAL_INCIDENTS, DEMO_DATA } from '../data/intelligenceData';
@@ -44,7 +44,11 @@ const incidentPins = HISTORICAL_INCIDENTS.map((inc, i) => {
   };
 });
 
-const INITIAL_PINS = [...MOCK_SITES, ...demoPins, ...incidentPins];
+const INITIAL_PINS = [
+  ...MOCK_SITES,
+  ...demoPins,
+  ...incidentPins
+];
 
 // Inside the Dashboard component, we will use useState(INITIAL_PINS)
 
@@ -66,6 +70,41 @@ const PIE_DATA = [
 ];
 
 function MapInteractionHandler({ setCustomLocation, setSelectedPinId }) {
+  const map = useMap();
+  
+  useEffect(() => {
+    const handleGlobalScan = () => {
+      let duration = 0;
+      
+      const scanInterval = setInterval(() => {
+        if (duration >= 10000) {
+          clearInterval(scanInterval);
+          // Return to home center
+          map.flyTo([20, 0], 2, { duration: 1.5, easeLinearity: 0.25 });
+          return;
+        }
+        
+        // Pick a random pin to fly to
+        const randomPin = INITIAL_PINS[Math.floor(Math.random() * INITIAL_PINS.length)];
+        const zoom = Math.floor(Math.random() * 3) + 4; // Zoom 4 to 6
+        
+        map.flyTo(randomPin.pos, zoom, {
+          duration: 1.5,
+          easeLinearity: 0.25
+        });
+        
+        duration += 2000;
+      }, 2000);
+      
+      // Trigger first jump immediately
+      const firstPin = INITIAL_PINS[Math.floor(Math.random() * INITIAL_PINS.length)];
+      map.flyTo(firstPin.pos, 5, { duration: 1.5 });
+    };
+
+    window.addEventListener('triggerMapScan', handleGlobalScan);
+    return () => window.removeEventListener('triggerMapScan', handleGlobalScan);
+  }, [map]);
+
   useMapEvents({
     click(e) {
       setSelectedPinId(null);
@@ -110,10 +149,63 @@ export default function Dashboard() {
   const [loadingAi, setLoadingAi] = useState(false);
   const [selectedPinId, setSelectedPinId] = useState('AS-07');
   const [customLocation, setCustomLocation] = useState(null);
-  const [radiusKm, setRadiusKm] = useState(100);
+  const [customLocationName, setCustomLocationName] = useState(null);
+  const [radiusKm, setRadiusKm] = useState(5);
   const [pins, setPins] = useState(INITIAL_PINS);
   const [demoStage, setDemoStage] = useState(0);
+  const [showHistoricalData, setShowHistoricalData] = useState(false);
+  const [showLocationInfo, setShowLocationInfo] = useState(false);
+  const [loadingLocationInfo, setLoadingLocationInfo] = useState(false);
   const mapContainerRef = useRef(null);
+  
+  // Initialize mock telemetry data (e.g. WOB - Weight on Bit)
+  const [telemetryData, setTelemetryData] = useState(() => 
+    Array.from({length: 20}).map((_, i) => ({ time: i, wob: 20 + Math.random() * 5, torque: 15 + Math.random() * 3 }))
+  );
+
+  // Simulate live telemetry stream
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTelemetryData(prev => {
+        const newData = [...prev.slice(1)];
+        const lastTime = newData[newData.length - 1].time;
+        const lastWob = newData[newData.length - 1].wob;
+        const lastTorque = newData[newData.length - 1].torque;
+        
+        // Add some random walk variation
+        newData.push({
+          time: lastTime + 1,
+          wob: Math.max(10, Math.min(30, lastWob + (Math.random() - 0.5) * 3)),
+          torque: Math.max(5, Math.min(25, lastTorque + (Math.random() - 0.5) * 2))
+        });
+        return newData;
+      });
+    }, 1500);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    if (customLocation) {
+      const place = getPlaceName(customLocation[0], customLocation[1]);
+      if (place.startsWith("Coordinates")) {
+        fetch(`https://nominatim.openstreetmap.org/reverse?lat=${customLocation[0]}&lon=${customLocation[1]}&format=json`)
+          .then(res => res.json())
+          .then(data => {
+            if (data && data.address) {
+              const state = data.address.state || data.address.country || "Unknown Region";
+              const city = data.address.city || data.address.town || data.address.village || data.address.county || "";
+              setCustomLocationName(city ? `${city}, ${state}` : state);
+            } else {
+              setCustomLocationName(place);
+            }
+          }).catch(() => setCustomLocationName(place));
+      } else {
+        setCustomLocationName(place);
+      }
+    } else {
+      setCustomLocationName(null);
+    }
+  }, [customLocation]);
 
   // Calculate nearby offset wells falling inside targeting radius circle
   const nearbyWells = React.useMemo(() => {
@@ -180,7 +272,7 @@ export default function Dashboard() {
     || (customLocation && customAnalysis ? {
         id: 'CUSTOM',
         name: customAnalysis.placeName,
-        state: `Clicked Target [${customLocation[0].toFixed(4)}°, ${customLocation[1].toFixed(4)}°]`,
+        state: customLocationName || (customAnalysis.placeName.startsWith("Coordinates") ? "Fetching location..." : customAnalysis.placeName),
         operator: customAnalysis.operatorText,
         spud: customAnalysis.count > 0 ? 'Offset Data Hydrated' : 'Pre-Drill Evaluation',
         td: customAnalysis.safeTdText,
@@ -220,14 +312,14 @@ export default function Dashboard() {
           setAiData({
             confidence: customAnalysis.count > 0 ? 94 : (customAnalysis.isRisky ? 95 : 84),
             root_cause: customAnalysis.statusText,
-            historical_matches: customAnalysis.count > 0 ? nearbyWells.length : 2,
+            historical_matches: customAnalysis.count > 0 ? HISTORICAL_INCIDENTS.slice(0, nearbyWells.length || 1) : HISTORICAL_INCIDENTS.slice(0, 2),
             recommendation: customAnalysis.recommendationText
           });
         } else {
           setAiData({
             confidence: activeTarget.status === 'red' ? 87 : activeTarget.status === 'yellow' ? 65 : 95,
             root_cause: activeTarget.rca,
-            historical_matches: [1,2,3],
+            historical_matches: HISTORICAL_INCIDENTS.slice(0, 3),
             recommendation: activeTarget.status === 'red' ? 
               `Critical Alert: ${activeTarget.rca}. Inspect pressure-control equipment immediately.\nHistorical drills in this area reached ${activeTarget.td}.` : 
               `Proceed with normal operations. Parameters are stable.\nCurrent well TD is ${activeTarget.td}. Safe to proceed further.`
@@ -272,12 +364,12 @@ export default function Dashboard() {
                 <span className="text-xs text-textMuted font-medium uppercase tracking-wide shrink-0">Radius</span>
                 <input 
                   type="range" 
-                  min="5" 
-                  max="2000" 
-                  step="5" 
+                  min="1" 
+                  max="10" 
+                  step="1" 
                   value={radiusKm} 
                   onChange={(e) => setRadiusKm(Number(e.target.value))}
-                  className="flex-1 min-w-0 h-1 bg-borderC rounded-lg appearance-none cursor-pointer accent-brandBlue outline-none"
+                  className="flex-1 min-w-0 h-1 bg-borderC rounded-lg cursor-pointer accent-brandBlue outline-none"
                 />
                 <span className="font-bold text-brandBlue bg-brandBlue/10 px-2 py-0.5 rounded text-xs shrink-0 whitespace-nowrap">{radiusKm} km</span>
               </div>
@@ -296,25 +388,25 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div ref={mapContainerRef} className="h-[340px] sm:h-[440px] w-full bg-bgCard rounded-xl border border-borderC overflow-hidden relative shadow-lg shrink-0">
+          <div ref={mapContainerRef} className="h-[340px] sm:h-[440px] xl:h-auto xl:flex-1 min-h-[340px] sm:min-h-[440px] w-full bg-bgCard rounded-xl border border-borderC overflow-hidden relative shadow-lg">
             
             <MapContainer center={[20, 0]} zoom={2} style={{ width: '100%', height: '100%' }} zoomControl={false} minZoom={2}>
               <MapInteractionHandler setCustomLocation={setCustomLocation} setSelectedPinId={setSelectedPinId} />
               
               {mapMode === 'satellite' ? (
-                <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" attribution="Tiles &copy; Esri" />
+                <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" attribution="Tiles &copy; Esri" noWrap={true} />
               ) : (
-                <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}" attribution="Tiles &copy; Esri" />
+                <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}" attribution="Tiles &copy; Esri" noWrap={true} />
               )}
               
                 {customLocation && !selectedPinId && (
                   <>
                     <Circle center={customLocation} radius={radiusKm * 1000} pathOptions={{ color: '#2C81FF', fillColor: '#2C81FF', fillOpacity: 0.15, weight: 2, dashArray: '4 4' }} />
                     <CircleMarker center={customLocation} radius={8} pathOptions={{ fillColor: '#2C81FF', color: '#fff', weight: 3, fillOpacity: 1 }}>
-                      <Tooltip permanent direction="top" className="bg-bgPanel border border-brandBlue/50 text-white font-bold shadow-2xl" offset={[0, -12]}>
+                      <Tooltip permanent direction="bottom" className="bg-bgPanel border border-brandBlue/50 text-white font-bold shadow-2xl" offset={[0, 12]}>
                         <div className="flex flex-col items-center">
-                          <span className="text-xs text-brandBlue font-extrabold flex items-center gap-1"><Crosshair size={12}/> {getPlaceName(customLocation[0], customLocation[1])}</span>
-                          <span className="text-[10px] text-textMuted font-mono">[{customLocation[0].toFixed(2)}°, {customLocation[1].toFixed(2)}°]</span>
+                          <span className="text-xs text-brandBlue font-extrabold flex items-center gap-1"><Crosshair size={12}/> {customLocationName || getPlaceName(customLocation[0], customLocation[1])}</span>
+                          <span className="text-[10px] text-textMuted font-mono">({radiusKm} km radius)</span>
                         </div>
                       </Tooltip>
                     </CircleMarker>
@@ -380,6 +472,7 @@ export default function Dashboard() {
                   <div><p className="text-xs text-textMuted mb-1">Status Date</p><p className="font-semibold">{activeTarget.spud}</p></div>
                   <div><p className="text-xs text-textMuted mb-1">Total Depth (TD)</p><p className="font-semibold">{activeTarget.td}</p></div>
                   <div className="col-span-2"><p className="text-xs text-textMuted mb-1">Target Formation</p><p className="font-semibold">{activeTarget.formation}</p></div>
+                  <div><p className="text-xs text-textMuted mb-1">Location</p><p className="font-semibold">{activeTarget.state}</p></div>
                   <div className="col-span-3">
                     <p className="text-xs text-textMuted mb-2">Diagnostic Status</p>
                     <div className="flex gap-2">
@@ -396,12 +489,68 @@ export default function Dashboard() {
                 </div>
               )}
               {activeTab === 'Telemetry' && (
-                <div className="flex-1 flex flex-col justify-center text-center text-textMuted text-sm">Telemetry sensors offline or not connected for this target.</div>
+                <div className="flex-1 flex flex-col min-h-0 animate-in fade-in">
+                  <div className="flex gap-4 mb-4">
+                    <div className="bg-bgMain border border-borderC rounded-lg p-3 flex-1">
+                      <div className="text-[10px] text-textMuted uppercase font-semibold mb-1">Weight on Bit (WOB)</div>
+                      <div className="text-xl font-bold text-brandBlue flex items-end gap-1">
+                        {telemetryData[telemetryData.length - 1].wob.toFixed(1)} <span className="text-xs text-textMuted font-normal pb-1">klbs</span>
+                      </div>
+                    </div>
+                    <div className="bg-bgMain border border-borderC rounded-lg p-3 flex-1">
+                      <div className="text-[10px] text-textMuted uppercase font-semibold mb-1">Surface Torque</div>
+                      <div className="text-xl font-bold text-accentYellow flex items-end gap-1">
+                        {telemetryData[telemetryData.length - 1].torque.toFixed(1)} <span className="text-xs text-textMuted font-normal pb-1">kft-lb</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex-1 min-h-[150px] bg-bgMain border border-borderC rounded-lg p-2 pb-0">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart data={telemetryData} margin={{ top: 5, right: 5, left: -25, bottom: 0 }}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#23324A" vertical={false} />
+                        <XAxis dataKey="time" hide />
+                        <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#94A3B8' }} domain={['dataMin - 2', 'dataMax + 2']} />
+                        <RechartsTooltip 
+                          contentStyle={{backgroundColor: '#0E1623', border: '1px solid #23324A', borderRadius: '8px', fontSize: '12px'}}
+                          itemStyle={{color: '#fff'}}
+                          labelStyle={{display: 'none'}}
+                        />
+                        <Line type="monotone" dataKey="wob" stroke="#2C81FF" strokeWidth={2} dot={false} isAnimationActive={false} name="WOB" />
+                        <Line type="monotone" dataKey="torque" stroke="#FBBF24" strokeWidth={2} dot={false} isAnimationActive={false} name="Torque" />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
               )}
               {activeTab === 'History' && (
                 <div className="flex-1 overflow-y-auto pr-2 space-y-4">
                   {activeTarget.status === 'custom' ? (
-                    <div className="flex flex-col justify-center text-center text-textMuted text-sm h-full">No historical drilling logs exist for this un-drilled coordinate.</div>
+                    <div className="relative border-l border-borderC ml-3 space-y-6 pb-2 animate-in fade-in">
+                      <TimelineEvent 
+                        date="Projected" 
+                        title="Commence Drilling Operations" 
+                        desc="Mobilize rig and initiate spud phase upon regulatory clearance." 
+                        color="bg-brandBlue" 
+                      />
+                      <TimelineEvent 
+                        date="Current Stage" 
+                        title="AI Georisk Profiling" 
+                        desc={`Synthesizing historical incident data within ${radiusKm}km radius to compute preliminary well-bore stability model.`} 
+                        color="bg-accentYellow" 
+                      />
+                      <TimelineEvent 
+                        date="2 Weeks Ago" 
+                        title="Seismic Desktop Study" 
+                        desc="2D/3D seismic lines re-processed for fault identification. Initial target depth set." 
+                        color="bg-textMuted" 
+                      />
+                      <TimelineEvent 
+                        date="1 Month Ago" 
+                        title="Block Acquisition" 
+                        desc="Exploration license granted for coordinates by regional authority." 
+                        color="bg-borderC" 
+                      />
+                    </div>
                   ) : (
                     <div className="relative border-l border-borderC ml-3 space-y-6 pb-2">
                       <TimelineEvent 
@@ -454,23 +603,74 @@ export default function Dashboard() {
                       <p className="text-sm font-semibold text-textMain">{aiData.root_cause}</p>
                     </div>
                   </div>
-                  <div className="bg-bgPanel rounded-lg border border-borderC p-3 flex gap-4 items-center">
-                    <div className="bg-brandBlue/20 w-8 h-8 rounded-lg flex items-center justify-center shrink-0">
-                      <FileText className="text-brandBlue" size={16} />
+                  <div 
+                    className="bg-bgPanel rounded-lg border border-borderC p-3 flex flex-col gap-4 cursor-pointer hover:border-brandBlue/50 transition-colors"
+                    onClick={() => setShowHistoricalData(!showHistoricalData)}
+                  >
+                    <div className="flex gap-4 items-center w-full">
+                      <div className="bg-brandBlue/20 w-8 h-8 rounded-lg flex items-center justify-center shrink-0">
+                        <FileText className="text-brandBlue" size={16} />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-xs text-textMuted mb-0.5">Historical Similarity (RAG)</p>
+                        <p className="text-sm font-medium">{aiData.historical_matches?.length || 0} previous incidents found</p>
+                      </div>
                     </div>
-                    <div className="flex-1">
-                      <p className="text-xs text-textMuted mb-0.5">Historical Similarity (RAG)</p>
-                      <p className="text-sm font-medium">{aiData.historical_matches?.length || 0} previous incidents found</p>
-                    </div>
+                    {showHistoricalData && aiData.historical_matches?.length > 0 && (
+                      <div className="text-xs text-textMuted mt-2 border-t border-borderC pt-2">
+                        {aiData.historical_matches.map((match, i) => (
+                          <div key={i} className="mb-2 last:mb-0">
+                            <span className="font-semibold text-textMain">{match.incident_name} ({match.date})</span><br/>
+                            <span className="text-brandBlue font-medium">Failure:</span> {match.failure_subtype}<br/>
+                            <span className="text-brandBlue font-medium">Cause:</span> {match.root_cause}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {showHistoricalData && (!aiData.historical_matches || aiData.historical_matches.length === 0) && (
+                      <div className="text-xs text-textMuted mt-2 border-t border-borderC pt-2">
+                        No previous historical data available for this location.
+                      </div>
+                    )}
                   </div>
-                  <div className="bg-bgPanel rounded-lg border border-borderC p-3 flex gap-4">
-                    <div className="bg-accentYellow/10 w-8 h-8 rounded-lg flex items-center justify-center shrink-0">
-                      <Sparkles className="text-accentYellow" size={16} />
+                  <div 
+                    className="bg-bgPanel rounded-lg border border-borderC p-3 flex flex-col gap-4 cursor-pointer hover:border-accentYellow/50 transition-colors"
+                    onClick={() => {
+                      setShowLocationInfo(!showLocationInfo);
+                      if (!showLocationInfo) {
+                        setLoadingLocationInfo(true);
+                        setTimeout(() => setLoadingLocationInfo(false), 1200);
+                      }
+                    }}
+                  >
+                    <div className="flex gap-4 items-start w-full">
+                      <div className="bg-accentYellow/10 w-8 h-8 rounded-lg flex items-center justify-center shrink-0">
+                        <Sparkles className="text-accentYellow" size={16} />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-xs text-textMuted mb-1">AI Recommendation</p>
+                        <p className="text-xs leading-relaxed text-textMuted whitespace-pre-wrap">{aiData.recommendation}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-xs text-textMuted mb-1">AI Recommendation</p>
-                      <p className="text-xs leading-relaxed text-textMuted">{aiData.recommendation}</p>
-                    </div>
+                    {showLocationInfo && (
+                      <div className="text-xs text-textMuted mt-2 border-t border-borderC pt-2">
+                        {loadingLocationInfo ? (
+                          <div className="flex items-center gap-2 text-accentYellow"><Loader2 className="animate-spin w-4 h-4"/> Connecting to AI Intelligence...</div>
+                        ) : (
+                          <div className="space-y-2 mt-2">
+                            <p><strong className="text-textMain text-sm">Regional Intelligence: {activeTarget.state}</strong></p>
+                            <p className="leading-relaxed">
+                              {activeTarget.state.includes('Assam') ? 
+                                'The Upper Assam Basin is one of India\'s oldest and most prolific hydrocarbon regions. It is characterized by complex geology, thrust belts (like the Naga Thrust), and challenges such as abnormal pore pressures and wellbore instability. Operators frequently encounter tight hole conditions and shear failures in the Upper Oligocene formations here.' :
+                                activeTarget.state.includes('Cambay') || activeTarget.state.includes('Gujarat') ?
+                                'The Cambay Basin in Gujarat is a major onshore rift basin in western India. It is known for high geothermal gradients, deep heavy oil deposits, and complex faulting systems which present unique drilling challenges like lost circulation and differential sticking.' :
+                                'This region features unique geological characteristics and established oil & gas infrastructure. Operators here typically deal with basin-specific challenges ranging from complex fault zones to narrow drilling windows. Local geological surveys recommend continuous pressure monitoring.'
+                              }
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </>
               ) : null}
@@ -479,8 +679,8 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-bgCard rounded-xl border border-borderC p-5 flex flex-col h-64">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-[1000]">
+        <div className="bg-bgCard rounded-xl border border-borderC p-5 flex flex-col">
           <div className="flex justify-between items-center mb-4 relative">
             <h3 className="font-semibold flex items-center gap-2"><BarChart2 size={18} className="text-textMuted"/> Drilling Activity</h3>
           </div>
@@ -528,13 +728,13 @@ export default function Dashboard() {
         </div>
 
         <div className="bg-bgCard rounded-xl border border-borderC p-5 flex flex-col">
-          <h3 className="font-semibold flex items-center gap-2 mb-4 text-accentRed"><AlertTriangle size={18} /> Top Risk Causes</h3>
+          <h3 className="font-semibold flex items-center gap-2 mb-4 text-accentRed"><AlertTriangle size={18} /> Top Risk Causes ({activeTarget.state})</h3>
           <div className="flex-1 space-y-3 overflow-y-auto pr-2">
-            <CauseRow color="bg-pink-500" label="Wellbore Instability" pct="28%" />
-            <CauseRow color="bg-accentRed" label="Abnormal Pressure Trend" pct="29%" />
-            <CauseRow color="bg-accentYellow" label="Equipment Failure" pct="18%" />
-            <CauseRow color="bg-blue-500" label="Economic Abandonment" pct="13%" />
-            <CauseRow color="bg-textMuted" label="Regulatory Shutdown" pct="7%" />
+            <CauseRow color="bg-pink-500" label="Wellbore Instability" pct="28%" drills={pins.filter(p => p.state === activeTarget.state && (p.rca.toLowerCase().includes('instability') || p.rca.toLowerCase().includes('pack-off') || p.rca.toLowerCase().includes('stuck'))).map(p => p.name)} />
+            <CauseRow color="bg-accentRed" label="Abnormal Pressure Trend" pct="29%" drills={pins.filter(p => p.state === activeTarget.state && (p.rca.toLowerCase().includes('pressure') || p.rca.toLowerCase().includes('kick') || p.rca.toLowerCase().includes('blowout'))).map(p => p.name)} />
+            <CauseRow color="bg-accentYellow" label="Equipment Failure" pct="18%" drills={pins.filter(p => p.state === activeTarget.state && p.rca.toLowerCase().includes('equipment')).map(p => p.name)} />
+            <CauseRow color="bg-blue-500" label="Economic Abandonment" pct="13%" drills={pins.filter(p => p.state === activeTarget.state && p.rca.toLowerCase().includes('abandon')).map(p => p.name)} />
+            <CauseRow color="bg-textMuted" label="Regulatory Shutdown" pct="7%" drills={pins.filter(p => p.state === activeTarget.state && p.rca.toLowerCase().includes('regulatory')).map(p => p.name)} />
           </div>
         </div>
       </div>
@@ -543,23 +743,121 @@ export default function Dashboard() {
 }
 
 function LegendRow({ color, label, sub }) {
+  const [showPopup, setShowPopup] = useState(false);
+  const popupRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (popupRef.current && !popupRef.current.contains(event.target)) {
+        setShowPopup(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const getLegendDetails = (legendLabel) => {
+    switch (legendLabel.toLowerCase()) {
+      case 'high risk':
+        return 'Drilling operations have catastrophically failed or are in immediate danger of a blowout. Mandatory halt of operations. Immediate intervention required by well-control specialists.';
+      case 'medium risk':
+        return 'Operations are suspended or partially restricted due to significant anomalies like severe fluid loss, dangerous gas kicks, or stuck pipe. Proceeding with caution under revised parameters.';
+      case 'low-mod risk':
+        return 'Experiencing minor issues such as slow rate of penetration (ROP), minor tool wear, or slight pressure variations. Operations continue while engineers monitor trends closely.';
+      case 'active':
+        return 'All telemetry data is nominal. Wellbore stability is excellent, and drilling is proceeding according to the planned trajectory and time schedule with no safety concerns.';
+      default:
+        return 'Status indicator representing current operational telemetry and historical geomechanical modeling.';
+    }
+  };
+
   return (
-    <div className="flex items-start gap-2 text-xs">
+    <div className="flex items-start gap-2 text-xs relative cursor-pointer hover:bg-white/5 p-1.5 -mx-1.5 rounded-md transition-colors" ref={popupRef} onClick={() => setShowPopup(!showPopup)}>
       <div className={`w-2.5 h-2.5 rounded-sm mt-0.5 shrink-0 ${color}`}></div>
       <div>
-        <div className="text-textMain">{label}</div>
+        <div className="text-textMain font-medium">{label}</div>
         {sub && <div className="text-textMuted scale-90 origin-left">{sub}</div>}
       </div>
+      
+      {showPopup && (
+        <div className="absolute bottom-full left-0 mb-2 w-64 bg-bgPanel border border-borderC rounded-lg shadow-xl z-[9999] p-3 animate-in fade-in slide-in-from-bottom-2 cursor-default" onClick={e => e.stopPropagation()}>
+          <h4 className="text-xs font-bold text-white mb-2 flex items-center gap-2">
+            <AlertCircle size={14} className={label === 'High Risk' ? 'text-accentRed' : label === 'Active' ? 'text-accentGreen' : 'text-accentYellow'} /> {label} Details
+          </h4>
+          <p className="text-[10px] text-textMuted leading-relaxed">
+            {getLegendDetails(label)}
+          </p>
+          <div className="mt-3 text-[9px] uppercase tracking-wider font-semibold text-brandBlue flex justify-between">
+            <span>Status: {sub ? sub.replace(/[()]/g, '') : 'Nominal'}</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-function CauseRow({ color, label, pct }) {
+function CauseRow({ color, label, pct, drills }) {
+  const [showPopup, setShowPopup] = useState(false);
+  const popupRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (popupRef.current && !popupRef.current.contains(event.target)) {
+        setShowPopup(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const getRiskDetails = (riskLabel) => {
+    switch (riskLabel.toLowerCase()) {
+      case 'wellbore instability':
+        return 'Occurs due to geomechanical stress imbalance, leading to hole collapse, tight spots, or stuck pipe. Mitigation involves careful mud weight management and monitoring cavings.';
+      case 'abnormal pressure trend':
+        return 'Unexpectedly high formation pore pressures that can cause kicks, blowouts, or severe well control incidents. Requires immediate BOP readiness and mud density adjustments.';
+      case 'equipment failure':
+        return 'Breakdown of critical rig components like top drives, mud pumps, or downhole tools due to wear, fatigue, or exceeding operating limits. Leads to costly non-productive time (NPT).';
+      case 'economic abandonment':
+        return 'Decision to halt drilling due to spiraling costs, unviable reservoir discoveries, or severe market shifts rendering the well unprofitable to complete.';
+      case 'regulatory shutdown':
+        return 'Suspension of operations mandated by governmental or environmental authorities due to non-compliance, safety violations, or geopolitical instability.';
+      default:
+        return 'General operational risk identified through historical drilling logs and predictive telemetry algorithms.';
+    }
+  };
+
   return (
-    <div className="flex items-center gap-3 text-xs">
-      <div className={`w-2 h-2 rounded-full shrink-0 ${color}`}></div>
-      <div className="flex-1 text-textMain">{label}</div>
-      <div className="font-medium">{pct}</div>
+    <div className="flex flex-col gap-1 mb-2 relative" ref={popupRef}>
+      <div 
+        className="flex items-center gap-3 text-xs cursor-pointer hover:bg-white/5 p-1.5 -mx-1.5 rounded-md transition-colors"
+        onClick={() => setShowPopup(!showPopup)}
+      >
+        <div className={`w-2 h-2 rounded-full shrink-0 ${color}`}></div>
+        <div className="flex-1 text-textMain font-medium">{label}</div>
+        <div className="font-bold">{pct}</div>
+      </div>
+      
+      {drills && drills.length > 0 && (
+        <div className="text-[10px] text-textMuted pl-5 leading-tight">
+          Affected Drills: <span className="text-brandBlue">{drills.join(', ')}</span>
+        </div>
+      )}
+
+      {showPopup && (
+        <div className="absolute top-full left-0 mt-2 w-64 bg-bgPanel border border-borderC rounded-lg shadow-xl z-[9999] p-3 animate-in fade-in slide-in-from-top-2">
+          <h4 className="text-xs font-bold text-white mb-2 flex items-center gap-2">
+            <AlertCircle size={14} className="text-accentYellow" /> {label} Details
+          </h4>
+          <p className="text-[10px] text-textMuted leading-relaxed">
+            {getRiskDetails(label)}
+          </p>
+          <div className="mt-3 text-[9px] uppercase tracking-wider font-semibold text-brandBlue flex justify-between">
+            <span>Probability: {pct}</span>
+            <span>Severity: High</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

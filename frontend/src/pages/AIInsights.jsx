@@ -155,18 +155,47 @@ export default function AIInsights() {
         aiResponse += `\n*Every output surfaces clear confidence boundaries and data provenance.*`;
       }
 
-      // UNIVERSAL HYPER-ACCURATE PETROLEUM ENGINEERING FALLBACK
+      // UNIVERSAL HYPER-ACCURATE PETROLEUM ENGINEERING FALLBACK WITH WIKIPEDIA INTEGRATION
       else {
-        mapLocation = { name: "Selected Target Sector", coords: "20.5937° N, 78.9629° E", region: "Global Asset Monitoring" };
-        aiResponse = `### 🧠 Engineering Telemetry & Georisk Evaluation for "${userQ}"\n` +
-          `**Target Location:** \`${mapLocation.name}\` (${mapLocation.coords})\n\n` +
-          `**Technical Assessment:**\n` +
-          `1. **Hydraulic Profile:** Ensure Standpipe Pressure (SPP) remains within $\\pm 50\\text{ psi}$ of baseline. Unexpected drop indicates nozzle washout or bit nozzle loss.\n` +
-          `2. **Torque & Drag Analysis:** Monitor hook load trends during trips. Rising pick-up weights indicate hole cleaning deficiency or ledge formation.\n` +
-          `3. **Mud Weight Window:** Verify that equivalent circulating density (ECD) stays strictly between formation pore pressure ($P_{\\text{pore}}$) and fracture gradient ($P_{\\text{frac}}$).\n\n` +
-          `*Recommendation:* Cross-check with regional offset well logs in the DGH NDR database.`;
-        citedSources.push("PSM Global Drilling Intelligence Base");
-        citedSources.push("IADC DDR Plus Drilling Taxonomy Specifications");
+        fetch(`https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(userQ + " petroleum oil drilling geology")}&utf8=&format=json&origin=*`)
+          .then(res => res.json())
+          .then(data => {
+            let asyncResponse = "";
+            let asyncSources = ["PSM Global Drilling Intelligence Base"];
+            
+            if (data.query && data.query.search && data.query.search.length > 0) {
+              const topResult = data.query.search[0];
+              asyncResponse = `### 🧠 AI Knowledge Base Query: "${userQ}"\n\n` +
+                `**Top Reference:** ${topResult.title}\n\n` +
+                `*Information Extract:* ${topResult.snippet.replace(/<\/?[^>]+(>|$)/g, "")}...\n\n` +
+                `**Operational Context:**\n` +
+                `The concept of **${topResult.title}** is critical during live drilling operations. ` +
+                `Always cross-reference this with your current mud weight window and Equivalent Circulating Density (ECD) to prevent geomechanical failures.\n\n` +
+                `*Recommendation:* Verify parameters against regional offset well logs in the DGH NDR database.`;
+              asyncSources.push(`Wikipedia Database: ${topResult.title}`);
+            } else {
+              asyncResponse = `### 🧠 Engineering Telemetry & Georisk Evaluation for "${userQ}"\n` +
+                `**Technical Assessment:**\n` +
+                `1. **Hydraulic Profile:** Ensure Standpipe Pressure (SPP) remains within $\\pm 50\\text{ psi}$ of baseline. Unexpected drop indicates nozzle washout or bit nozzle loss.\n` +
+                `2. **Torque & Drag Analysis:** Monitor hook load trends during trips. Rising pick-up weights indicate hole cleaning deficiency or ledge formation.\n` +
+                `3. **Mud Weight Window:** Verify that equivalent circulating density (ECD) stays strictly between formation pore pressure ($P_{\\text{pore}}$) and fracture gradient ($P_{\\text{frac}}$).\n\n` +
+                `*Recommendation:* Cross-check with regional offset well logs in the DGH NDR database.`;
+            }
+
+            setMessages(prev => [...prev, { 
+              role: 'ai', 
+              text: asyncResponse,
+              location: { name: "Selected Target Sector", coords: "Global Assessment", region: "General Analytics" },
+              sources: asyncSources
+            }]);
+            setIsTyping(false);
+          })
+          .catch(() => {
+            const fallbackResponse = `### 🧠 Engineering Telemetry Evaluation for "${userQ}"\nCannot connect to external knowledge base. Ensure safe drilling parameters.`;
+            setMessages(prev => [...prev, { role: 'ai', text: fallbackResponse }]);
+            setIsTyping(false);
+          });
+        return; // Prevent synchronous state update
       }
 
       setMessages(prev => [...prev, { 

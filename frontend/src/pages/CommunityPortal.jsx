@@ -111,6 +111,78 @@ export default function CommunityPortal() {
 
   const completedChecklistCount = Object.values(checklistState).filter(Boolean).length;
 
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loginForm, setLoginForm] = useState({ username: '', password: '' });
+  const [loginError, setLoginError] = useState(false);
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    if (loginForm.username === 'admin' && loginForm.password === 'admin') {
+      setIsLoggedIn(true);
+      setLoginError(false);
+    } else {
+      setLoginError(true);
+    }
+  };
+
+  if (!isLoggedIn) {
+    return (
+      <div className="h-full flex items-center justify-center animate-in fade-in">
+        <div className="bg-bgCard border border-borderC rounded-xl p-8 shadow-2xl max-w-md w-full">
+          <div className="flex justify-center mb-6">
+            <div className="w-16 h-16 bg-brandBlue/10 rounded-full flex items-center justify-center">
+              <Users className="text-brandBlue" size={32} />
+            </div>
+          </div>
+          <h2 className="text-2xl font-bold text-center text-white mb-2">Community Portal Access</h2>
+          <p className="text-textMuted text-sm text-center mb-8">Please log in with your resident or agency credentials to access safety protocols.</p>
+          
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div>
+              <label className="block text-xs font-semibold text-textMuted uppercase mb-1">Username / ID</label>
+              <input 
+                type="text" 
+                className="w-full bg-bgPanel border border-borderC rounded-lg px-4 py-2.5 text-white text-sm focus:outline-none focus:border-brandBlue transition-colors"
+                placeholder="Enter your ID"
+                value={loginForm.username}
+                onChange={e => { setLoginForm({...loginForm, username: e.target.value}); setLoginError(false); }}
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-textMuted uppercase mb-1">Password</label>
+              <input 
+                type="password" 
+                className="w-full bg-bgPanel border border-borderC rounded-lg px-4 py-2.5 text-white text-sm focus:outline-none focus:border-brandBlue transition-colors"
+                placeholder="••••••••"
+                value={loginForm.password}
+                onChange={e => { setLoginForm({...loginForm, password: e.target.value}); setLoginError(false); }}
+                required
+              />
+            </div>
+            {loginError && (
+              <div className="text-accentRed text-xs font-bold bg-accentRed/10 p-2 rounded border border-accentRed/20 flex items-center gap-2">
+                <AlertTriangle size={14} /> Invalid credentials. Please use admin / admin.
+              </div>
+            )}
+            <button 
+              type="submit"
+              className="w-full bg-brandBlue hover:bg-blue-600 text-white font-bold text-sm px-4 py-3 rounded-lg mt-2 shadow-[0_0_15px_rgba(44,129,255,0.3)] transition-all cursor-pointer"
+            >
+              Sign In to Portal
+            </button>
+          </form>
+          
+          <div className="mt-6 pt-6 border-t border-borderC text-center">
+            <p className="text-xs text-textMuted flex items-center justify-center gap-1">
+              <ShieldAlert size={12} className="text-accentRed" /> In case of immediate emergency, dial 911.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="h-full flex flex-col space-y-6 overflow-y-auto pb-8 pr-2">
       

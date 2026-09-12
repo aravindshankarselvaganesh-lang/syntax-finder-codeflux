@@ -325,9 +325,16 @@ const INITIAL_COURSES = [
 ];
 
 export default function LearningLab() {
+  const [isAnimating, setIsAnimating] = useState(true);
   const [activeView, setActiveView] = useState('home'); // 'home', 'simulator', 'case', 'course'
   const [selectedCase, setSelectedCase] = useState(null);
   const [selectedCourse, setSelectedCourse] = useState(null);
+
+  useEffect(() => {
+    // Only run animation on initial mount
+    const timer = setTimeout(() => setIsAnimating(false), 2500);
+    return () => clearTimeout(timer);
+  }, []);
 
   const [courseProgress, setCourseProgress] = useState(() => {
     const saved = localStorage.getItem('psm_course_progress');
@@ -343,20 +350,58 @@ export default function LearningLab() {
     });
   };
 
+  if (isAnimating) {
+    return (
+      <div className="h-full flex flex-col items-center justify-center bg-[#050014] overflow-hidden relative border-2 border-purple-500/30 rounded-2xl p-8">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPgo8cmVjdCB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSIjMDUwMDE0Ij48L3JlY3Q+CjxwYXRoIGQ9Ik0wIDBMOCA4Wk04IDBMMCA4WiIgc3Ryb2tlPSIjM2IyMDRkIiBzdHJva2Utd2lkdGg9IjEiPjwvcGF0aD4KPC9zdmc+')] opacity-20"></div>
+        <div className="relative w-32 h-32 mb-12">
+          <div className="absolute inset-0 border-[3px] border-purple-500/10 rounded-full"></div>
+          <div className="absolute inset-0 border-[3px] border-transparent border-t-purple-500 border-r-fuchsia-400 rounded-full animate-[spin_1.2s_linear_infinite]"></div>
+          <div className="absolute inset-3 border-[3px] border-transparent border-b-purple-400 border-l-fuchsia-500 rounded-full animate-[spin_0.8s_linear_infinite_reverse]"></div>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-16 h-16 bg-purple-500/20 rounded-full animate-pulse blur-md"></div>
+          </div>
+        </div>
+        <h1 className="text-4xl font-mono text-purple-400 tracking-[0.5em] ml-[0.5em] mb-2 animate-pulse text-center">INITIALIZING</h1>
+        <h2 className="text-lg font-mono text-fuchsia-300 tracking-widest mb-12 text-center">CYBER-LEARNING PROTOCOL</h2>
+        
+        <div className="w-64 h-1.5 bg-[#2d1b4e] rounded-full overflow-hidden">
+          <div className="h-full bg-gradient-to-r from-purple-600 to-fuchsia-500 w-full animate-[ping_1.5s_cubic-bezier(0,0,0.2,1)_infinite]"></div>
+        </div>
+      </div>
+    );
+  }
+
+  // The custom theme wrapper injected via style
+  const cyberpunkTheme = {
+    '--color-bgMain': '#0a0514',
+    '--color-bgPanel': '#160a2b',
+    '--color-bgCard': '#1d0f38',
+    '--color-borderC': '#3b2063',
+  };
+
   if (activeView === 'simulator') {
-    return <InteractiveSimulator onBack={() => setActiveView('home')} />;
+    return (
+      <div style={cyberpunkTheme} className="h-full bg-[var(--color-bgMain)] text-[var(--color-textMain)]">
+        <InteractiveSimulator onBack={() => setActiveView('home')} />
+      </div>
+    );
   }
 
   if (activeView === 'case') {
-    return <CaseStudyViewer caseData={selectedCase} onBack={() => setActiveView('home')} />;
+    return (
+      <div style={cyberpunkTheme} className="h-full bg-[var(--color-bgMain)] text-[var(--color-textMain)]">
+        <CaseStudyViewer caseData={selectedCase} onBack={() => setActiveView('home')} />
+      </div>
+    );
   }
 
   if (activeView === 'course' && selectedCourse) {
     return (
-      <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md p-4 md:p-8 flex justify-center items-center animate-fadeIn overflow-hidden">
-        <div className="bg-bgCard border border-purple-500/30 rounded-2xl w-full max-w-5xl h-[88vh] flex flex-col p-6 md:p-8 shadow-2xl relative overflow-hidden">
+      <div style={cyberpunkTheme} className="fixed inset-0 z-[9999] bg-black/85 backdrop-blur-md p-4 md:p-8 flex justify-center items-center animate-in fade-in overflow-hidden text-[var(--color-textMain)]">
+        <div className="bg-[var(--color-bgCard)] border border-purple-500/50 rounded-2xl w-full max-w-5xl h-[88vh] flex flex-col p-6 md:p-8 shadow-[0_0_50px_rgba(168,85,247,0.15)] relative overflow-hidden">
           {/* Fixed Header */}
-          <div className="flex justify-between items-center pb-4 border-b border-borderC shrink-0">
+          <div className="flex justify-between items-center pb-4 border-b border-[var(--color-borderC)] shrink-0">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-purple-500/20 text-purple-400">
                 <BookOpen size={24} />
@@ -396,14 +441,14 @@ export default function LearningLab() {
   }
 
   return (
-    <div className="h-full flex flex-col space-y-6 overflow-y-auto pb-8 pr-2">
+    <div style={cyberpunkTheme} className="h-full flex flex-col space-y-6 overflow-y-auto pb-8 pr-2 bg-[var(--color-bgMain)] text-[var(--color-textMain)] p-4 -m-4 rounded-xl">
       <div className="flex justify-between items-center mb-2">
         <div>
-          <h2 className="text-2xl font-bold flex items-center gap-2">
-            <BookOpen className="text-purple-400" size={28}/> 
+          <h2 className="text-2xl font-bold flex items-center gap-2 text-fuchsia-100">
+            <BookOpen className="text-fuchsia-400" size={28}/> 
             Learning Lab & Operational Simulation
           </h2>
-          <p className="text-textMuted text-sm mt-1">Interactive educational platform for drilling mechanics, well control, and georisk intelligence.</p>
+          <p className="text-purple-300 text-sm mt-1 font-mono text-xs">Interactive educational platform for drilling mechanics, well control, and georisk intelligence.</p>
         </div>
       </div>
 

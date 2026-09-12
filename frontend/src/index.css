@@ -27,3 +27,23 @@ html, body, #root {
 .leaflet-container {
   background: #060B14 !important;
 }
+
+/* Custom Dark Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bgMain);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-borderC);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-brandBlue);
+}
+
