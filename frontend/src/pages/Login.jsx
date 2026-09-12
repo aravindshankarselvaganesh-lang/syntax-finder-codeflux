@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Shield, Lock, User, Activity, AlertTriangle, ArrowRight } from 'lucide-react';
+import bgHero from '../assets/bg-hero.jpg';
 
 export default function Login({ onLogin }) {
   const [email, setEmail] = useState('astha@psm.com');
@@ -29,7 +30,7 @@ export default function Login({ onLogin }) {
       <div className="hidden lg:flex flex-1 relative overflow-hidden border-r border-borderC">
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-10000 animate-slow-zoom"
-          style={{ backgroundImage: "url('/bg-hero.jpg')" }}
+          style={{ backgroundImage: `url(${bgHero})` }}
         ></div>
         <div className="absolute inset-0 bg-gradient-to-r from-[#060B14]/95 via-[#060B14]/75 to-[#060B14]/90"></div>
         <div className="absolute inset-0 bg-radial from-transparent via-[#060B14]/50 to-[#060B14]/90"></div>

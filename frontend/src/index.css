@@ -34,12 +34,12 @@ html, body, #root {
   content: '';
   position: fixed;
   inset: 0;
-  background-image: url('/bg-hero.jpg');
+  background-image: url('./assets/bg-hero.jpg');
   background-size: cover;
   background-position: center bottom;
   background-repeat: no-repeat;
-  opacity: 0.45;
-  filter: brightness(0.85) contrast(1.15) saturate(1.2);
+  opacity: 0.55;
+  filter: brightness(0.9) contrast(1.15) saturate(1.2);
   pointer-events: none;
   z-index: 0;
   animation: slowZoom 25s ease-in-out infinite alternate;
