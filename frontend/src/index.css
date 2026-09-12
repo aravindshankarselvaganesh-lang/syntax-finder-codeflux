@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bgMain: rgba(6, 11, 20, 0.40);
-  --color-bgPanel: rgba(10, 18, 32, 0.48);
+  --color-bgMain: #060B14;
+  --color-bgPanel: #0A1220;
   --color-bgCard: rgba(14, 25, 45, 0.50);
   --color-borderC: rgba(30, 45, 69, 0.6);
   --color-brandBlue: #38BDF8;
