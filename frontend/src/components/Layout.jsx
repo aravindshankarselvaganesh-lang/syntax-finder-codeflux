@@ -4,6 +4,7 @@ import {
   Activity, MapPin, BarChart2, FileText, Bell, Sparkles, Settings,
   AlertTriangle, BrainCircuit, Database, ChevronDown, Droplet, BookOpen, ShieldAlert, Users, X, Menu, Mail, Phone
 } from 'lucide-react';
+import bgHero from '../assets/bg-hero.jpg';
 
 export default function Layout() {
   const [showNotifs, setShowNotifs] = useState(false);
@@ -45,17 +46,21 @@ export default function Layout() {
     setIsSearchingRisk(true);
     setRiskSearchResult(null);
     
-    // Simulate API delay
     setTimeout(() => {
-      const q = riskSearchQuery.toLowerCase();
-      const isRisky = q.includes('assam') || q.includes('naga') || q.includes('macondo') || q.includes('cambay') || q.includes('fault');
-      
-      if (isRisky) {
+      const query = riskSearchQuery.toLowerCase();
+      if (query.includes('assam') || query.includes('as-07')) {
         setRiskSearchResult({
-          status: 'danger',
-          title: 'High Risk Alert',
-          description: `Drilling operations at ${riskSearchQuery} are currently flagged for high geomechanical instability or abnormal pore pressures.`,
-          action: 'Immediately halt drilling and check mud weight.'
+          status: 'high',
+          title: 'Assam-07 High-Risk Field',
+          description: 'Geomechanical fault-line instability detected. High ROP drop and torque spike indicates pipe sticking and kick vulnerability.',
+          action: 'Inspect ECD and mud weight immediately.'
+        });
+      } else if (query.includes('gujarat') || query.includes('cambay')) {
+        setRiskSearchResult({
+          status: 'medium',
+          title: 'Cambay Basin Georisk',
+          description: 'Moderate pore pressure anomaly detected in fractured carbonate reservoir.',
+          action: 'Prepare LCM pills for lost circulation.'
         });
       } else {
         setRiskSearchResult({
@@ -70,7 +75,16 @@ export default function Layout() {
   };
 
   return (
-    <div className="flex h-[100dvh] bg-bgMain text-textMain font-sans overflow-hidden app-bg-overlay">
+    <div className="flex h-[100dvh] bg-bgMain text-textMain font-sans overflow-hidden relative">
+      
+      {/* DIRECT VISUAL REFINERY BACKGROUND LAYER */}
+      <div 
+        className="fixed inset-0 bg-cover bg-center bg-no-repeat pointer-events-none z-0 opacity-55 animate-slow-zoom"
+        style={{ backgroundImage: `url(${bgHero})` }}
+      />
+      <div 
+        className="fixed inset-0 pointer-events-none z-0 bg-gradient-to-b from-[#060B14]/40 via-[#060B14]/75 to-[#060B14]/92"
+      />
       
       {/* MOBILE BACKDROP OVERLAY */}
       {mobileMenuOpen && (
