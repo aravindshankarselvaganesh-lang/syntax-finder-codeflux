@@ -56,23 +56,24 @@ html, body, #root {
 
 /* Glassmorphism Overrides for Tailwind Utility Classes */
 .bg-bgMain {
-  background-color: rgba(6, 11, 20, 0.78) !important;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background-color: rgba(6, 11, 20, 0.40) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .bg-bgPanel {
-  background-color: rgba(10, 18, 32, 0.88) !important;
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  background-color: rgba(10, 18, 32, 0.48) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-color: rgba(56, 189, 248, 0.2) !important;
 }
 
 .bg-bgCard {
-  background-color: rgba(16, 27, 46, 0.88) !important;
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border-color: rgba(56, 189, 248, 0.25) !important;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  background-color: rgba(14, 25, 45, 0.50) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-color: rgba(56, 189, 248, 0.3) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
 /* High-Contrast Text Legibility */
@@ -110,24 +111,24 @@ html, body, #root {
 
 /* Glassmorphism Cards & Panels */
 .glass-panel {
-  background: rgba(10, 18, 32, 0.88) !important;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(56, 189, 248, 0.2) !important;
+  background: rgba(10, 18, 32, 0.48) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(56, 189, 248, 0.25) !important;
 }
 
 .glass-card {
-  background: rgba(16, 27, 46, 0.88) !important;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(56, 189, 248, 0.25) !important;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+  background: rgba(14, 25, 45, 0.50) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(56, 189, 248, 0.3) !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .glass-card:hover {
-  border-color: rgba(56, 189, 248, 0.55) !important;
-  box-shadow: 0 12px 40px 0 rgba(56, 189, 248, 0.28);
+  border-color: rgba(56, 189, 248, 0.6) !important;
+  box-shadow: 0 12px 40px 0 rgba(56, 189, 248, 0.3);
   transform: translateY(-2px);
 }
 

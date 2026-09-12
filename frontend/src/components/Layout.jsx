@@ -79,11 +79,11 @@ export default function Layout() {
       
       {/* DIRECT VISUAL REFINERY BACKGROUND LAYER */}
       <div 
-        className="fixed inset-0 bg-cover bg-center bg-no-repeat pointer-events-none z-0 opacity-55 animate-slow-zoom"
+        className="fixed inset-0 bg-cover bg-center bg-no-repeat pointer-events-none z-0 opacity-80 animate-slow-zoom"
         style={{ backgroundImage: `url(${bgHero})` }}
       />
       <div 
-        className="fixed inset-0 pointer-events-none z-0 bg-gradient-to-b from-[#060B14]/40 via-[#060B14]/75 to-[#060B14]/92"
+        className="fixed inset-0 pointer-events-none z-0 bg-gradient-to-b from-[#060B14]/15 via-[#060B14]/40 to-[#060B14]/75"
       />
       
       {/* MOBILE BACKDROP OVERLAY */}
