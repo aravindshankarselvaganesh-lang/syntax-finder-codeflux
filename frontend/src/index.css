@@ -2,14 +2,14 @@
 
 @theme {
   --color-bgMain: #060B14;
-  --color-bgPanel: #0E1623;
-  --color-bgCard: #152033;
-  --color-borderC: #23324A;
-  --color-brandBlue: #2C81FF;
-  --color-textMain: #F8FAFC;
-  --color-textMuted: #94A3B8;
+  --color-bgPanel: #0A1220;
+  --color-bgCard: #101B2E;
+  --color-borderC: #1E2D45;
+  --color-brandBlue: #38BDF8;
+  --color-textMain: #FFFFFF;
+  --color-textMuted: #CBD5E1;
   --color-accentRed: #F43F5E;
-  --color-accentYellow: #FBBF24;
+  --color-accentYellow: #F59E0B;
   --color-accentGreen: #10B981;
 }
 
@@ -36,10 +36,10 @@ html, body, #root {
   inset: 0;
   background-image: url('/bg-hero.jpg');
   background-size: cover;
-  background-position: center center;
+  background-position: center bottom;
   background-repeat: no-repeat;
-  opacity: 0.65;
-  filter: brightness(0.85) contrast(1.1) saturate(1.2);
+  opacity: 0.45;
+  filter: brightness(0.85) contrast(1.15) saturate(1.2);
   pointer-events: none;
   z-index: 0;
   animation: slowZoom 25s ease-in-out infinite alternate;
@@ -49,40 +49,46 @@ html, body, #root {
   content: '';
   position: fixed;
   inset: 0;
-  background: radial-gradient(circle at 50% 40%, rgba(6, 11, 20, 0.25) 0%, rgba(6, 11, 20, 0.65) 60%, rgba(6, 11, 20, 0.88) 100%);
+  background: radial-gradient(circle at 50% 30%, rgba(6, 11, 20, 0.3) 0%, rgba(6, 11, 20, 0.75) 65%, rgba(6, 11, 20, 0.94) 100%);
   pointer-events: none;
   z-index: 0;
 }
 
 /* Glassmorphism Overrides for Tailwind Utility Classes */
 .bg-bgMain {
-  background-color: rgba(6, 11, 20, 0.72) !important;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background-color: rgba(6, 11, 20, 0.78) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .bg-bgPanel {
-  background-color: rgba(14, 22, 35, 0.82) !important;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background-color: rgba(10, 18, 32, 0.88) !important;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 }
 
 .bg-bgCard {
-  background-color: rgba(21, 32, 51, 0.82) !important;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-color: rgba(44, 129, 255, 0.2) !important;
+  background-color: rgba(16, 27, 46, 0.88) !important;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-color: rgba(56, 189, 248, 0.25) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* High-Contrast Text Legibility */
+.text-textMuted {
+  color: #CBD5E1 !important;
 }
 
 /* Animations */
 @keyframes slowZoom {
   0% { transform: scale(1); }
-  100% { transform: scale(1.05); }
+  100% { transform: scale(1.04); }
 }
 
 @keyframes pulseGlow {
-  0%, 100% { opacity: 0.5; filter: drop-shadow(0 0 10px rgba(44, 129, 255, 0.5)); }
-  50% { opacity: 0.9; filter: drop-shadow(0 0 22px rgba(44, 129, 255, 0.9)); }
+  0%, 100% { opacity: 0.6; filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.6)); }
+  50% { opacity: 1; filter: drop-shadow(0 0 24px rgba(56, 189, 248, 0.95)); }
 }
 
 @keyframes floatLight {
@@ -104,30 +110,30 @@ html, body, #root {
 
 /* Glassmorphism Cards & Panels */
 .glass-panel {
-  background: rgba(14, 22, 35, 0.82) !important;
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  background: rgba(10, 18, 32, 0.88) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(56, 189, 248, 0.2) !important;
 }
 
 .glass-card {
-  background: rgba(21, 32, 51, 0.82) !important;
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(44, 129, 255, 0.25) !important;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45);
+  background: rgba(16, 27, 46, 0.88) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(56, 189, 248, 0.25) !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .glass-card:hover {
-  border-color: rgba(44, 129, 255, 0.5) !important;
-  box-shadow: 0 12px 40px 0 rgba(44, 129, 255, 0.25);
+  border-color: rgba(56, 189, 248, 0.55) !important;
+  box-shadow: 0 12px 40px 0 rgba(56, 189, 248, 0.28);
   transform: translateY(-2px);
 }
 
 /* Leaflet dark mode overrides */
 .leaflet-container {
-  background: rgba(6, 11, 20, 0.85) !important;
+  background: rgba(6, 11, 20, 0.9) !important;
 }
 
 /* Custom Dark Scrollbar */
