@@ -1,4 +1,11 @@
 {
+  "name": "syntax-finder-codeflux",
+  "version": "1.0.0",
+  "scripts": {
+    "install-frontend": "cd frontend && npm install",
+    "build": "cd frontend && npm run build",
+    "vercel-build": "npm run install-frontend && npm run build"
+  },
   "dependencies": {
     "express": "^5.2.1",
     "puppeteer": "^25.10.0"
