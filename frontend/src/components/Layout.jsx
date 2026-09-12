@@ -80,7 +80,12 @@ export default function Layout() {
       {/* DIRECT VISUAL REFINERY BACKGROUND LAYER */}
       <div 
         className="fixed inset-0 bg-cover bg-bottom bg-no-repeat pointer-events-none animate-slow-zoom animate-water-wave"
-        style={{ backgroundImage: `url(${bgHero})`, zIndex: -1, opacity: 1 }}
+        style={{ 
+          backgroundImage: `url(${bgHero})`, 
+          zIndex: -1, 
+          opacity: 0.55,
+          filter: 'brightness(0.9) contrast(1.15) saturate(1.2)'
+        }}
       />
       
       {/* ANIMATED WATER SHIMMER & LIGHT REFLECTION OVERLAY */}
