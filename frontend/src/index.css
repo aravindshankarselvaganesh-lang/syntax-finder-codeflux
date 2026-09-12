@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bgMain: #060B14;
-  --color-bgPanel: #0A1220;
-  --color-bgCard: #101B2E;
-  --color-borderC: #1E2D45;
+  --color-bgMain: rgba(6, 11, 20, 0.40);
+  --color-bgPanel: rgba(10, 18, 32, 0.48);
+  --color-bgCard: rgba(14, 25, 45, 0.50);
+  --color-borderC: rgba(30, 45, 69, 0.6);
   --color-brandBlue: #38BDF8;
   --color-textMain: #FFFFFF;
   --color-textMuted: #CBD5E1;
@@ -18,7 +18,7 @@ html, body, #root {
   width: 100%;
   margin: 0;
   padding: 0;
-  background-color: var(--color-bgMain);
+  background-color: #060B14;
   color: var(--color-textMain);
   font-family: 'Inter', sans-serif;
   overflow: hidden;
@@ -56,23 +56,18 @@ html, body, #root {
 
 /* Glassmorphism Overrides for Tailwind Utility Classes */
 .bg-bgMain {
-  background-color: rgba(6, 11, 20, 0.40) !important;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 }
 
 .bg-bgPanel {
-  background-color: rgba(10, 18, 32, 0.48) !important;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-color: rgba(56, 189, 248, 0.2) !important;
 }
 
 .bg-bgCard {
-  background-color: rgba(14, 25, 45, 0.50) !important;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-color: rgba(56, 189, 248, 0.3) !important;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
